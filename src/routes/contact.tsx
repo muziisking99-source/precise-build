@@ -73,7 +73,7 @@ function Contact() {
             <div className="map-box">
               <svg width="80" height="100" viewBox="0 0 80 100" aria-hidden>
                 <path d="M40 5 C20 5 8 20 8 38 C8 60 40 95 40 95 C40 95 72 60 72 38 C72 20 60 5 40 5 Z" fill="#FFF200" stroke="#00A651" strokeWidth="2" />
-                <circle cx="40" cy="38" r="12" fill="#0A0A0A" />
+                <circle cx="40" cy="38" r="12" fill="#7A5C2A" />
               </svg>
             </div>
           </Reveal>
