@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SectionTag, RedBand, GoldBand } from "../components/Layout";
 import { Reveal } from "../components/Effects";
-import { CHARACTERS } from "../components/Characters";
+import { CHARACTERS, SupaDupa, GingerMan, LuvALotGirl, AllStarFootballer, JokerHat } from "../components/Characters";
+import { Logo } from "../components/Logo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -16,35 +17,13 @@ export const Route = createFileRoute("/")({
 const RIBBON_ITEMS = ["Glucose Energy","Just Ginger","Luv-A-Lot","Trio","All-Star","Joker","Marie","Supa Dupa","Cream Biscuits","Proudly South African"];
 
 const TEASERS = [
-  { name: "Glucose Energy", emoji: "⚡", desc: "South Africa's lunchbox legend. Pure, honest energy.", color: "#F5A800" },
-  { name: "Just Ginger", emoji: "🍪", desc: "Warm spice in every bite. A heritage classic.", color: "#E8751A" },
-  { name: "Luv-A-Lot", emoji: "💖", desc: "Sweet school-bag bestie. Loved by kids nationwide.", color: "#D4237A" },
-  { name: "All-Star", emoji: "⚽", desc: "Cream-filled goals. Game-day favourite.", color: "#1A4B8C" },
-  { name: "Trio", emoji: "🍫", desc: "Three flavours, one cream-filled bite.", color: "#6B3A2A" },
-  { name: "Joker", emoji: "🎭", desc: "Three colours, one cheeky grin.", color: "#2EAA4A" },
+  { name: "Glucose Energy", Comp: SupaDupa, desc: "South Africa's lunchbox legend. Pure, honest energy.", color: "#FFF200" },
+  { name: "Just Ginger", Comp: GingerMan, desc: "Warm spice in every bite. A heritage classic.", color: "#8C6239" },
+  { name: "Luv-A-Lot", Comp: LuvALotGirl, desc: "Sweet school-bag bestie. Loved by kids nationwide.", color: "#ED1C24" },
+  { name: "All-Star", Comp: AllStarFootballer, desc: "Cream-filled goals. Game-day favourite.", color: "#00A651" },
+  { name: "Trio", Comp: SupaDupa, desc: "Three flavours, one cream-filled bite.", color: "#C59B6D" },
+  { name: "Joker", Comp: JokerHat, desc: "Three colours, one cheeky grin.", color: "#00A651" },
 ];
-
-function BiscuitStack() {
-  return (
-    <svg width="380" height="380" viewBox="0 0 380 380" className="hero-stack" aria-hidden>
-      <defs>
-        <linearGradient id="bg1" x1="0" x2="1">
-          <stop offset="0" stopColor="#FFCF47" />
-          <stop offset="1" stopColor="#C88400" />
-        </linearGradient>
-      </defs>
-      {[0,1,2,3].map((i) => (
-        <g key={i} transform={`translate(${60 + i*8} ${260 - i*48}) rotate(${-6 + i*4} 130 30)`}>
-          <rect width="260" height="60" rx="14" fill="url(#bg1)" stroke="#9A1515" strokeWidth="2" strokeDasharray="4 3" />
-          <text x="130" y="38" textAnchor="middle" fontFamily="Abril Fatface, serif" fontSize="22" fill="#1A1F2E">GF</text>
-        </g>
-      ))}
-      <circle cx="50" cy="320" r="5" fill="#C88400" />
-      <circle cx="330" cy="100" r="4" fill="#C88400" />
-      <circle cx="350" cy="280" r="6" fill="#C88400" />
-    </svg>
-  );
-}
 
 function Index() {
   return (
@@ -71,7 +50,7 @@ function Index() {
           </div>
         </div>
         <div className="hero-right">
-          <BiscuitStack />
+          <Logo height={280} className="hero-logo" />
           <div className="info-card info-card-1">
             <div className="info-card-label">Bestseller</div>
             <div className="info-card-title">Glucose Energy</div>
@@ -98,19 +77,22 @@ function Index() {
           <p className="section-sub">Nine ranges, baked in Lenasia and loved across all nine provinces.</p>
         </Reveal>
         <div className="grid-3">
-          {TEASERS.map((p) => (
+          {TEASERS.map((p) => {
+            const Mascot = p.Comp;
+            return (
             <Reveal key={p.name} className="prod-card">
-              <div className="prod-top" style={{ background: `linear-gradient(135deg, ${p.color}22, ${p.color}55)` }}>
-                <span style={{ fontSize: 64 }}>{p.emoji}</span>
+              <div className="prod-top prod-mascot" style={{ background: `linear-gradient(135deg, ${p.color}22, ${p.color}55)` }}>
+                <Mascot size={100} />
               </div>
               <div className="prod-body">
                 <div className="prod-pill">Range</div>
                 <div className="prod-name">{p.name}</div>
                 <p className="prod-desc">{p.desc}</p>
-                <Link to="/products" className="prod-link">Find It →</Link>
+            <Link to="/products/single" className="prod-link">Find It →</Link>
               </div>
             </Reveal>
-          ))}
+            );
+          })}
         </div>
         <div style={{ textAlign: "center", marginTop: 48 }}>
           <Link to="/products" className="btn btn-red">View All Products →</Link>
@@ -139,7 +121,9 @@ function Index() {
       <section className="section section-cream">
         <div className="heritage-grid">
           <Reveal>
-            <BiscuitStack />
+            <div className="heritage-logo-wrap">
+              <Logo height={220} />
+            </div>
             <div className="heritage-badge">
               <span className="heritage-badge-year">1998</span>
               <span className="heritage-badge-text">Est. Lenasia, JHB</span>

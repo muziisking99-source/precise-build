@@ -79,16 +79,38 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Golden Fresh Biscuits — Lekker Biscuits For Every SA Family" },
+      { name: "description", content: "From Lenasia to the nation — Golden Fresh delivers real quality at honest prices. Nine beloved ranges since 1998." },
+      { name: "author", content: "Golden Fresh Biscuits" },
+      { property: "og:title", content: "Golden Fresh Biscuits" },
+      { property: "og:description", content: "Lekker biscuits for every SA family. Proudly South African since 1998." },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "/brand/golden-fresh-logo.png" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
+      {
+        rel: "icon",
+        type: "image/png",
+        href: "/favicon.png",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: "/favicon.png",
+      },
+      {
+        rel: "preconnect",
+        href: "https://fonts.googleapis.com",
+      },
+      {
+        rel: "preconnect",
+        href: "https://fonts.gstatic.com",
+        crossOrigin: "anonymous",
+      },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Great+Vibes&family=Nunito:wght@300;400;600;700;800&display=swap",
+      },
       {
         rel: "stylesheet",
         href: appCss,

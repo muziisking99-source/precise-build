@@ -13,6 +13,9 @@ import { Route as ProductsRouteImport } from './routes/products'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProductsIndexRouteImport } from './routes/products/index'
+import { Route as ProductsSingleRouteImport } from './routes/products/single'
+import { Route as ProductsBulkRouteImport } from './routes/products/bulk'
 
 const ProductsRoute = ProductsRouteImport.update({
   id: '/products',
@@ -34,39 +37,83 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProductsIndexRoute = ProductsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProductsRoute,
+} as any)
+const ProductsSingleRoute = ProductsSingleRouteImport.update({
+  id: '/single',
+  path: '/single',
+  getParentRoute: () => ProductsRoute,
+} as any)
+const ProductsBulkRoute = ProductsBulkRouteImport.update({
+  id: '/bulk',
+  path: '/bulk',
+  getParentRoute: () => ProductsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/products': typeof ProductsRoute
+  '/products': typeof ProductsRouteWithChildren
+  '/products/bulk': typeof ProductsBulkRoute
+  '/products/single': typeof ProductsSingleRoute
+  '/products/': typeof ProductsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/products': typeof ProductsRoute
+  '/products/bulk': typeof ProductsBulkRoute
+  '/products/single': typeof ProductsSingleRoute
+  '/products': typeof ProductsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/products': typeof ProductsRoute
+  '/products': typeof ProductsRouteWithChildren
+  '/products/bulk': typeof ProductsBulkRoute
+  '/products/single': typeof ProductsSingleRoute
+  '/products/': typeof ProductsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/contact' | '/products'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/contact'
+    | '/products'
+    | '/products/bulk'
+    | '/products/single'
+    | '/products/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/contact' | '/products'
-  id: '__root__' | '/' | '/about' | '/contact' | '/products'
+  to:
+    | '/'
+    | '/about'
+    | '/contact'
+    | '/products/bulk'
+    | '/products/single'
+    | '/products'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/contact'
+    | '/products'
+    | '/products/bulk'
+    | '/products/single'
+    | '/products/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
-  ProductsRoute: typeof ProductsRoute
+  ProductsRoute: typeof ProductsRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -99,15 +146,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/products/': {
+      id: '/products/'
+      path: '/'
+      fullPath: '/products/'
+      preLoaderRoute: typeof ProductsIndexRouteImport
+      parentRoute: typeof ProductsRoute
+    }
+    '/products/single': {
+      id: '/products/single'
+      path: '/single'
+      fullPath: '/products/single'
+      preLoaderRoute: typeof ProductsSingleRouteImport
+      parentRoute: typeof ProductsRoute
+    }
+    '/products/bulk': {
+      id: '/products/bulk'
+      path: '/bulk'
+      fullPath: '/products/bulk'
+      preLoaderRoute: typeof ProductsBulkRouteImport
+      parentRoute: typeof ProductsRoute
+    }
   }
 }
+
+interface ProductsRouteChildren {
+  ProductsBulkRoute: typeof ProductsBulkRoute
+  ProductsSingleRoute: typeof ProductsSingleRoute
+  ProductsIndexRoute: typeof ProductsIndexRoute
+}
+
+const ProductsRouteChildren: ProductsRouteChildren = {
+  ProductsBulkRoute: ProductsBulkRoute,
+  ProductsSingleRoute: ProductsSingleRoute,
+  ProductsIndexRoute: ProductsIndexRoute,
+}
+
+const ProductsRouteWithChildren = ProductsRoute._addFileChildren(
+  ProductsRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
-  ProductsRoute: ProductsRoute,
+  ProductsRoute: ProductsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

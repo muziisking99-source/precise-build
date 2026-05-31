@@ -1,32 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-
-export function LogoMark({ size = 44 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 44 44" aria-hidden>
-      <rect width="44" height="44" rx="8" fill="#C41C1C" />
-      <line x1="22" y1="8" x2="22" y2="32" stroke="#F5A800" strokeWidth="2" />
-      {[0, 1, 2].map((i) => (
-        <g key={i}>
-          <ellipse cx="16" cy={12 + i * 6} rx="4" ry="2.2" fill="#F5A800" transform={`rotate(-30 16 ${12 + i * 6})`} />
-          <ellipse cx="28" cy={12 + i * 6} rx="4" ry="2.2" fill="#F5A800" transform={`rotate(30 28 ${12 + i * 6})`} />
-        </g>
-      ))}
-      <text x="22" y="40" textAnchor="middle" fontFamily="Abril Fatface, serif" fontSize="9" fill="#F5A800">GF</text>
-    </svg>
-  );
-}
+import { Logo } from "./Logo";
 
 export function Nav() {
   const [open, setOpen] = useState(false);
   return (
     <nav className="nav">
       <Link to="/" className="nav-brand" style={{ textDecoration: "none" }}>
-        <LogoMark />
-        <div className="nav-brand-text">
-          <span className="nav-brand-name">Golden Fresh</span>
-          <span className="nav-brand-sub">Est. 1998 · South Africa</span>
-        </div>
+        <Logo height={44} />
       </Link>
       <div className={`nav-links ${open ? "open" : ""}`}>
         <Link to="/" activeOptions={{ exact: true }} activeProps={{ className: "active" }} onClick={() => setOpen(false)}>Home</Link>
@@ -47,9 +28,8 @@ export function Footer() {
     <footer className="footer">
       <div className="footer-grid">
         <div className="footer-col">
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-            <LogoMark size={40} />
-            <span style={{ fontFamily: "Abril Fatface, serif", fontSize: 22, color: "var(--gold)" }}>Golden Fresh</span>
+          <div className="footer-brand">
+            <Logo height={72} />
           </div>
           <p className="footer-tag">Delivering local lekkerness since 1998. Proudly South African.</p>
           <div className="footer-social">
@@ -100,7 +80,7 @@ export function RedBand({ title, body, cta }: { title: string; body: string; cta
         <h2>{title}</h2>
         <p>{body}</p>
       </div>
-      <a className="btn btn-gold" href="#">{cta} →</a>
+      <a className="btn btn-green" href="#">{cta} →</a>
     </div>
   );
 }
@@ -112,7 +92,7 @@ export function GoldBand({ title, body, cta }: { title: string; body: string; ct
         <h2>{title}</h2>
         <p>{body}</p>
       </div>
-      <a className="btn btn-red" href="/products">{cta} →</a>
+      <a className="btn btn-red" href="/products/single">{cta} →</a>
     </div>
   );
 }
