@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SectionTag, RedBand, GoldBand } from "../components/Layout";
 import { Reveal } from "../components/Effects";
 import { CHARACTERS, SupaDupa, GingerMan, LuvALotGirl, AllStarFootballer, JokerHat } from "../components/Characters";
+import { Hero } from "../components/Hero";
 import { Logo } from "../components/Logo";
 
 export const Route = createFileRoute("/")({
@@ -28,39 +29,7 @@ const TEASERS = [
 function Index() {
   return (
     <>
-      <section className="hero">
-        <div className="hero-glow-1" /><div className="hero-glow-2" /><div className="hero-grid-lines" />
-        <div className="hero-left">
-          <div className="hero-badge"><span className="hero-badge-dot" />Proudly South African · Est. 1998</div>
-          <h1>
-            Lekker
-            <span className="gold">Biscuits</span>
-            For Every
-            <span> <span className="red">SA Family.</span></span>
-          </h1>
-          <p className="hero-sub">From Lenasia to the nation — Golden Fresh delivers real quality at honest prices. Nine beloved ranges, millions of happy families.</p>
-          <div className="hero-buttons">
-            <Link to="/products" className="btn btn-red">Shop Products</Link>
-            <Link to="/about" className="btn btn-ghost">Our Story →</Link>
-          </div>
-          <div className="hero-stats">
-            <div><div className="hero-stat-num">25+</div><div className="hero-stat-label">Years Baking</div></div>
-            <div><div className="hero-stat-num">9</div><div className="hero-stat-label">Ranges</div></div>
-            <div><div className="hero-stat-num">9</div><div className="hero-stat-label">Provinces</div></div>
-          </div>
-        </div>
-        <div className="hero-right">
-          <Logo height={280} className="hero-logo" />
-          <div className="info-card info-card-1">
-            <div className="info-card-label">Bestseller</div>
-            <div className="info-card-title">Glucose Energy</div>
-          </div>
-          <div className="info-card info-card-2">
-            <div className="info-card-label">Kids' Favourite</div>
-            <div className="info-card-title">Luv-A-Lot</div>
-          </div>
-        </div>
-      </section>
+      <Hero />
 
       <div className="ribbon">
         <div className="ribbon-track">
