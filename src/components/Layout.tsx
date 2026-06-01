@@ -1,13 +1,22 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
 
 export function Nav() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <nav className="nav">
+    <nav className={`nav ${scrolled ? "nav--scrolled" : ""}`}>
       <Link to="/" className="nav-brand" style={{ textDecoration: "none" }}>
-        <Logo height={44} />
+        <Logo height={40} />
       </Link>
       <div className={`nav-links ${open ? "open" : ""}`}>
         <Link to="/" activeOptions={{ exact: true }} activeProps={{ className: "active" }} onClick={() => setOpen(false)}>Home</Link>
@@ -15,13 +24,18 @@ export function Nav() {
         <Link to="/products" activeProps={{ className: "active" }} onClick={() => setOpen(false)}>Products</Link>
         <Link to="/contact" activeProps={{ className: "active" }} onClick={() => setOpen(false)}>Contact</Link>
       </div>
-      <button className="nav-cta">Find a Store</button>
-      <button className="nav-burger" onClick={() => setOpen((o) => !o)} aria-label="Menu">
-        <svg width="28" height="28" viewBox="0 0 28 28"><path d="M4 8h20M4 14h20M4 20h20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" /></svg>
+      <button type="button" className="nav-cta">Find a Store</button>
+      <button type="button" className="nav-burger" onClick={() => setOpen((o) => !o)} aria-label="Menu">
+        <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden><path d="M4 8h20M4 14h20M4 20h20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
       </button>
     </nav>
   );
 }
+
+const PRODUCT_LINKS = [
+  "Glucose Energy", "Just Ginger", "Luv-A-Lot", "Trio", "All-Star",
+  "Joker", "Marie", "Supa Dupa", "Cream Biscuits",
+];
 
 export function Footer() {
   return (
@@ -29,7 +43,7 @@ export function Footer() {
       <div className="footer-grid">
         <div className="footer-col">
           <div className="footer-brand">
-            <Logo height={72} />
+            <Logo height={64} />
           </div>
           <p className="footer-tag">Delivering local lekkerness since 1998. Proudly South African.</p>
           <div className="footer-social">
@@ -40,12 +54,14 @@ export function Footer() {
         </div>
         <div className="footer-col">
           <div className="footer-col-head">Products</div>
-          {["Glucose Energy","Just Ginger","Luv-A-Lot","Trio","All-Star","Joker","Marie","Supa Dupa","Cream Biscuits"].map(p => <a href="/products" key={p}>{p}</a>)}
+          {PRODUCT_LINKS.map((p) => (
+            <Link key={p} to="/products">{p}</Link>
+          ))}
         </div>
         <div className="footer-col">
           <div className="footer-col-head">Company</div>
-          <a href="/about">About Us</a>
-          <a href="/about">Our Story</a>
+          <Link to="/about">About Us</Link>
+          <Link to="/about">Our Story</Link>
           <a href="#">Careers</a>
           <a href="#">News</a>
         </div>
@@ -80,7 +96,7 @@ export function RedBand({ title, body, cta }: { title: string; body: string; cta
         <h2>{title}</h2>
         <p>{body}</p>
       </div>
-      <a className="btn btn-green" href="#">{cta} →</a>
+      <a className="btn btn-red" href="#">{cta} →</a>
     </div>
   );
 }
@@ -92,7 +108,7 @@ export function GoldBand({ title, body, cta }: { title: string; body: string; ct
         <h2>{title}</h2>
         <p>{body}</p>
       </div>
-      <a className="btn btn-red" href="/products/single">{cta} →</a>
+      <Link to="/products/single" className="btn btn-red">{cta} →</Link>
     </div>
   );
 }

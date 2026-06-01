@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { SectionTag, RedBand, GoldBand } from "../../components/Layout";
+import { PageHero } from "../../components/PageHero";
 import { Reveal } from "../../components/Effects";
+import { productTopStyle } from "../../lib/uiTint";
 import { SINGLE_RANGES } from "../../data/products";
 
 export const Route = createFileRoute("/products/single")({
@@ -22,16 +24,17 @@ function SingleProducts() {
 
   return (
     <>
-      <section className="products-hero">
+      <PageHero
+        eyebrow="Single Packs"
+        title={<>Our <span className="accent">Full Range</span></>}
+        description="Nine ranges. Every moment. Every South African family."
+      >
         <Link to="/products" className="products-back">← All categories</Link>
-        <SectionTag>Single Packs</SectionTag>
-        <h1>Our <span className="accent">Full Range</span></h1>
-        <p>Nine ranges. Every moment. Every South African family.</p>
-      </section>
+      </PageHero>
 
       <div className="filter-tabs">
         {TABS.map((t) => (
-          <button key={t.key} className={`filter-tab ${filter === t.key ? "active" : ""}`} onClick={() => setFilter(t.key)}>
+          <button key={t.key} type="button" className={`filter-tab ${filter === t.key ? "active" : ""}`} onClick={() => setFilter(t.key)}>
             {t.label}
           </button>
         ))}
@@ -53,7 +56,7 @@ function SingleProducts() {
           <div className="grid-3">
             {r.products.map((p) => (
               <Reveal key={p.name} className="prod-card">
-                <div className="prod-top prod-mascot" style={{ background: `linear-gradient(135deg, ${p.color}33, ${p.color}88)` }}>
+                <div className="prod-top prod-mascot" style={productTopStyle(p.color)}>
                   {r.Mascot ? (() => {
                     const Mascot = r.Mascot;
                     return <Mascot size={90} />;

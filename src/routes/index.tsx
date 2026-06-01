@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SectionTag, RedBand, GoldBand } from "../components/Layout";
+import { Section, SectionHead } from "../components/Section";
 import { Reveal } from "../components/Effects";
+import { productTopStyle } from "../lib/uiTint";
 import { CHARACTERS, SupaDupa, GingerMan, LuvALotGirl, AllStarFootballer, JokerHat } from "../components/Characters";
 import { Hero } from "../components/Hero";
 import { Logo } from "../components/Logo";
@@ -15,7 +17,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const RIBBON_ITEMS = ["Glucose Energy","Just Ginger","Luv-A-Lot","Trio","All-Star","Joker","Marie","Supa Dupa","Cream Biscuits","Proudly South African"];
+const RIBBON_ITEMS = ["Glucose Energy", "Just Ginger", "Luv-A-Lot", "Trio", "All-Star", "Joker", "Marie", "Supa Dupa", "Cream Biscuits", "Proudly South African"];
 
 const TEASERS = [
   { name: "Glucose Energy", Comp: SupaDupa, desc: "South Africa's lunchbox legend. Pure, honest energy.", color: "#FFF200" },
@@ -26,6 +28,12 @@ const TEASERS = [
   { name: "Joker", Comp: JokerHat, desc: "Three colours, one cheeky grin.", color: "#00A651" },
 ];
 
+const TESTIMONIALS = [
+  { q: "Golden Fresh has been in my kids' lunchboxes since they started school. Quality and price — both spot on.", n: "Thandi M.", w: "Soweto, Gauteng", featured: true },
+  { q: "Best Glucose biscuit in the country. The shop never runs out — we make sure of it.", n: "Pravesh N.", w: "Phoenix, KZN", featured: false },
+  { q: "My oupa ate Just Ginger. My kids eat Just Ginger. That's South African heritage.", n: "Liesel V.", w: "Stellenbosch, WC", featured: false },
+];
+
 function Index() {
   return (
     <>
@@ -34,47 +42,54 @@ function Index() {
       <div className="ribbon">
         <div className="ribbon-track">
           {[...RIBBON_ITEMS, ...RIBBON_ITEMS, ...RIBBON_ITEMS, ...RIBBON_ITEMS].map((it, i) => (
-            <span key={i} className="ribbon-item">{it}<span className="ribbon-sep"> ✦ </span></span>
+            <span key={i} className="ribbon-item">{it}<span className="ribbon-sep"> · </span></span>
           ))}
         </div>
       </div>
 
-      <section className="section section-cream">
-        <Reveal className="section-head">
-          <SectionTag>Our Ranges</SectionTag>
-          <h2>A Biscuit for Every <span className="accent">Moment</span></h2>
-          <p className="section-sub">Nine ranges, baked in Lenasia and loved across all nine provinces.</p>
+      <Section variant="cream">
+        <Reveal>
+          <SectionHead
+            eyebrow="Our Ranges"
+            title={<>A Biscuit for Every <span className="accent">Moment</span></>}
+            subtitle="Nine ranges, baked in Lenasia and loved across all nine provinces."
+          />
         </Reveal>
-        <div className="grid-3">
-          {TEASERS.map((p) => {
+        <div className="grid-zigzag">
+          {TEASERS.map((p, i) => {
             const Mascot = p.Comp;
             return (
-            <Reveal key={p.name} className="prod-card">
-              <div className="prod-top prod-mascot" style={{ background: `linear-gradient(135deg, ${p.color}22, ${p.color}55)` }}>
-                <Mascot size={100} />
-              </div>
-              <div className="prod-body">
-                <div className="prod-pill">Range</div>
-                <div className="prod-name">{p.name}</div>
-                <p className="prod-desc">{p.desc}</p>
-            <Link to="/products/single" className="prod-link">Find It →</Link>
-              </div>
-            </Reveal>
+              <Reveal
+                key={p.name}
+                className={`prod-card prod-card--zigzag ${i % 2 === 1 ? "prod-card--reverse" : ""}`}
+              >
+                <div className="prod-top prod-mascot" style={productTopStyle(p.color)}>
+                  <Mascot size={100} />
+                </div>
+                <div className="prod-body">
+                  <div className="prod-pill">Range</div>
+                  <div className="prod-name">{p.name}</div>
+                  <p className="prod-desc">{p.desc}</p>
+                  <Link to="/products/single" className="prod-link">Find It →</Link>
+                </div>
+              </Reveal>
             );
           })}
         </div>
-        <div style={{ textAlign: "center", marginTop: 48 }}>
+        <div className="section-cta">
           <Link to="/products" className="btn btn-red">View All Products →</Link>
         </div>
-      </section>
+      </Section>
 
-      <section className="section section-navy">
-        <Reveal className="section-head">
-          <SectionTag>The Real Characters</SectionTag>
-          <h2>Meet the <span className="accent">Biscuit Gang</span></h2>
-          <p className="section-sub">The real mascots from the real packs — proudly part of every Golden Fresh box.</p>
+      <Section variant="warm" className="section-navy">
+        <Reveal>
+          <SectionHead
+            eyebrow="The Real Characters"
+            title={<>Meet the <span className="accent">Biscuit Gang</span></>}
+            subtitle="The real mascots from the real packs — proudly part of every Golden Fresh box."
+          />
         </Reveal>
-        <div className="grid-5">
+        <div className="char-scroll">
           {CHARACTERS.map(({ Comp, name, range, desc, tag }) => (
             <Reveal key={name} className="char-card">
               <Comp />
@@ -85,9 +100,9 @@ function Index() {
             </Reveal>
           ))}
         </div>
-      </section>
+      </Section>
 
-      <section className="section section-cream">
+      <Section variant="cream">
         <div className="heritage-grid">
           <Reveal>
             <div className="heritage-logo-wrap">
@@ -98,9 +113,9 @@ function Index() {
               <span className="heritage-badge-text">Est. Lenasia, JHB</span>
             </div>
           </Reveal>
-          <Reveal>
+          <Reveal className="heritage-copy">
             <SectionTag>Our Heritage</SectionTag>
-            <h2 style={{ fontSize: "clamp(36px, 4.5vw, 52px)" }}>Baked in Lenasia. <span style={{ color: "var(--red)" }}>Loved Nationwide.</span></h2>
+            <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)" }}>Baked in Lenasia. <span style={{ color: "var(--red)" }}>Loved Nationwide.</span></h2>
             <p style={{ color: "var(--mid)", lineHeight: 1.7, marginTop: 18, fontSize: 16 }}>
               For over a quarter-century, Golden Fresh — a Yunma Foods brand — has been baking honest, affordable biscuits for South African families. From spaza shops to supermarkets, our range now fills lunchboxes in every province.
             </p>
@@ -112,23 +127,22 @@ function Index() {
             </div>
           </Reveal>
         </div>
-      </section>
+      </Section>
 
       <GoldBand title="Find Your Favourite Biscuit!" body="Nine ranges. Every flavour. Every South African table." cta="Shop All Products" />
 
-      <section className="section section-white">
-        <Reveal className="section-head">
-          <SectionTag>Word on the Street</SectionTag>
-          <h2>From <span className="accent">SA Families</span></h2>
+      <Section variant="white">
+        <Reveal>
+          <SectionHead
+            align="center"
+            eyebrow="Word on the Street"
+            title={<>From <span className="accent">SA Families</span></>}
+          />
         </Reveal>
-        <div className="grid-3">
-          {[
-            { q: "Golden Fresh has been in my kids' lunchboxes since they started school. Quality and price — both spot on.", n: "Thandi M.", w: "Soweto, Gauteng" },
-            { q: "Best Glucose biscuit in the country. The shop never runs out — we make sure of it.", n: "Pravesh N.", w: "Phoenix, KZN" },
-            { q: "My oupa ate Just Ginger. My kids eat Just Ginger. That's South African heritage.", n: "Liesel V.", w: "Stellenbosch, WC" },
-          ].map((t) => (
-            <Reveal key={t.n} className="testi-card">
-              <p className="testi-quote">"{t.q}"</p>
+        <div className="testi-grid">
+          {TESTIMONIALS.map((t) => (
+            <Reveal key={t.n} className={`testi-card ${t.featured ? "testi-card--featured" : ""}`}>
+              <p className="testi-quote">&ldquo;{t.q}&rdquo;</p>
               <div className="testi-author">
                 <div className="testi-name">{t.n}</div>
                 <div className="testi-where">{t.w}</div>
@@ -136,7 +150,7 @@ function Index() {
             </Reveal>
           ))}
         </div>
-      </section>
+      </Section>
 
       <RedBand title="Find Golden Fresh Near You" body="From spaza shops to supermarkets, we're in every province. Find your nearest stockist." cta="Find a Stockist" />
     </>

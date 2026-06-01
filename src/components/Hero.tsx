@@ -19,7 +19,7 @@ export function Hero() {
 
           <h1 className="hero-title hero-animate" style={{ "--i": 1 } as CSSProperties}>
             <span className="hero-title-line hero-title-lekker">Lekker</span>
-            <span className="hero-title-line hero-title-script gold">Biscuits</span>
+            <span className="hero-title-line hero-title-accent">Biscuits</span>
             <span className="hero-title-line hero-title-rest">
               For Every <span className="red">SA Family.</span>
             </span>

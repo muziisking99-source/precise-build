@@ -1,6 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { SectionTag, RedBand } from "../../components/Layout";
+import { RedBand } from "../../components/Layout";
+import { PageHero } from "../../components/PageHero";
+import { Section } from "../../components/Section";
 import { Reveal } from "../../components/Effects";
+import { productTopStyle } from "../../lib/uiTint";
 import { BULK_PRODUCTS } from "../../data/products";
 
 export const Route = createFileRoute("/products/bulk")({
@@ -16,22 +19,19 @@ export const Route = createFileRoute("/products/bulk")({
 function BulkProducts() {
   return (
     <>
-      <section className="section section-cream bulk-section">
-        <Link to="/products" className="products-back products-back--light">← All categories</Link>
-        <Reveal className="section-head">
-          <SectionTag>Bulk Range</SectionTag>
-          <h2>
-            Our <span className="accent">Bulk Biscuit</span> Range
-          </h2>
-          <p className="section-sub">
-            Great value packs for families, spaza shops, and events — the same Golden Fresh quality in every box.
-          </p>
-        </Reveal>
+      <PageHero
+        eyebrow="Bulk Range"
+        title={<>Our <span className="accent">Bulk Biscuit</span> Range</>}
+        description="Great value packs for families, spaza shops, and events — the same Golden Fresh quality in every box."
+      >
+        <Link to="/products" className="products-back">← All categories</Link>
+      </PageHero>
 
+      <Section variant="cream" className="bulk-section">
         <div className="bulk-grid">
           {BULK_PRODUCTS.map((p) => (
             <Reveal key={p.name} className="bulk-card">
-              <div className="bulk-card-img" style={{ background: `linear-gradient(135deg, ${p.color}18, ${p.color}44)` }}>
+              <div className="bulk-card-img" style={productTopStyle(p.color)}>
                 {p.Mascot ? (() => {
                   const Mascot = p.Mascot;
                   return <Mascot size={90} />;
@@ -45,7 +45,7 @@ function BulkProducts() {
             </Reveal>
           ))}
         </div>
-      </section>
+      </Section>
 
       <RedBand title="Want to stock Golden Fresh?" body="We partner with spaza shops, supermarkets, and wholesalers nationwide." cta="Become a Stockist" />
     </>
