@@ -35,30 +35,32 @@
 }
 
 :root {
-  /* Brand — Golden Fresh v3 */
+  /* Brand — Golden Fresh v4 (Premium Refined Warmth) */
   --red: #C41C1C;
-  --red-dk: #9A1515;
-  --red-lt: #E8453A;
-  --gold: #F5A800;
-  --gold-dk: #C88400;
-  --gold-lt: #FFCF47;
-  --navy: #1A1F2E;
-  --navy-dk: #11141F;
-  --cream: #FEF8EC;
-  --warm: #FDF3D8;
-  --wheat: #E8D4A0;
-  --mid: #7A5C2A;
-  --ink: #1A1208;
+  --red-dk: #8A1010;
+  --red-lt: #D63830;
+  --gold: #D4920A;
+  --gold-dk: #A87008;
+  --gold-lt: #E8B830;
+  --navy: #111318;
+  --navy-dk: #0A0C10;
+  --cream: #FAF8F4;
+  --warm: #F4F1EB;
+  --wheat: #D8C898;
+  --mid: #5C4A2A;
+  --ink: #0F0D0A;
   --yellow: #FFF200;
   --brown: #6B5340;
   --tan: #9A8570;
   --dark: var(--navy);
-  /* Stone aliases preserved (used widely) — re-mapped to warm cream system */
-  --stone-50: #FEF8EC;
-  --stone-100: #FDF3D8;
-  --stone-200: #E8D4A0;
-  --stone-600: #7A5C2A;
-  --stone-800: #1A1F2E;
+  --dark-surface: #1C1F28;
+  --dark-surface-2: #252932;
+  /* Stone aliases preserved (used widely) — re-mapped to refined warm system */
+  --stone-50: #FAF8F4;
+  --stone-100: #F4F1EB;
+  --stone-200: #D8C898;
+  --stone-600: #5C4A2A;
+  --stone-800: #111318;
   /* Repaint "green" accents to gold so existing markup uses brand */
   --green: var(--gold);
   --green-dk: var(--gold-dk);
@@ -66,11 +68,21 @@
   --surface: var(--cream);
   --surface-alt: var(--warm);
   --surface-elevated: #FFFFFF;
-  --shadow-tint: rgba(26, 31, 46, 0.08);
-  --shadow-diffuse: 0 20px 40px -15px rgba(26, 31, 46, 0.10);
+  --shadow-tint: rgba(0, 0, 0, 0.08);
+  --shadow-diffuse: 0 2px 24px rgba(0, 0, 0, 0.10);
+  --shadow-card: 0 2px 24px rgba(0, 0, 0, 0.10);
+  --shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.18);
   --background: var(--surface);
   --foreground: var(--ink);
-  --border: rgba(26, 31, 46, 0.10);
+  --border: rgba(0, 0, 0, 0.08);
+  --border-light: rgba(0, 0, 0, 0.08);
+  --border-dark: rgba(255, 255, 255, 0.08);
+  --border-gold: rgba(212, 146, 10, 0.30);
+  --text-55: rgba(255, 255, 255, 0.55);
+  --text-28: rgba(255, 255, 255, 0.28);
+  --overlay: rgba(0, 0, 0, 0.45);
+  --overlay-deep: rgba(0, 0, 0, 0.65);
+
   --radius-sm: 4px;
   --radius-md: 12px;
   --radius-lg: 20px;
