@@ -37,7 +37,7 @@ const TESTIMONIALS = [
 function Index() {
   return (
     <>
-      <Hero />
+      <SnapHero />
 
       <div className="ribbon">
         <div className="ribbon-track">
