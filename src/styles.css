@@ -29,51 +29,55 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-border: var(--border);
-  --font-display: 'Fraunces', serif;
-  --font-body: 'Outfit', sans-serif;
+  --font-display: 'Abril Fatface', 'Fraunces', serif;
+  --font-body: 'Nunito', 'Outfit', sans-serif;
   --font-mono: ui-monospace, 'Cascadia Code', monospace;
 }
 
 :root {
-  --stone-50: #F7F6F3;
-  --stone-100: #EFEDE8;
-  --stone-200: #E2DFD8;
-  --stone-600: #5C5348;
-  --stone-800: #2C2620;
-  --red: #C41E24;
-  --red-dk: #9A161B;
-  --red-lt: #D4383E;
+  /* Brand — Golden Fresh v3 */
+  --red: #C41C1C;
+  --red-dk: #9A1515;
+  --red-lt: #E8453A;
+  --gold: #F5A800;
+  --gold-dk: #C88400;
+  --gold-lt: #FFCF47;
+  --navy: #1A1F2E;
+  --navy-dk: #11141F;
+  --cream: #FEF8EC;
+  --warm: #FDF3D8;
+  --wheat: #E8D4A0;
+  --mid: #7A5C2A;
+  --ink: #1A1208;
   --yellow: #FFF200;
-  --green: #2D6B4F;
-  --green-dk: #1F4D38;
   --brown: #6B5340;
   --tan: #9A8570;
-  --dark: #2C2620;
-  --gold: #B8952E;
-  --gold-dk: #8F7222;
-  --gold-lt: #D4B85A;
-  --navy: #2C2620;
-  --cream: var(--stone-50);
-  --warm: var(--stone-100);
-  --wheat: var(--stone-200);
-  --mid: var(--stone-600);
-  --ink: var(--stone-800);
+  --dark: var(--navy);
+  /* Stone aliases preserved (used widely) — re-mapped to warm cream system */
+  --stone-50: #FEF8EC;
+  --stone-100: #FDF3D8;
+  --stone-200: #E8D4A0;
+  --stone-600: #7A5C2A;
+  --stone-800: #1A1F2E;
+  /* Repaint "green" accents to gold so existing markup uses brand */
+  --green: var(--gold);
+  --green-dk: var(--gold-dk);
   --white: #FFFFFF;
-  --surface: var(--stone-50);
-  --surface-alt: var(--stone-100);
-  --surface-elevated: var(--white);
-  --shadow-tint: rgba(44, 38, 32, 0.08);
-  --shadow-diffuse: 0 20px 40px -15px rgba(44, 38, 32, 0.06);
+  --surface: var(--cream);
+  --surface-alt: var(--warm);
+  --surface-elevated: #FFFFFF;
+  --shadow-tint: rgba(26, 31, 46, 0.08);
+  --shadow-diffuse: 0 20px 40px -15px rgba(26, 31, 46, 0.10);
   --background: var(--surface);
   --foreground: var(--ink);
-  --border: var(--stone-200);
-  --radius-sm: 6px;
+  --border: rgba(26, 31, 46, 0.10);
+  --radius-sm: 4px;
   --radius-md: 12px;
   --radius-lg: 20px;
   --radius-xl: 32px;
   --section-y: clamp(72px, 10vw, 120px);
   --container: min(1200px, 100% - 48px);
-  --nav-h: 64px;
+  --nav-h: 72px;
 }
 
 @layer base {
