@@ -1233,3 +1233,261 @@
   }
   .ribbon-track { animation: none; }
 }
+
+/* ============================================================
+   V3 — BMW/Tesla/Porsche layout upgrade
+   ============================================================ */
+
+/* Ribbon — red brand band */
+.ribbon {
+  background: var(--red);
+  border-top: 2px solid var(--red-dk);
+  border-bottom: 2px solid var(--red-dk);
+  overflow: hidden;
+  padding: 0;
+}
+.ribbon-track {
+  display: flex; white-space: nowrap; width: max-content;
+  animation: ribbonScrollV3 28s linear infinite;
+}
+.ribbon-item {
+  padding: 16px 24px;
+  font: 800 12px/1 var(--font-body);
+  letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.92);
+}
+.ribbon-sep { color: var(--gold-lt); opacity: .75; padding: 0; }
+@keyframes ribbonScrollV3 {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Footer — navy with gold top border */
+.footer {
+  background: var(--navy);
+  border-top: 3px solid var(--gold);
+  color: rgba(255,255,255,0.7);
+}
+.footer-col-head { color: var(--gold); }
+.footer-col a, .footer-col p { color: rgba(255,255,255,0.42); }
+.footer-col a:hover { color: rgba(255,255,255,0.92); }
+.footer-tag { color: rgba(255,255,255,0.55); }
+.footer-social a { color: rgba(255,255,255,0.55); }
+.footer-social a:hover { color: var(--gold); }
+.footer-bot {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.32);
+}
+
+/* Bands recoloured */
+.gold-band {
+  background: var(--warm);
+  border-top: 1px solid var(--wheat);
+  border-bottom: 1px solid var(--wheat);
+  border-left: 4px solid var(--gold);
+}
+.red-band {
+  background: var(--navy);
+  color: white;
+}
+
+/* === Snap panels === */
+html { scroll-snap-type: y proximity; }
+.snap-wrap { position: relative; }
+.snap-panel {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--nav-h) clamp(24px, 5vw, 80px) 0;
+  isolation: isolate;
+}
+.snap-panel--navy {
+  background: var(--navy);
+  color: white;
+}
+.snap-panel--cream {
+  background: linear-gradient(145deg, var(--warm), #FFE8A0);
+  color: var(--ink);
+}
+.snap-panel--navy::before {
+  /* grid overlay */
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(245,168,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,168,0,0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+  pointer-events: none;
+  z-index: 0;
+}
+.snap-panel--navy::after {
+  /* radial brand glows */
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 10% 90%, rgba(245,168,0,0.10), transparent 50%),
+    radial-gradient(circle at 90% 10%, rgba(196,28,28,0.10), transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+.snap-panel > * { position: relative; z-index: 1; }
+
+.snap-inner {
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(20px, 3vh, 36px);
+}
+
+.snap-badge {
+  display: inline-flex; align-items: center; gap: 10px;
+  font: 700 11px/1 var(--font-body);
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--gold);
+  align-self: flex-start;
+}
+.snap-badge-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 0 rgba(245,168,0,0.7);
+  animation: dotPulse 2s infinite;
+}
+@keyframes dotPulse {
+  0% { box-shadow: 0 0 0 0 rgba(245,168,0,0.6); }
+  70% { box-shadow: 0 0 0 12px rgba(245,168,0,0); }
+  100% { box-shadow: 0 0 0 0 rgba(245,168,0,0); }
+}
+
+.snap-h1 {
+  font-family: var(--font-display);
+  font-size: clamp(56px, 9vw, 120px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.snap-h1 .gold { color: var(--gold); }
+.snap-h1 .red  { color: var(--red-lt); }
+.snap-h1 .white { color: white; }
+
+.snap-sub {
+  font: 400 17px/1.7 var(--font-body);
+  color: rgba(255,255,255,0.62);
+  max-width: 52ch;
+}
+.snap-panel--cream .snap-sub { color: var(--mid); }
+
+.snap-ctas {
+  display: flex; gap: 14px; flex-wrap: wrap;
+  margin-top: clamp(8px, 2vh, 20px);
+}
+.snap-cta-primary {
+  background: var(--red); color: white;
+  border: 1px solid var(--red-dk);
+  padding: 16px 28px;
+  border-radius: var(--radius-sm);
+  font: 700 13px/1 var(--font-body); letter-spacing: .12em; text-transform: uppercase;
+  box-shadow: 0 5px 0 var(--red-dk);
+  text-decoration: none;
+  transition: transform .15s, box-shadow .15s;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.snap-cta-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 0 var(--red-dk); }
+.snap-cta-primary:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--red-dk); }
+
+.snap-cta-ghost {
+  background: transparent; color: white;
+  border: 1.5px solid rgba(255,255,255,0.45);
+  padding: 16px 28px;
+  border-radius: var(--radius-sm);
+  font: 700 13px/1 var(--font-body); letter-spacing: .12em; text-transform: uppercase;
+  text-decoration: none;
+  transition: border-color .2s, color .2s, background .2s;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.snap-cta-ghost:hover { border-color: var(--gold); color: var(--gold); }
+.snap-panel--cream .snap-cta-ghost { color: var(--ink); border-color: var(--ink); }
+.snap-panel--cream .snap-cta-ghost:hover { background: var(--ink); color: var(--gold); }
+
+.snap-scroll-hint {
+  position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%);
+  font: 700 10px/1 var(--font-body);
+  letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  animation: scrollBounce 2.4s ease-in-out infinite;
+  z-index: 2;
+}
+.snap-panel--cream .snap-scroll-hint { color: rgba(26,18,8,0.4); }
+.snap-scroll-hint::after {
+  content: ''; width: 1px; height: 28px;
+  background: currentColor; opacity: .6;
+}
+@keyframes scrollBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); opacity: .35; }
+  50% { transform: translateX(-50%) translateY(6px); opacity: .7; }
+}
+
+/* Characters spread in Panel 3 */
+.char-spread {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 32px);
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 32px 0;
+  scrollbar-width: none;
+}
+.char-spread::-webkit-scrollbar { display: none; }
+.char-spread > div {
+  flex-shrink: 0;
+  animation: floaty 4s ease-in-out infinite;
+}
+.char-spread > div:nth-child(1) { animation-duration: 3.6s; transform: translateY(-12px); }
+.char-spread > div:nth-child(2) { animation-duration: 4.2s; animation-delay: .3s; }
+.char-spread > div:nth-child(3) { animation-duration: 3.2s; animation-delay: .15s; transform: translateY(-18px); }
+.char-spread > div:nth-child(4) { animation-duration: 4.8s; animation-delay: .5s; }
+.char-spread > div:nth-child(5) { animation-duration: 3.8s; animation-delay: .2s; transform: translateY(-8px); }
+@keyframes floaty {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -10px; }
+}
+
+/* Dot navigation */
+.dot-nav {
+  position: fixed; right: 28px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 14px;
+  z-index: 150;
+}
+.dot-nav button {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  border: 1px solid rgba(255,255,255,0.2);
+  cursor: pointer; padding: 0;
+  transition: background .3s, transform .3s, border-color .3s;
+}
+.dot-nav button.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  transform: scale(1.5);
+}
+@media (max-width: 768px) {
+  .dot-nav { display: none; }
+  html { scroll-snap-type: none; }
+  .snap-panel { min-height: auto; padding: calc(var(--nav-h) + 48px) 24px 64px; }
+  .snap-panel--navy::before, .snap-panel--navy::after { background: none; }
+}
+
+/* Product card gold underline reveal (override prior green) */
+.prod-card::after { background: var(--gold); height: 3px; }
+.char-card::before { background: var(--gold); height: 3px; }
