@@ -114,53 +114,54 @@
 
 .page-transition-root { min-height: 1px; }
 
-/* Nav */
+/* Nav — Porsche/Tesla treatment: transparent over hero, frosted navy on scroll */
 .nav {
   position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
-  background: rgba(247, 246, 243, 0.92);
-  border-bottom: 1px solid var(--border);
+  background: transparent;
+  border-bottom: 3px solid var(--gold);
   padding: 0 clamp(24px, 4vw, 56px);
   display: flex; align-items: center; justify-content: space-between;
-  z-index: 100;
-  transition: background .3s, box-shadow .3s, border-color .3s;
+  z-index: 200;
+  transition: background .4s ease, backdrop-filter .4s ease, box-shadow .3s ease;
 }
 .nav--scrolled {
-  background: rgba(247, 246, 243, 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: var(--shadow-diffuse);
-  border-bottom-color: transparent;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), var(--shadow-diffuse);
+  background: rgba(26, 31, 46, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px -12px rgba(0,0,0,0.5);
 }
 .nav-brand { display: flex; align-items: center; gap: 14px; }
 .nav-links { display: flex; gap: 32px; align-items: center; }
 .nav-links a {
-  font-size: 13px; font-weight: 600; letter-spacing: .06em;
-  color: var(--mid); text-decoration: none; padding: 6px 0;
-  border-bottom: 1px solid transparent; transition: color .2s, border-color .2s;
+  font-family: var(--font-body);
+  font-size: 13px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78); text-decoration: none; padding: 6px 0;
+  border-bottom: 2px solid transparent; transition: color .2s, border-color .2s;
 }
-.nav-links a:hover { color: var(--green-dk); }
-.nav-links a.active { color: var(--green-dk); border-bottom-color: var(--green); }
+.nav-links a:hover { color: var(--gold); }
+.nav-links a.active { color: var(--gold); border-bottom-color: var(--gold); }
 .nav-cta {
   background: var(--red); color: white;
   border: 1px solid var(--red-dk);
-  padding: 10px 20px; border-radius: var(--radius-sm);
-  font-weight: 600; font-size: 13px; letter-spacing: .04em;
-  box-shadow: var(--shadow-diffuse);
-  transition: transform .2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .2s;
+  padding: 11px 22px; border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-weight: 700; font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+  box-shadow: 0 4px 0 var(--red-dk);
+  transition: transform .15s ease, box-shadow .15s ease;
+  cursor: pointer;
 }
-.nav-cta:hover { transform: translateY(-1px); }
-.nav-cta:active { transform: scale(0.98); }
-.nav-burger { display: none; background: none; border: none; color: var(--green-dk); }
+.nav-cta:hover { transform: translateY(-1px); box-shadow: 0 5px 0 var(--red-dk); }
+.nav-cta:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--red-dk); }
+.nav-burger { display: none; background: none; border: none; color: var(--gold); cursor: pointer; }
 
 @media (max-width: 1024px) {
   .nav-links, .nav-cta { display: none; }
   .nav-burger { display: block; }
   .nav-links.open {
     display: flex; flex-direction: column; position: absolute; top: var(--nav-h); left: 0; right: 0;
-    background: rgba(247, 246, 243, 0.98); backdrop-filter: blur(12px);
-    padding: 24px; gap: 18px; border-bottom: 1px solid var(--border);
-    box-shadow: var(--shadow-diffuse);
+    background: rgba(26, 31, 46, 0.98); backdrop-filter: blur(20px);
+    padding: 24px; gap: 18px; border-bottom: 3px solid var(--gold);
   }
 }
 
