@@ -4,7 +4,7 @@ import { Section, SectionHead } from "../components/Section";
 import { Reveal } from "../components/Effects";
 import { productTopStyle } from "../lib/uiTint";
 import { CHARACTERS, SupaDupa, GingerMan, LuvALotGirl, AllStarFootballer, JokerHat } from "../components/Characters";
-import { Hero } from "../components/Hero";
+import { SnapHero } from "../components/SnapHero";
 import { Logo } from "../components/Logo";
 
 export const Route = createFileRoute("/")({
