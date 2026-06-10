@@ -11,11 +11,21 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductsIndexRouteImport } from './routes/products/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as ProductsSingleRouteImport } from './routes/products/single'
 import { Route as ProductsBulkRouteImport } from './routes/products/bulk'
+import { Route as AdminTestimonialsRouteImport } from './routes/admin/testimonials'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
+import { Route as AdminProductsRouteImport } from './routes/admin/products'
+import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as AdminHeroRouteImport } from './routes/admin/hero'
+import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as AdminContactInfoRouteImport } from './routes/admin/contact-info'
+import { Route as AdminCharactersRouteImport } from './routes/admin/characters'
 
 const ProductsRoute = ProductsRouteImport.update({
   id: '/products',
@@ -25,6 +35,11 @@ const ProductsRoute = ProductsRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -42,6 +57,11 @@ const ProductsIndexRoute = ProductsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ProductsRoute,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ProductsSingleRoute = ProductsSingleRouteImport.update({
   id: '/single',
   path: '/single',
@@ -52,32 +72,101 @@ const ProductsBulkRoute = ProductsBulkRouteImport.update({
   path: '/bulk',
   getParentRoute: () => ProductsRoute,
 } as any)
+const AdminTestimonialsRoute = AdminTestimonialsRouteImport.update({
+  id: '/testimonials',
+  path: '/testimonials',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProductsRoute = AdminProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminHeroRoute = AdminHeroRouteImport.update({
+  id: '/hero',
+  path: '/hero',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContactInfoRoute = AdminContactInfoRouteImport.update({
+  id: '/contact-info',
+  path: '/contact-info',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCharactersRoute = AdminCharactersRouteImport.update({
+  id: '/characters',
+  path: '/characters',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/products': typeof ProductsRouteWithChildren
+  '/admin/characters': typeof AdminCharactersRoute
+  '/admin/contact-info': typeof AdminContactInfoRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/hero': typeof AdminHeroRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/testimonials': typeof AdminTestimonialsRoute
   '/products/bulk': typeof ProductsBulkRoute
   '/products/single': typeof ProductsSingleRoute
+  '/admin/': typeof AdminIndexRoute
   '/products/': typeof ProductsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/admin/characters': typeof AdminCharactersRoute
+  '/admin/contact-info': typeof AdminContactInfoRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/hero': typeof AdminHeroRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/testimonials': typeof AdminTestimonialsRoute
   '/products/bulk': typeof ProductsBulkRoute
   '/products/single': typeof ProductsSingleRoute
+  '/admin': typeof AdminIndexRoute
   '/products': typeof ProductsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/products': typeof ProductsRouteWithChildren
+  '/admin/characters': typeof AdminCharactersRoute
+  '/admin/contact-info': typeof AdminContactInfoRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/hero': typeof AdminHeroRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/testimonials': typeof AdminTestimonialsRoute
   '/products/bulk': typeof ProductsBulkRoute
   '/products/single': typeof ProductsSingleRoute
+  '/admin/': typeof AdminIndexRoute
   '/products/': typeof ProductsIndexRoute
 }
 export interface FileRouteTypes {
@@ -85,33 +174,63 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
     | '/contact'
     | '/products'
+    | '/admin/characters'
+    | '/admin/contact-info'
+    | '/admin/dashboard'
+    | '/admin/hero'
+    | '/admin/login'
+    | '/admin/products'
+    | '/admin/settings'
+    | '/admin/testimonials'
     | '/products/bulk'
     | '/products/single'
+    | '/admin/'
     | '/products/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/contact'
+    | '/admin/characters'
+    | '/admin/contact-info'
+    | '/admin/dashboard'
+    | '/admin/hero'
+    | '/admin/login'
+    | '/admin/products'
+    | '/admin/settings'
+    | '/admin/testimonials'
     | '/products/bulk'
     | '/products/single'
+    | '/admin'
     | '/products'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
     | '/contact'
     | '/products'
+    | '/admin/characters'
+    | '/admin/contact-info'
+    | '/admin/dashboard'
+    | '/admin/hero'
+    | '/admin/login'
+    | '/admin/products'
+    | '/admin/settings'
+    | '/admin/testimonials'
     | '/products/bulk'
     | '/products/single'
+    | '/admin/'
     | '/products/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
   ProductsRoute: typeof ProductsRouteWithChildren
 }
@@ -130,6 +249,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -153,6 +279,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsIndexRouteImport
       parentRoute: typeof ProductsRoute
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/products/single': {
       id: '/products/single'
       path: '/single'
@@ -167,8 +300,90 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsBulkRouteImport
       parentRoute: typeof ProductsRoute
     }
+    '/admin/testimonials': {
+      id: '/admin/testimonials'
+      path: '/testimonials'
+      fullPath: '/admin/testimonials'
+      preLoaderRoute: typeof AdminTestimonialsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/products': {
+      id: '/admin/products'
+      path: '/products'
+      fullPath: '/admin/products'
+      preLoaderRoute: typeof AdminProductsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/hero': {
+      id: '/admin/hero'
+      path: '/hero'
+      fullPath: '/admin/hero'
+      preLoaderRoute: typeof AdminHeroRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/contact-info': {
+      id: '/admin/contact-info'
+      path: '/contact-info'
+      fullPath: '/admin/contact-info'
+      preLoaderRoute: typeof AdminContactInfoRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/characters': {
+      id: '/admin/characters'
+      path: '/characters'
+      fullPath: '/admin/characters'
+      preLoaderRoute: typeof AdminCharactersRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminCharactersRoute: typeof AdminCharactersRoute
+  AdminContactInfoRoute: typeof AdminContactInfoRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminHeroRoute: typeof AdminHeroRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminProductsRoute: typeof AdminProductsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminTestimonialsRoute: typeof AdminTestimonialsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminCharactersRoute: AdminCharactersRoute,
+  AdminContactInfoRoute: AdminContactInfoRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminHeroRoute: AdminHeroRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminProductsRoute: AdminProductsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminTestimonialsRoute: AdminTestimonialsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface ProductsRouteChildren {
   ProductsBulkRoute: typeof ProductsBulkRoute
@@ -189,9 +404,20 @@ const ProductsRouteWithChildren = ProductsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
   ProductsRoute: ProductsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
