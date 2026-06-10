@@ -18,7 +18,14 @@ import { Route as ProductsIndexRouteImport } from './routes/products/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as ProductsSingleRouteImport } from './routes/products/single'
 import { Route as ProductsBulkRouteImport } from './routes/products/bulk'
+import { Route as AdminTestimonialsRouteImport } from './routes/admin/testimonials'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
+import { Route as AdminProductsRouteImport } from './routes/admin/products'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as AdminHeroRouteImport } from './routes/admin/hero'
+import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as AdminContactInfoRouteImport } from './routes/admin/contact-info'
+import { Route as AdminCharactersRouteImport } from './routes/admin/characters'
 
 const ProductsRoute = ProductsRouteImport.update({
   id: '/products',
@@ -65,9 +72,44 @@ const ProductsBulkRoute = ProductsBulkRouteImport.update({
   path: '/bulk',
   getParentRoute: () => ProductsRoute,
 } as any)
+const AdminTestimonialsRoute = AdminTestimonialsRouteImport.update({
+  id: '/testimonials',
+  path: '/testimonials',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProductsRoute = AdminProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminHeroRoute = AdminHeroRouteImport.update({
+  id: '/hero',
+  path: '/hero',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContactInfoRoute = AdminContactInfoRouteImport.update({
+  id: '/contact-info',
+  path: '/contact-info',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCharactersRoute = AdminCharactersRouteImport.update({
+  id: '/characters',
+  path: '/characters',
   getParentRoute: () => AdminRoute,
 } as any)
 
@@ -77,7 +119,14 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/products': typeof ProductsRouteWithChildren
+  '/admin/characters': typeof AdminCharactersRoute
+  '/admin/contact-info': typeof AdminContactInfoRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/hero': typeof AdminHeroRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/testimonials': typeof AdminTestimonialsRoute
   '/products/bulk': typeof ProductsBulkRoute
   '/products/single': typeof ProductsSingleRoute
   '/admin/': typeof AdminIndexRoute
@@ -87,7 +136,14 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/admin/characters': typeof AdminCharactersRoute
+  '/admin/contact-info': typeof AdminContactInfoRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/hero': typeof AdminHeroRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/testimonials': typeof AdminTestimonialsRoute
   '/products/bulk': typeof ProductsBulkRoute
   '/products/single': typeof ProductsSingleRoute
   '/admin': typeof AdminIndexRoute
@@ -100,7 +156,14 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/products': typeof ProductsRouteWithChildren
+  '/admin/characters': typeof AdminCharactersRoute
+  '/admin/contact-info': typeof AdminContactInfoRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/hero': typeof AdminHeroRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/testimonials': typeof AdminTestimonialsRoute
   '/products/bulk': typeof ProductsBulkRoute
   '/products/single': typeof ProductsSingleRoute
   '/admin/': typeof AdminIndexRoute
@@ -114,7 +177,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/products'
+    | '/admin/characters'
+    | '/admin/contact-info'
+    | '/admin/dashboard'
+    | '/admin/hero'
     | '/admin/login'
+    | '/admin/products'
+    | '/admin/settings'
+    | '/admin/testimonials'
     | '/products/bulk'
     | '/products/single'
     | '/admin/'
@@ -124,7 +194,14 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/admin/characters'
+    | '/admin/contact-info'
+    | '/admin/dashboard'
+    | '/admin/hero'
     | '/admin/login'
+    | '/admin/products'
+    | '/admin/settings'
+    | '/admin/testimonials'
     | '/products/bulk'
     | '/products/single'
     | '/admin'
@@ -136,7 +213,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/products'
+    | '/admin/characters'
+    | '/admin/contact-info'
+    | '/admin/dashboard'
+    | '/admin/hero'
     | '/admin/login'
+    | '/admin/products'
+    | '/admin/settings'
+    | '/admin/testimonials'
     | '/products/bulk'
     | '/products/single'
     | '/admin/'
@@ -216,6 +300,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsBulkRouteImport
       parentRoute: typeof ProductsRoute
     }
+    '/admin/testimonials': {
+      id: '/admin/testimonials'
+      path: '/testimonials'
+      fullPath: '/admin/testimonials'
+      preLoaderRoute: typeof AdminTestimonialsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/products': {
+      id: '/admin/products'
+      path: '/products'
+      fullPath: '/admin/products'
+      preLoaderRoute: typeof AdminProductsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/login'
@@ -223,16 +328,58 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/hero': {
+      id: '/admin/hero'
+      path: '/hero'
+      fullPath: '/admin/hero'
+      preLoaderRoute: typeof AdminHeroRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/contact-info': {
+      id: '/admin/contact-info'
+      path: '/contact-info'
+      fullPath: '/admin/contact-info'
+      preLoaderRoute: typeof AdminContactInfoRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/characters': {
+      id: '/admin/characters'
+      path: '/characters'
+      fullPath: '/admin/characters'
+      preLoaderRoute: typeof AdminCharactersRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
+  AdminCharactersRoute: typeof AdminCharactersRoute
+  AdminContactInfoRoute: typeof AdminContactInfoRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminHeroRoute: typeof AdminHeroRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminProductsRoute: typeof AdminProductsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminTestimonialsRoute: typeof AdminTestimonialsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminCharactersRoute: AdminCharactersRoute,
+  AdminContactInfoRoute: AdminContactInfoRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminHeroRoute: AdminHeroRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminProductsRoute: AdminProductsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminTestimonialsRoute: AdminTestimonialsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
