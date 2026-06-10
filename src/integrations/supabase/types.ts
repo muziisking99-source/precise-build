@@ -14,13 +14,287 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      admin_users: {
+        Row: {
+          created_at: string
+          email: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      characters: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_visible: boolean
+          name: string
+          pill_text: string | null
+          range: string | null
+          role: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_visible?: boolean
+          name: string
+          pill_text?: string | null
+          range?: string | null
+          role?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_visible?: boolean
+          name?: string
+          pill_text?: string | null
+          range?: string | null
+          role?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      content_log: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          item_name: string | null
+          user_email: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          item_name?: string | null
+          user_email?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          item_name?: string | null
+          user_email?: string | null
+        }
+        Relationships: []
+      }
+      hero_panels: {
+        Row: {
+          badge_text: string | null
+          card_1_label: string | null
+          card_2_label: string | null
+          card_3_label: string | null
+          created_at: string
+          cta_1_text: string | null
+          cta_2_text: string | null
+          heading_1: string | null
+          heading_2: string | null
+          heading_3: string | null
+          heading_4: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          panel_number: number
+          subtext: string | null
+          updated_at: string
+        }
+        Insert: {
+          badge_text?: string | null
+          card_1_label?: string | null
+          card_2_label?: string | null
+          card_3_label?: string | null
+          created_at?: string
+          cta_1_text?: string | null
+          cta_2_text?: string | null
+          heading_1?: string | null
+          heading_2?: string | null
+          heading_3?: string | null
+          heading_4?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          panel_number: number
+          subtext?: string | null
+          updated_at?: string
+        }
+        Update: {
+          badge_text?: string | null
+          card_1_label?: string | null
+          card_2_label?: string | null
+          card_3_label?: string | null
+          created_at?: string
+          cta_1_text?: string | null
+          cta_2_text?: string | null
+          heading_1?: string | null
+          heading_2?: string | null
+          heading_3?: string | null
+          heading_4?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          panel_number?: number
+          subtext?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      product_ranges: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_visible: boolean
+          name: string
+          pill_text: string | null
+          range_id: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_visible?: boolean
+          name: string
+          pill_text?: string | null
+          range_id: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_visible?: boolean
+          name?: string
+          pill_text?: string | null
+          range_id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_range_id_fkey"
+            columns: ["range_id"]
+            isOneToOne: false
+            referencedRelation: "product_ranges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: string | null
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: string | null
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: string | null
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          created_at: string
+          id: string
+          is_visible: boolean
+          location: string | null
+          name: string
+          quote: string
+          sort_order: number
+          stars: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          location?: string | null
+          name: string
+          quote: string
+          sort_order?: number
+          stars?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          location?: string | null
+          name?: string
+          quote?: string
+          sort_order?: number
+          stars?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_admin_access: { Args: { _uid: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
