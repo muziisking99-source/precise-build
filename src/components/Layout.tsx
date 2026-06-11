@@ -39,6 +39,16 @@ const PRODUCT_LINKS = [
 ];
 
 export function Footer() {
+  const [cfg, setCfg] = useState<Record<string, string>>({});
+  useEffect(() => {
+    supabase.from("site_settings").select("key, value").then(({ data }) => {
+      if (!data) return;
+      const next: Record<string, string> = {};
+      (data as { key: string; value: string }[]).forEach((s) => { if (s.value) next[s.key] = s.value; });
+      setCfg(next);
+    });
+  }, []);
+
   return (
     <footer className="footer">
       <div className="footer-grid">
@@ -46,11 +56,10 @@ export function Footer() {
           <div className="footer-brand">
             <Logo height={64} />
           </div>
-          <p className="footer-tag">Delivering local lekkerness since 1998. Proudly South African.</p>
+          <p className="footer-tag">{cfg.footer_tagline ?? "Delivering local lekkerness since 1998. Proudly South African."}</p>
           <div className="footer-social">
-            <a href="#">Facebook</a>
-            <a href="#">Instagram</a>
-            <a href="#">YouTube</a>
+            <a href={cfg.facebook_url || "#"}>Facebook</a>
+            <a href={cfg.instagram_url || "#"}>Instagram</a>
           </div>
         </div>
         <div className="footer-col">
@@ -68,8 +77,9 @@ export function Footer() {
         </div>
         <div className="footer-col">
           <div className="footer-col-head">Contact</div>
-          <p>info@goldenfresh.co.za</p>
-          <p>Lenasia, Johannesburg</p>
+          {cfg.contact_email && <p>{cfg.contact_email}</p>}
+          {cfg.contact_phone && <p>{cfg.contact_phone}</p>}
+          <p>{cfg.contact_address ?? "Lenasia, Johannesburg"}</p>
           <p>A Yunma Foods Brand</p>
         </div>
       </div>
