@@ -60,6 +60,7 @@ export function Footer() {
           <div className="footer-social">
             <a href={cfg.facebook_url || "#"}>Facebook</a>
             <a href={cfg.instagram_url || "#"}>Instagram</a>
+            <a href="#">YouTube</a>
           </div>
         </div>
         <div className="footer-col">
