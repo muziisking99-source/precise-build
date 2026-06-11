@@ -87,7 +87,7 @@ export function SnapHero() {
   return (
     <div className="snap-wrap">
       <nav className="dot-nav" aria-label="Section navigation">
-        {["Home", "Products", "Characters"].map((label, i) => (
+        {["Home", "Products"].map((label, i) => (
           <button
             key={label}
             type="button"
@@ -125,7 +125,7 @@ export function SnapHero() {
       </Panel>
 
       {/* PANEL 2 — Products Hero */}
-      <Panel kind="cream" index={1} registerRef={register}>
+      <Panel kind="cream" index={1} registerRef={register} hint={false}>
         <div className="snap-badge" style={{ color: "var(--red)" }}>
           <span className="snap-badge-dot" style={{ background: "var(--red)" }} />
           Nine Ranges · One Nation
@@ -142,34 +142,7 @@ export function SnapHero() {
           <Link to="/products" className="snap-cta-primary">View All Products →</Link>
         </div>
       </Panel>
-
-      {/* PANEL 3 — Characters Intro */}
-      <Panel kind="navy" index={2} registerRef={register} hint={false}>
-        <div className="snap-badge">
-          <span className="snap-badge-dot" />
-          The Biscuit Gang
-        </div>
-        <h1 className="snap-h1">
-          <span className="white">Meet the</span>
-          <br />
-          <span className="gold">Biscuit Gang.</span>
-        </h1>
-        <p className="snap-sub">
-          Collect all five. Find a sticker in every pack.
-        </p>
-        <div className="char-spread">
-          <div><SupaDupa size={140} /></div>
-          <div><GingerMan size={130} /></div>
-          <div><LuvALotGirl size={160} /></div>
-          <div><AllStarFootballer size={130} /></div>
-          <div><JokerHat size={140} /></div>
-        </div>
-        <div className="snap-ctas">
-          <Link to="/products" className="snap-cta-ghost" style={{ borderColor: "var(--gold)", color: "var(--gold)" }}>
-            See the Gang →
-          </Link>
-        </div>
-      </Panel>
     </div>
   );
 }
+
