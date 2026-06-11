@@ -89,15 +89,35 @@ function ProductsAdmin() {
 
   return (
     <AdminShell title="Products">
+      <div className="admin-tabs" style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+        <button
+          className={`admin-tab ${category === "single" ? "active" : ""}`}
+          onClick={() => setCategory("single")}
+        >
+          Single Biscuits ({ranges.filter(r => r.category === "single").length})
+        </button>
+        <button
+          className={`admin-tab ${category === "bulk" ? "active" : ""}`}
+          onClick={() => setCategory("bulk")}
+        >
+          Bulk Biscuits ({ranges.filter(r => r.category === "bulk").length})
+        </button>
+      </div>
       <div className="admin-products-layout">
         <div className="admin-range-list">
           <div className="admin-card">
-            {ranges.map((r) => (
+            {filteredRanges.length === 0 && (
+              <div style={{ color: "rgba(255,255,255,0.4)", padding: 12, fontSize: 13 }}>
+                No {category} ranges yet.
+              </div>
+            )}
+            {filteredRanges.map((r) => (
               <button key={r.id} className={`admin-range-item ${activeRange === r.id ? "active" : ""}`} onClick={() => setActiveRange(r.id)}>
                 {r.name}
               </button>
             ))}
           </div>
+
         </div>
         <div>
           <div className="admin-section-head">
