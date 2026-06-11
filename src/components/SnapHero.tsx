@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { SupaDupa, GingerMan, LuvALotGirl, AllStarFootballer, JokerHat } from "./Characters";
+
 
 type PanelKind = "navy" | "cream";
 
