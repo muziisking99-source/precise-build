@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Mail, MapPin, Factory, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Mail, MapPin, Factory, Clock, Phone } from "lucide-react";
 import { RedBand } from "../components/Layout";
 import { PageHero } from "../components/PageHero";
 import { Section, SectionHead } from "../components/Section";
 import { Reveal } from "../components/Effects";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -16,15 +17,35 @@ export const Route = createFileRoute("/contact")({
   component: Contact,
 });
 
-const CONTACT_ROWS = [
-  { icon: Mail, text: "info@goldenfresh.co.za" },
-  { icon: MapPin, text: "Lenasia, Johannesburg, South Africa" },
-  { icon: Factory, text: "A Yunma Foods Brand" },
-  { icon: Clock, text: "Monday – Friday, 8am – 5pm" },
-];
+const DEFAULTS: Record<string, string> = {
+  contact_email: "info@goldenfresh.co.za",
+  contact_phone: "",
+  contact_address: "Lenasia, Johannesburg, South Africa",
+  contact_hours: "Monday – Friday, 8am – 5pm",
+  facebook_url: "#",
+  instagram_url: "#",
+};
 
 function Contact() {
   const [sent, setSent] = useState(false);
+  const [cfg, setCfg] = useState<Record<string, string>>(DEFAULTS);
+
+  useEffect(() => {
+    supabase.from("site_settings").select("key, value").then(({ data }) => {
+      if (!data) return;
+      const next = { ...DEFAULTS };
+      (data as { key: string; value: string }[]).forEach((s) => { if (s.value) next[s.key] = s.value; });
+      setCfg(next);
+    });
+  }, []);
+
+  const rows = [
+    cfg.contact_email && { icon: Mail, text: cfg.contact_email },
+    cfg.contact_phone && { icon: Phone, text: cfg.contact_phone },
+    cfg.contact_address && { icon: MapPin, text: cfg.contact_address },
+    cfg.contact_hours && { icon: Clock, text: cfg.contact_hours },
+    { icon: Factory, text: "A Yunma Foods Brand" },
+  ].filter(Boolean) as { icon: typeof Mail; text: string }[];
 
   return (
     <>
@@ -42,7 +63,7 @@ function Contact() {
               title={<>Let&apos;s <span className="accent">Talk</span></>}
             />
             <div style={{ marginTop: 28 }}>
-              {CONTACT_ROWS.map((row) => {
+              {rows.map((row) => {
                 const Icon = row.icon;
                 return (
                   <div key={row.text} className="contact-info-item">
@@ -53,11 +74,12 @@ function Contact() {
               })}
             </div>
             <div className="contact-social">
-              <a href="#">Facebook</a>
-              <a href="#">Instagram</a>
+              <a href={cfg.facebook_url || "#"}>Facebook</a>
+              <a href={cfg.instagram_url || "#"}>Instagram</a>
               <a href="#">YouTube</a>
             </div>
           </Reveal>
+
 
           <Reveal>
             <form className="contact-form" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
