@@ -76,6 +76,7 @@ function Contact() {
             <div className="contact-social">
               <a href={cfg.facebook_url || "#"}>Facebook</a>
               <a href={cfg.instagram_url || "#"}>Instagram</a>
+              <a href="#">YouTube</a>
             </div>
           </Reveal>
 
