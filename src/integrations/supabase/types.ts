@@ -160,6 +160,7 @@ export type Database = {
       }
       product_ranges: {
         Row: {
+          category: string
           created_at: string
           description: string | null
           id: string
@@ -169,6 +170,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          category?: string
           created_at?: string
           description?: string | null
           id?: string
@@ -178,6 +180,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          category?: string
           created_at?: string
           description?: string | null
           id?: string

@@ -12,7 +12,7 @@ export const Route = createFileRoute("/admin/products")({
   component: ProductsAdmin,
 });
 
-type Range = { id: string; slug: string; name: string };
+type Range = { id: string; slug: string; name: string; category: "single" | "bulk" };
 type Product = {
   id: string; range_id: string; name: string; description: string | null;
   image_url: string | null; pill_text: string | null; is_visible: boolean; sort_order: number;
@@ -21,23 +21,32 @@ type Product = {
 function ProductsAdmin() {
   const { user } = useAdminAuth();
   const [ranges, setRanges] = useState<Range[]>([]);
+  const [category, setCategory] = useState<"single" | "bulk">("single");
   const [activeRange, setActiveRange] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [editing, setEditing] = useState<Product | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [toDelete, setToDelete] = useState<Product | null>(null);
 
+  const filteredRanges = ranges.filter((r) => r.category === category);
+
   const loadRanges = async () => {
-    const { data } = await supabase.from("product_ranges").select("id, slug, name").order("sort_order");
-    setRanges(data ?? []);
-    if (!activeRange && data?.length) setActiveRange(data[0].id);
+    const { data } = await supabase.from("product_ranges").select("id, slug, name, category").order("sort_order");
+    setRanges((data as Range[]) ?? []);
   };
   const loadProducts = async (rangeId: string) => {
     const { data } = await supabase.from("products").select("*").eq("range_id", rangeId).order("sort_order");
     setProducts((data as Product[]) ?? []);
   };
   useEffect(() => { loadRanges(); }, []);
+  useEffect(() => {
+    // when category changes, pick the first range in that category
+    const first = ranges.find((r) => r.category === category);
+    setActiveRange(first?.id ?? null);
+    if (!first) setProducts([]);
+  }, [category, ranges]);
   useEffect(() => { if (activeRange) loadProducts(activeRange); }, [activeRange]);
+
 
   const openNew = () => {
     if (!activeRange) return;
@@ -80,15 +89,35 @@ function ProductsAdmin() {
 
   return (
     <AdminShell title="Products">
+      <div className="admin-tabs" style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+        <button
+          className={`admin-tab ${category === "single" ? "active" : ""}`}
+          onClick={() => setCategory("single")}
+        >
+          Single Biscuits ({ranges.filter(r => r.category === "single").length})
+        </button>
+        <button
+          className={`admin-tab ${category === "bulk" ? "active" : ""}`}
+          onClick={() => setCategory("bulk")}
+        >
+          Bulk Biscuits ({ranges.filter(r => r.category === "bulk").length})
+        </button>
+      </div>
       <div className="admin-products-layout">
         <div className="admin-range-list">
           <div className="admin-card">
-            {ranges.map((r) => (
+            {filteredRanges.length === 0 && (
+              <div style={{ color: "rgba(255,255,255,0.4)", padding: 12, fontSize: 13 }}>
+                No {category} ranges yet.
+              </div>
+            )}
+            {filteredRanges.map((r) => (
               <button key={r.id} className={`admin-range-item ${activeRange === r.id ? "active" : ""}`} onClick={() => setActiveRange(r.id)}>
                 {r.name}
               </button>
             ))}
           </div>
+
         </div>
         <div>
           <div className="admin-section-head">
