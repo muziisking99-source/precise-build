@@ -12,7 +12,7 @@ export const Route = createFileRoute("/admin/products")({
   component: ProductsAdmin,
 });
 
-type Range = { id: string; slug: string; name: string; category: "single" | "bulk" };
+type Range = { id: string; slug: string; name: string };
 type Product = {
   id: string; range_id: string; name: string; description: string | null;
   image_url: string | null; pill_text: string | null; is_visible: boolean; sort_order: number;
@@ -21,31 +21,24 @@ type Product = {
 function ProductsAdmin() {
   const { user } = useAdminAuth();
   const [ranges, setRanges] = useState<Range[]>([]);
-  const [category, setCategory] = useState<"single" | "bulk">("single");
   const [activeRange, setActiveRange] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [editing, setEditing] = useState<Product | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [toDelete, setToDelete] = useState<Product | null>(null);
 
-  const filteredRanges = ranges.filter((r) => r.category === category);
-
   const loadRanges = async () => {
-    const { data } = await supabase.from("product_ranges").select("id, slug, name, category").order("sort_order");
-    setRanges((data as Range[]) ?? []);
+    const { data } = await supabase.from("product_ranges").select("id, slug, name").order("sort_order");
+    const rs = (data as Range[]) ?? [];
+    setRanges(rs);
+    setActiveRange((prev) => prev ?? rs[0]?.id ?? null);
   };
   const loadProducts = async (rangeId: string) => {
     const { data } = await supabase.from("products").select("*").eq("range_id", rangeId).order("sort_order");
     setProducts((data as Product[]) ?? []);
   };
   useEffect(() => { loadRanges(); }, []);
-  useEffect(() => {
-    // when category changes, pick the first range in that category
-    const first = ranges.find((r) => r.category === category);
-    setActiveRange(first?.id ?? null);
-    if (!first) setProducts([]);
-  }, [category, ranges]);
-  useEffect(() => { if (activeRange) loadProducts(activeRange); }, [activeRange]);
+  useEffect(() => { if (activeRange) loadProducts(activeRange); else setProducts([]); }, [activeRange]);
 
 
   const openNew = () => {
