@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
+import { supabase } from "@/integrations/supabase/client";
 
 export function Nav() {
   const [open, setOpen] = useState(false);
