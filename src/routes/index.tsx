@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { SectionTag, RedBand, GoldBand } from "../components/Layout";
 import { Section, SectionHead } from "../components/Section";
 import { Reveal } from "../components/Effects";
@@ -6,6 +7,7 @@ import { productTopStyle } from "../lib/uiTint";
 import { CHARACTERS, SupaDupa, GingerMan, LuvALotGirl, AllStarFootballer, JokerHat } from "../components/Characters";
 import { SnapHero } from "../components/SnapHero";
 import { Logo } from "../components/Logo";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -17,31 +19,61 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const RIBBON_ITEMS = ["Glucose Energy", "Just Ginger", "Luv-A-Lot", "Trio", "All-Star", "Joker", "Marie", "Supa Dupa", "Cream Biscuits", "Proudly South African"];
+const FALLBACK_RIBBON = ["Glucose Energy", "Just Ginger", "Luv-A-Lot", "Trio", "All-Star", "Joker", "Marie", "Supa Dupa", "Cream Biscuits", "Proudly South African"];
 
-const TEASERS = [
-  { name: "Glucose Energy", Comp: SupaDupa, desc: "South Africa's lunchbox legend. Pure, honest energy.", color: "#FFF200" },
-  { name: "Just Ginger", Comp: GingerMan, desc: "Warm spice in every bite. A heritage classic.", color: "#8C6239" },
-  { name: "Luv-A-Lot", Comp: LuvALotGirl, desc: "Sweet school-bag bestie. Loved by kids nationwide.", color: "#ED1C24" },
-  { name: "All-Star", Comp: AllStarFootballer, desc: "Cream-filled goals. Game-day favourite.", color: "#00A651" },
-  { name: "Trio", Comp: SupaDupa, desc: "Three flavours, one cream-filled bite.", color: "#C59B6D" },
-  { name: "Joker", Comp: JokerHat, desc: "Three colours, one cheeky grin.", color: "#00A651" },
+const MASCOT_BY_SLUG: Record<string, { Comp: React.ComponentType<{ size?: number }>; color: string }> = {
+  glucose: { Comp: SupaDupa, color: "#FFF200" },
+  supadupa: { Comp: SupaDupa, color: "#FFF200" },
+  ginger: { Comp: GingerMan, color: "#8C6239" },
+  luvalot: { Comp: LuvALotGirl, color: "#ED1C24" },
+  allstar: { Comp: AllStarFootballer, color: "#00A651" },
+  trio: { Comp: SupaDupa, color: "#C59B6D" },
+  joker: { Comp: JokerHat, color: "#00A651" },
+  marie: { Comp: GingerMan, color: "#C59B6D" },
+  cream: { Comp: LuvALotGirl, color: "#ED1C24" },
+};
+
+const FALLBACK_TESTIMONIALS = [
+  { quote: "Golden Fresh has been in my kids' lunchboxes since they started school. Quality and price — both spot on.", name: "Thandi M.", location: "Soweto, Gauteng" },
+  { quote: "Best Glucose biscuit in the country. The shop never runs out — we make sure of it.", name: "Pravesh N.", location: "Phoenix, KZN" },
+  { quote: "My oupa ate Just Ginger. My kids eat Just Ginger. That's South African heritage.", name: "Liesel V.", location: "Stellenbosch, WC" },
 ];
 
-const TESTIMONIALS = [
-  { q: "Golden Fresh has been in my kids' lunchboxes since they started school. Quality and price — both spot on.", n: "Thandi M.", w: "Soweto, Gauteng", featured: true },
-  { q: "Best Glucose biscuit in the country. The shop never runs out — we make sure of it.", n: "Pravesh N.", w: "Phoenix, KZN", featured: false },
-  { q: "My oupa ate Just Ginger. My kids eat Just Ginger. That's South African heritage.", n: "Liesel V.", w: "Stellenbosch, WC", featured: false },
-];
+type RangeRow = { id: string; slug: string; name: string; description: string | null; sort_order: number };
+type CharacterRow = { id: string; name: string; range: string | null; description: string | null; pill_text: string | null; image_url: string | null };
+type TestimonialRow = { id: string; quote: string; name: string; location: string | null };
 
 function Index() {
+  const [ranges, setRanges] = useState<RangeRow[]>([]);
+  const [characters, setCharacters] = useState<CharacterRow[]>([]);
+  const [testimonials, setTestimonials] = useState<TestimonialRow[]>([]);
+  const [ribbon, setRibbon] = useState<string[]>(FALLBACK_RIBBON);
+
+  useEffect(() => {
+    supabase.from("product_ranges").select("id, slug, name, description, sort_order").order("sort_order")
+      .then(({ data }) => { if (data && data.length) setRanges(data as RangeRow[]); });
+    supabase.from("characters").select("id, name, range, description, pill_text, image_url").eq("is_visible", true).order("sort_order")
+      .then(({ data }) => { if (data && data.length) setCharacters(data as CharacterRow[]); });
+    supabase.from("testimonials").select("id, quote, name, location").eq("is_visible", true).order("sort_order").limit(6)
+      .then(({ data }) => { if (data && data.length) setTestimonials(data as TestimonialRow[]); });
+    supabase.from("site_settings").select("key, value").eq("key", "ribbon_items")
+      .then(({ data }) => {
+        const v = data?.[0]?.value;
+        if (v) setRibbon(v.split(/\s*·\s*|\s*\|\s*|,\s*/).filter(Boolean));
+      });
+  }, []);
+
+  const teasers = (ranges.length ? ranges : []).slice(0, 6);
+  const chars = characters.length ? characters : CHARACTERS.map((c) => ({ id: c.name, name: c.name, range: c.range, description: c.desc, pill_text: c.tag, image_url: null }));
+  const testis = testimonials.length ? testimonials : FALLBACK_TESTIMONIALS.map((t, i) => ({ id: String(i), ...t }));
+
   return (
     <>
       <SnapHero />
 
       <div className="ribbon">
         <div className="ribbon-track">
-          {[...RIBBON_ITEMS, ...RIBBON_ITEMS, ...RIBBON_ITEMS, ...RIBBON_ITEMS].map((it, i) => (
+          {[...ribbon, ...ribbon, ...ribbon, ...ribbon].map((it, i) => (
             <span key={i} className="ribbon-item">{it}<span className="ribbon-sep"> · </span></span>
           ))}
         </div>
@@ -56,20 +88,21 @@ function Index() {
           />
         </Reveal>
         <div className="grid-zigzag">
-          {TEASERS.map((p, i) => {
-            const Mascot = p.Comp;
+          {teasers.map((p, i) => {
+            const m = MASCOT_BY_SLUG[p.slug] ?? { Comp: SupaDupa, color: "#FFF200" };
+            const Mascot = m.Comp;
             return (
               <Reveal
-                key={p.name}
+                key={p.id}
                 className={`prod-card prod-card--zigzag ${i % 2 === 1 ? "prod-card--reverse" : ""}`}
               >
-                <div className="prod-top prod-mascot" style={productTopStyle(p.color)}>
+                <div className="prod-top prod-mascot" style={productTopStyle(m.color)}>
                   <Mascot size={100} />
                 </div>
                 <div className="prod-body">
                   <div className="prod-pill">Range</div>
                   <div className="prod-name">{p.name}</div>
-                  <p className="prod-desc">{p.desc}</p>
+                  <p className="prod-desc">{p.description ?? ""}</p>
                   <Link to="/products/single" className="prod-link">Find It →</Link>
                 </div>
               </Reveal>
@@ -90,15 +123,19 @@ function Index() {
           />
         </Reveal>
         <div className="char-scroll">
-          {CHARACTERS.map(({ Comp, name, range, desc, tag }) => (
-            <Reveal key={name} className="char-card">
-              <Comp />
-              <div className="char-name">{name}</div>
-              <div className="char-range">{range}</div>
-              <p className="char-desc">{desc}</p>
-              <div className="char-pill">{tag}</div>
-            </Reveal>
-          ))}
+          {chars.map((c) => {
+            const fallback = CHARACTERS.find((x) => x.name === c.name || x.range === c.range);
+            const Comp = fallback?.Comp ?? SupaDupa;
+            return (
+              <Reveal key={c.id} className="char-card">
+                {c.image_url ? <img src={c.image_url} alt={c.name} style={{ width: 110, height: 110, objectFit: "contain" }} /> : <Comp />}
+                <div className="char-name">{c.name}</div>
+                <div className="char-range">{c.range}</div>
+                <p className="char-desc">{c.description}</p>
+                <div className="char-pill">{c.pill_text}</div>
+              </Reveal>
+            );
+          })}
         </div>
       </Section>
 
@@ -140,12 +177,12 @@ function Index() {
           />
         </Reveal>
         <div className="testi-grid">
-          {TESTIMONIALS.map((t) => (
-            <Reveal key={t.n} className={`testi-card ${t.featured ? "testi-card--featured" : ""}`}>
-              <p className="testi-quote">&ldquo;{t.q}&rdquo;</p>
+          {testis.map((t, i) => (
+            <Reveal key={t.id} className={`testi-card ${i === 0 ? "testi-card--featured" : ""}`}>
+              <p className="testi-quote">&ldquo;{t.quote}&rdquo;</p>
               <div className="testi-author">
-                <div className="testi-name">{t.n}</div>
-                <div className="testi-where">{t.w}</div>
+                <div className="testi-name">{t.name}</div>
+                <div className="testi-where">{t.location}</div>
               </div>
             </Reveal>
           ))}
