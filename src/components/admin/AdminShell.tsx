@@ -46,7 +46,7 @@ export function AdminShell({ title, children }: { title: string; children: React
     <div className="admin-root">
       <aside className={`admin-sidebar ${mobileOpen ? "open" : ""}`}>
         <div className="admin-logo">
-          <LogoMark />
+          <Logo height={32} />
           <div>
             <div className="admin-brand">Golden Fresh</div>
             <div className="admin-eyebrow">Admin</div>
