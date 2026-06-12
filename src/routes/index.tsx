@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { SectionTag, RedBand, GoldBand } from "../components/Layout";
 import { Section, SectionHead } from "../components/Section";
 import { Reveal } from "../components/Effects";
-import { productTopStyle } from "../lib/uiTint";
+
 import { CHARACTERS, SupaDupa, GingerMan, LuvALotGirl, AllStarFootballer, JokerHat } from "../components/Characters";
 import { SnapHero } from "../components/SnapHero";
 import { Logo } from "../components/Logo";
