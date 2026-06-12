@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { HeroNavyBackground, HeroCreamBackground } from "./HeroBackgrounds";
+
 
 
 type PanelKind = "navy" | "cream";
@@ -101,6 +103,7 @@ export function SnapHero() {
 
       {/* PANEL 1 — Brand Hero */}
       <Panel kind="navy" index={0} registerRef={register}>
+        <HeroNavyBackground />
         <div className="snap-badge">
           <span className="snap-badge-dot" />
           Proudly South African · Est. 1998
@@ -126,6 +129,7 @@ export function SnapHero() {
 
       {/* PANEL 2 — Products Hero */}
       <Panel kind="cream" index={1} registerRef={register} hint={false}>
+        <HeroCreamBackground />
         <div className="snap-badge" style={{ color: "var(--red)" }}>
           <span className="snap-badge-dot" style={{ background: "var(--red)" }} />
           Nine Ranges · One Nation

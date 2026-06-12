@@ -1727,3 +1727,144 @@ html { scroll-snap-type: y proximity; }
   transition: border-color .2s, color .2s;
 }
 .btn-outline-dark:hover { border-color: #D4920A; color: #D4920A; }
+
+/* === Hero animated backgrounds === */
+.hero-orbs,
+.hero-wheat-field,
+.hero-crumbs,
+.hero2-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+  transform: translateZ(0);
+  filter: blur(2px);
+}
+.hero-orb:nth-child(1) {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(212,146,10,0.18) 0%, transparent 70%);
+  bottom: -200px; left: -150px;
+  animation: orbDrift1 18s ease-in-out infinite;
+}
+.hero-orb:nth-child(2) {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(196,28,28,0.14) 0%, transparent 70%);
+  top: -100px; right: -100px;
+  animation: orbDrift2 22s ease-in-out infinite;
+}
+.hero-orb:nth-child(3) {
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(212,146,10,0.10) 0%, transparent 70%);
+  top: 40%; right: 15%;
+  animation: orbDrift3 14s ease-in-out infinite 3s;
+}
+.hero-orb:nth-child(4) {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(196,28,28,0.08) 0%, transparent 70%);
+  top: -150px; left: 20%;
+  animation: orbDrift1 26s ease-in-out infinite 6s;
+}
+.hero-orb:nth-child(5) {
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(232,184,48,0.12) 0%, transparent 70%);
+  top: 55%; left: 8%;
+  animation: orbDrift2 16s ease-in-out infinite 9s;
+}
+
+@keyframes orbDrift1 {
+  0%   { transform: translate(0,0) scale(1); }
+  33%  { transform: translate(40px,-30px) scale(1.08); }
+  66%  { transform: translate(-20px,20px) scale(0.95); }
+  100% { transform: translate(0,0) scale(1); }
+}
+@keyframes orbDrift2 {
+  0%   { transform: translate(0,0) scale(1); }
+  40%  { transform: translate(-35px,25px) scale(1.05); }
+  70%  { transform: translate(25px,-15px) scale(0.92); }
+  100% { transform: translate(0,0) scale(1); }
+}
+@keyframes orbDrift3 {
+  0%   { transform: translate(0,0); }
+  50%  { transform: translate(20px,-40px); }
+  100% { transform: translate(0,0); }
+}
+
+.hero-wheat-grain {
+  position: absolute;
+  bottom: -60px;
+  width: 18px;
+  opacity: 0;
+  will-change: transform, opacity;
+  transform: translateZ(0) scale(var(--s, 1));
+  animation-name: wheatRise;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.hero-wheat-grain svg { width: 100%; height: auto; display: block; }
+
+@keyframes wheatRise {
+  0%   { transform: translate3d(0, 0, 0) rotate(0) scale(var(--s, 1)); opacity: 0; }
+  10%  { opacity: 0.7; }
+  90%  { opacity: 0.5; }
+  100% { transform: translate3d(var(--drift, 0), -110vh, 0) rotate(var(--rot, 0)) scale(var(--s, 1)); opacity: 0; }
+}
+
+.snap-panel--cream {
+  background: linear-gradient(145deg, #FDF3D8, #FFE8A0, #F4F1EB);
+  background-size: 300% 300%;
+  animation: gradientShift 12s ease-in-out infinite;
+}
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.hero2-glow {
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 60%, rgba(245,168,0,0.20) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 35% at 20% 20%, rgba(212,146,10,0.10) 0%, transparent 60%);
+  animation: glowBreath 8s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+@keyframes glowBreath {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50%      { opacity: 1.0; transform: scale(1.06); }
+}
+
+.hero-crumb {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  animation-name: crumbFloat;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+@keyframes crumbFloat {
+  0%   { transform: translate3d(0, 30px, 0) rotate(0); opacity: 0; }
+  20%  { opacity: var(--op, 0.7); }
+  100% { transform: translate3d(var(--fx, 0), var(--fy, -50px), 0) rotate(var(--rot, 0)); opacity: var(--op, 0.7); }
+}
+
+/* Keep content above bg layers */
+.snap-panel .snap-inner { z-index: 2; }
+.snap-panel .snap-scroll-hint { z-index: 2; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-orb,
+  .hero-wheat-grain,
+  .hero-crumb,
+  .hero2-glow,
+  .snap-panel--cream { animation: none !important; }
+  .hero-wheat-grain, .hero-crumb { opacity: 0 !important; }
+}
