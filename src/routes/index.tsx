@@ -165,7 +165,7 @@ function Index() {
                   {c.image_url ? (
                     <img src={c.image_url} alt={c.name} className="char-card-img" />
                   ) : (
-                    <Comp size={100} />
+                    <Comp size={90} />
                   )}
                 </div>
                 <div className="char-name">{c.name}</div>
