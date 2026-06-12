@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { RedBand } from "../../components/Layout";
 import { PageHero } from "../../components/PageHero";
 import { Section } from "../../components/Section";
 import { Reveal } from "../../components/Effects";
@@ -60,9 +59,9 @@ function BulkProducts() {
             const fb = BULK_PRODUCTS[idx % BULK_PRODUCTS.length];
             return (
               <Reveal key={`${p.name}-${idx}`} className="bulk-card">
-                <div className="bulk-card-img" style={productTopStyle(p.color)}>
+                <div className={`bulk-card-img${p.image_url ? " bulk-card-img--pack" : ""}`} style={p.image_url ? undefined : productTopStyle(p.color)}>
                   {p.image_url ? (
-                    <img src={p.image_url} alt={p.name} style={{ maxWidth: "100%", maxHeight: 110, objectFit: "contain" }} />
+                    <img src={p.image_url} alt={p.name} className="product-pack-img" />
                   ) : fb?.Mascot ? (() => {
                     const Mascot = fb.Mascot;
                     return <Mascot size={90} />;
@@ -78,8 +77,6 @@ function BulkProducts() {
           })}
         </div>
       </Section>
-
-      <RedBand title="Want to stock Golden Fresh?" body="We partner with spaza shops, supermarkets, and wholesalers nationwide." cta="Become a Stockist" />
     </>
   );
 }

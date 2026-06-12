@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { SectionTag, RedBand, GoldBand } from "../components/Layout";
+import { SectionTag, GoldBand } from "../components/Layout";
 import { Section, SectionHead } from "../components/Section";
 import { Reveal } from "../components/Effects";
 
@@ -102,11 +102,13 @@ function Index() {
         {featured && (
           <Reveal className="range-featured" style={{ ["--range-colour" as any]: MASCOT_BY_SLUG[featured.slug]?.color ?? "#D4920A" }}>
             <Link to="/products" className="range-featured-link">
-              {featured.image_url ? (
-                <img src={featured.image_url} alt={featured.name} />
-              ) : (
-                <div className="range-featured-fallback" aria-hidden>🍪</div>
-              )}
+              <div className="range-featured-media">
+                {featured.image_url ? (
+                  <img src={featured.image_url} alt={featured.name} />
+                ) : (
+                  <div className="range-featured-fallback" aria-hidden />
+                )}
+              </div>
               <div className="range-featured-content">
                 <span className="range-num">01 — Featured Range</span>
                 <h3>{featured.name}</h3>
@@ -126,7 +128,7 @@ function Index() {
                 <Reveal key={r.id} className="range-card" style={{ ["--range-colour" as any]: colour }}>
                   <Link to="/products" className="range-card-link">
                     <div className={`range-card-image ${r.image_url ? "" : "no-image"}`}>
-                      {r.image_url ? <img src={r.image_url} alt={r.name} /> : <span className="range-card-fallback" aria-hidden>🍪</span>}
+                      {r.image_url ? <img src={r.image_url} alt={r.name} /> : <span className="range-card-fallback" aria-hidden />}
                     </div>
                     <div className="range-card-body">
                       <span className="range-card-count">{String(i + 2).padStart(2, "0")} · {count} {count === 1 ? "product" : "products"}</span>
@@ -219,8 +221,6 @@ function Index() {
           ))}
         </div>
       </Section>
-
-      <RedBand title="Find Golden Fresh Near You" body="From spaza shops to supermarkets, we're in every province. Find your nearest stockist." cta="Find a Stockist" />
     </>
   );
 }

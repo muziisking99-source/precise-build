@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { SectionTag, RedBand, GoldBand } from "../../components/Layout";
+import { SectionTag, GoldBand } from "../../components/Layout";
 import { PageHero } from "../../components/PageHero";
 import { Reveal } from "../../components/Effects";
 import { productTopStyle } from "../../lib/uiTint";
@@ -101,9 +101,9 @@ function SingleProducts() {
           <div className="grid-3">
             {r.products.map((p) => (
               <Reveal key={p.name} className="prod-card">
-                <div className="prod-top prod-mascot" style={productTopStyle(p.color)}>
+                <div className={`prod-top prod-mascot${p.image_url ? " prod-top--pack" : ""}`} style={p.image_url ? undefined : productTopStyle(p.color)}>
                   {p.image_url ? (
-                    <img src={p.image_url} alt={p.name} style={{ maxWidth: "100%", maxHeight: 120, objectFit: "contain" }} />
+                    <img src={p.image_url} alt={p.name} className="product-pack-img" />
                   ) : r.Mascot ? (() => {
                     const Mascot = r.Mascot!;
                     return <Mascot size={90} />;
@@ -126,7 +126,6 @@ function SingleProducts() {
       ))}
 
       <GoldBand title="Collect the Gang" body="Nine ranges. Five characters. One proudly South African brand." cta="Shop All Products" />
-      <RedBand title="Want to stock Golden Fresh?" body="We partner with spaza shops, supermarkets, and wholesalers nationwide." cta="Become a Stockist" />
     </>
   );
 }

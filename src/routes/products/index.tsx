@@ -42,12 +42,12 @@ function ProductCategories() {
     <Reveal className="category-card">
       <Link to={to} className="category-card-link">
         <div className={`category-card-image ${image ? "" : "no-image"}`}>
-          {image ? <img src={image} alt={title} /> : <span className="category-card-fallback" aria-hidden>🍪</span>}
-          <div className="category-card-image-text">
-            <span className="category-card-num">{num}</span>
-            <h3 className="category-card-title">{title}</h3>
-            <p className="category-card-sub">{desc}</p>
-          </div>
+          {image ? <img src={image} alt={title} /> : <span className="category-card-fallback" aria-hidden />}
+        </div>
+        <div className="category-card-copy">
+          <span className="category-card-num">{num}</span>
+          <h3 className="category-card-title">{title}</h3>
+          <p className="category-card-sub">{desc}</p>
         </div>
         <div className="category-card-body">
           <span className={`btn ${ctaClass} cat-card-btn`}>{ctaText} →</span>

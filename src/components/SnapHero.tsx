@@ -1,56 +1,58 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { HeroNavyBackground, HeroCreamBackground } from "./HeroBackgrounds";
-
-
+import { Logo } from "./Logo";
+import { prefersReducedMotion, spring } from "./motion/transitions";
 
 type PanelKind = "navy" | "cream";
+
+const contentEnter = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
 
 function Panel({
   kind,
   index,
   registerRef,
+  background,
   children,
+  innerClassName = "",
   hint = true,
 }: {
   kind: PanelKind;
   index: number;
   registerRef: (i: number, el: HTMLElement | null) => void;
+  background: React.ReactNode;
   children: React.ReactNode;
+  innerClassName?: string;
   hint?: boolean;
 }) {
-  const ref = useRef<HTMLElement | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-  // Scrubbed text reveal — opacity / translateY tied to scroll position
-  const y = useTransform(scrollYProgress, [0, 0.35, 0.65, 1], [60, 0, 0, -40]);
-  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
-  // Ken Burns background scale
-  const bgScale = useTransform(scrollYProgress, [0, 1], [1.08, 1]);
+  const reduced = prefersReducedMotion();
+  const isFirstPanel = index === 0;
 
   return (
     <section
-      ref={(el) => {
-        ref.current = el;
-        registerRef(index, el);
-      }}
+      ref={(el) => registerRef(index, el)}
       className={`snap-panel snap-panel--${kind}`}
       data-panel-index={index}
     >
+      <div className="snap-panel-bg" aria-hidden>
+        {background}
+      </div>
       <motion.div
-        aria-hidden
-        style={{
-          position: "absolute",
-          inset: 0,
-          scale: bgScale,
-          zIndex: 0,
-          pointerEvents: "none",
-        }}
-      />
-      <motion.div className="snap-inner" style={{ y, opacity }}>
+        className={`snap-inner ${innerClassName}`.trim()}
+        variants={contentEnter}
+        initial={reduced ? "visible" : "hidden"}
+        {...(isFirstPanel
+          ? { animate: "visible" }
+          : {
+              whileInView: "visible",
+              viewport: { once: true, amount: 0.2 },
+            })}
+        transition={{ ...spring, delay: isFirstPanel ? 0.08 : 0 }}
+      >
         {children}
       </motion.div>
       {hint && <div className="snap-scroll-hint">Scroll</div>}
@@ -101,35 +103,50 @@ export function SnapHero() {
         ))}
       </nav>
 
-      {/* PANEL 1 — Brand Hero */}
-      <Panel kind="navy" index={0} registerRef={register}>
-        <HeroNavyBackground />
-        <div className="snap-badge">
-          <span className="snap-badge-dot" />
-          Proudly South African · Est. 1998
+      <Panel
+        kind="navy"
+        index={0}
+        registerRef={register}
+        background={<HeroNavyBackground />}
+        innerClassName="snap-inner--split"
+      >
+        <div className="snap-copy">
+          <div className="snap-badge">
+            <span className="snap-badge-dot" />
+            Proudly South African · Est. 1998
+          </div>
+          <h1 className="snap-h1">
+            <span className="white">Lekker</span>
+            <br />
+            <span className="gold">Biscuits</span>
+            <br />
+            <span className="white">For Every</span>
+            <br />
+            <span className="white">SA </span>
+            <span className="red">Family.</span>
+          </h1>
+          <div className="snap-logo-mobile">
+            <Logo height={140} className="snap-logo-img" />
+          </div>
+          <p className="snap-sub">
+            From Lenasia to the nation — quality at honest prices, baked since 1998.
+          </p>
+          <div className="snap-ctas">
+            <Link to="/about" className="snap-cta-ghost">Our Story →</Link>
+          </div>
         </div>
-        <h1 className="snap-h1">
-          <span className="white">Lekker</span>
-          <br />
-          <span className="gold">Biscuits</span>
-          <br />
-          <span className="white">For Every</span>
-          <br />
-          <span className="white">SA </span>
-          <span className="red">Family.</span>
-        </h1>
-        <p className="snap-sub">
-          From Lenasia to the nation — quality at honest prices, baked since 1998.
-        </p>
-        <div className="snap-ctas">
-          <Link to="/products" className="snap-cta-primary">Shop Products</Link>
-          <Link to="/about" className="snap-cta-ghost">Our Story →</Link>
+        <div className="snap-logo-desktop">
+          <Logo height={280} className="snap-logo-img" />
         </div>
       </Panel>
 
-      {/* PANEL 2 — Products Hero */}
-      <Panel kind="cream" index={1} registerRef={register} hint={false}>
-        <HeroCreamBackground />
+      <Panel
+        kind="cream"
+        index={1}
+        registerRef={register}
+        background={<HeroCreamBackground />}
+        hint={false}
+      >
         <div className="snap-badge" style={{ color: "var(--red)" }}>
           <span className="snap-badge-dot" style={{ background: "var(--red)" }} />
           Nine Ranges · One Nation
@@ -142,11 +159,7 @@ export function SnapHero() {
         <p className="snap-sub">
           Glucose Energy, Just Ginger, Luv-A-Lot, All-Star, Joker and more — baked in Lenasia, loved in every province.
         </p>
-        <div className="snap-ctas">
-          <Link to="/products" className="snap-cta-primary">View All Products →</Link>
-        </div>
       </Panel>
     </div>
   );
 }
-

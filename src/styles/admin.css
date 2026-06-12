@@ -188,18 +188,50 @@
 
 /* Products page */
 .admin-products-layout { display: grid; grid-template-columns: 280px 1fr; gap: 24px; align-items: start; }
-.admin-range-list { display: flex; flex-direction: column; }
+.admin-range-list { display: flex; flex-direction: column; gap: 10px; }
+.admin-range-list-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 4px;
+}
+.admin-range-list-head span {
+  font: 700 11px 'Nunito'; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--admin-text-faint);
+}
+.admin-btn-sm { padding: 6px 12px; font-size: 11px; }
 .admin-range-list .admin-card { padding: 0; overflow: hidden; }
-.admin-range-item {
-  display: block; width: 100%; text-align: left;
-  padding: 14px 20px; background: none; border: none; cursor: pointer;
-  color: var(--admin-text-dim); font: 700 13px 'Nunito';
-  border-left: 3px solid transparent;
+.admin-range-row {
+  display: flex; align-items: stretch;
   border-bottom: 1px solid var(--admin-border);
 }
-.admin-range-item:last-child { border-bottom: none; }
-.admin-range-item:hover { background: rgba(255,255,255,0.03); color: #fff; }
-.admin-range-item.active { color: var(--admin-gold); border-left-color: var(--admin-gold); background: var(--admin-gold-dim); }
+.admin-range-row:last-child { border-bottom: none; }
+.admin-range-row.active { background: var(--admin-gold-dim); }
+.admin-range-item {
+  flex: 1; display: flex; flex-direction: column; gap: 2px;
+  text-align: left; padding: 12px 14px; background: none; border: none; cursor: pointer;
+  color: var(--admin-text-dim); font: 700 13px 'Nunito';
+  border-left: 3px solid transparent;
+}
+.admin-range-row.active .admin-range-item {
+  color: var(--admin-gold);
+  border-left-color: var(--admin-gold);
+}
+.admin-range-item:hover { color: #fff; }
+.admin-range-item-name { display: block; }
+.admin-range-item-meta {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--admin-text-faint);
+}
+.admin-range-row-actions {
+  display: flex; flex-direction: column; justify-content: center; gap: 4px;
+  padding: 8px 10px 8px 0;
+}
+.admin-range-row-actions button {
+  background: none; border: none; cursor: pointer;
+  font: 600 10px 'Nunito'; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--admin-text-faint); padding: 2px 0;
+}
+.admin-range-row-actions button:hover { color: #fff; }
+.admin-range-row-actions button.delete:hover { color: #ff6b6b; }
 
 .admin-section-head {
   display: flex; justify-content: space-between; align-items: center;

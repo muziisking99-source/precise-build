@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Factory, Coins, Leaf, Handshake, Sparkles, Heart, Flag } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { RedBand, SectionTag } from "../components/Layout";
+import { SectionTag } from "../components/Layout";
 import { PageHero } from "../components/PageHero";
 import { Section, SectionHead } from "../components/Section";
 import { Reveal } from "../components/Effects";
@@ -112,8 +112,6 @@ function About() {
         <div><div className="stats-bar-num">9</div><div className="stats-bar-label">Provinces</div></div>
         <div><div className="stats-bar-num">1M+</div><div className="stats-bar-label">Families</div></div>
       </div>
-
-      <RedBand title="Want to stock Golden Fresh?" body="We partner with spaza shops, supermarkets, and wholesalers nationwide." cta="Become a Stockist" />
     </>
   );
 }

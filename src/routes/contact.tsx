@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Mail, MapPin, Factory, Clock, Phone } from "lucide-react";
-import { RedBand } from "../components/Layout";
 import { PageHero } from "../components/PageHero";
 import { Section, SectionHead } from "../components/Section";
 import { Reveal } from "../components/Effects";
@@ -142,8 +141,6 @@ function Contact() {
           </Reveal>
         </div>
       </Section>
-
-      <RedBand title="Want to stock Golden Fresh?" body="We partner with spaza shops, supermarkets, and wholesalers nationwide." cta="Become a Stockist" />
     </>
   );
 }
