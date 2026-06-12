@@ -99,30 +99,49 @@ function Index() {
             subtitle="Nine ranges, baked in Lenasia and loved across all nine provinces."
           />
         </Reveal>
-        <div className="grid-zigzag">
-          {teasers.map((p, i) => {
-            const m = MASCOT_BY_SLUG[p.slug] ?? { Comp: SupaDupa, color: "#FFF200" };
-            const Mascot = m.Comp;
-            return (
-              <Reveal
-                key={p.id}
-                className={`prod-card prod-card--zigzag ${i % 2 === 1 ? "prod-card--reverse" : ""}`}
-              >
-                <div className="prod-top prod-mascot" style={productTopStyle(m.color)}>
-                  <Mascot size={100} />
-                </div>
-                <div className="prod-body">
-                  <div className="prod-pill">Range</div>
-                  <div className="prod-name">{p.name}</div>
-                  <p className="prod-desc">{p.description ?? ""}</p>
-                  <Link to="/products/single" className="prod-link">Find It →</Link>
-                </div>
-              </Reveal>
-            );
-          })}
-        </div>
+        {featured && (
+          <Reveal className="range-featured" style={{ ["--range-colour" as any]: MASCOT_BY_SLUG[featured.slug]?.color ?? "#D4920A" }}>
+            <Link to="/products" className="range-featured-link">
+              {featured.image_url ? (
+                <img src={featured.image_url} alt={featured.name} />
+              ) : (
+                <div className="range-featured-fallback" aria-hidden>🍪</div>
+              )}
+              <div className="range-featured-content">
+                <span className="range-num">01 — Featured Range</span>
+                <h3>{featured.name}</h3>
+                <p>{featured.description ?? "Discover the range that started a South African biscuit tradition."}</p>
+                <span className="range-featured-cta">Explore Range →</span>
+              </div>
+            </Link>
+          </Reveal>
+        )}
+
+        {restRanges.length > 0 && (
+          <div className="ranges-grid">
+            {restRanges.map((r, i) => {
+              const colour = MASCOT_BY_SLUG[r.slug]?.color ?? "#D4920A";
+              const count = r.product_count ?? 0;
+              return (
+                <Reveal key={r.id} className="range-card" style={{ ["--range-colour" as any]: colour }}>
+                  <Link to="/products" className="range-card-link">
+                    <div className={`range-card-image ${r.image_url ? "" : "no-image"}`}>
+                      {r.image_url ? <img src={r.image_url} alt={r.name} /> : <span className="range-card-fallback" aria-hidden>🍪</span>}
+                    </div>
+                    <div className="range-card-body">
+                      <span className="range-card-count">{String(i + 2).padStart(2, "0")} · {count} {count === 1 ? "product" : "products"}</span>
+                      <div className="range-card-name">{r.name}</div>
+                      <span className="range-card-arrow">Explore →</span>
+                    </div>
+                  </Link>
+                </Reveal>
+              );
+            })}
+          </div>
+        )}
+
         <div className="section-cta">
-          <Link to="/products" className="btn btn-red">View All Products →</Link>
+          <Link to="/products" className="btn-outline-dark">View All Products →</Link>
         </div>
       </Section>
 
