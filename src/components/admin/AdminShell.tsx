@@ -3,6 +3,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { type ReactNode, useState } from "react";
 import { Home, Package, Smile, Sparkles, MessageSquareQuote, Mail, Settings, LogOut, Menu, X } from "lucide-react";
 import { useAdminAuth } from "./AdminAuth";
+import { Logo } from "@/components/Logo";
 
 const NAV = [
   { to: "/admin/dashboard", label: "Dashboard", icon: Home },
@@ -46,7 +47,7 @@ export function AdminShell({ title, children }: { title: string; children: React
     <div className="admin-root">
       <aside className={`admin-sidebar ${mobileOpen ? "open" : ""}`}>
         <div className="admin-logo">
-          <LogoMark />
+          <Logo height={32} />
           <div>
             <div className="admin-brand">Golden Fresh</div>
             <div className="admin-eyebrow">Admin</div>

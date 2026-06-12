@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { PageHero } from "../../components/PageHero";
 import { Reveal } from "../../components/Effects";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/products/")({
   head: () => ({
@@ -12,7 +14,48 @@ export const Route = createFileRoute("/products/")({
   component: ProductCategories,
 });
 
+type CatHero = { single: string | null; bulk: string | null };
+
 function ProductCategories() {
+  const [hero, setHero] = useState<CatHero>({ single: null, bulk: null });
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("products")
+        .select("image_url, product_ranges!inner(category)")
+        .not("image_url", "is", null)
+        .limit(50);
+      const next: CatHero = { single: null, bulk: null };
+      (data ?? []).forEach((r: any) => {
+        const cat = r.product_ranges?.category;
+        if (cat === "single" && !next.single) next.single = r.image_url;
+        if (cat === "bulk" && !next.bulk) next.bulk = r.image_url;
+      });
+      setHero(next);
+    })();
+  }, []);
+
+  const Card = ({
+    num, title, desc, to, image, ctaClass, ctaText,
+  }: { num: string; title: string; desc: string; to: string; image: string | null; ctaClass: string; ctaText: string }) => (
+    <Reveal className="category-card">
+      <Link to={to} className="category-card-link">
+        <div className={`category-card-image ${image ? "" : "no-image"}`}>
+          {image ? <img src={image} alt={title} /> : <span className="category-card-fallback" aria-hidden>🍪</span>}
+          <div className="category-card-image-text">
+            <span className="category-card-num">{num}</span>
+            <h3 className="category-card-title">{title}</h3>
+            <p className="category-card-sub">{desc}</p>
+          </div>
+        </div>
+        <div className="category-card-body">
+          <span className={`btn ${ctaClass} cat-card-btn`}>{ctaText} →</span>
+        </div>
+      </Link>
+    </Reveal>
+  );
+
   return (
     <>
       <PageHero
@@ -23,32 +66,25 @@ function ProductCategories() {
 
       <section className="section section-cream products-landing">
         <div className="container">
-          <div className="cat-grid">
-            <Reveal className="cat-card">
-              <Link to="/products/single" className="cat-card-link">
-                <div className="cat-card-visual cat-card-visual--single" aria-hidden />
-                <div className="cat-card-body">
-                  <h3 className="cat-card-title">Single Biscuits</h3>
-                  <p className="cat-card-desc">
-                    Individually wrapped for freshness and perfect for on-the-go snacking. Our single biscuits come in a variety of flavours to satisfy every taste.
-                  </p>
-                  <span className="btn btn-red cat-card-btn">Explore Single Biscuits →</span>
-                </div>
-              </Link>
-            </Reveal>
-
-            <Reveal className="cat-card">
-              <Link to="/products/bulk" className="cat-card-link">
-                <div className="cat-card-visual cat-card-visual--bulk" aria-hidden />
-                <div className="cat-card-body">
-                  <h3 className="cat-card-title">Bulk Biscuits</h3>
-                  <p className="cat-card-desc">
-                    Perfect for families, events, or simply stocking up. Our bulk biscuits offer great value while maintaining the same Golden Fresh quality.
-                  </p>
-                  <span className="btn btn-secondary cat-card-btn">Explore Bulk Biscuits →</span>
-                </div>
-              </Link>
-            </Reveal>
+          <div className="cat-grid category-grid">
+            <Card
+              num="01 — Category"
+              title="Single Biscuits"
+              desc="Individually wrapped for freshness — perfect for on-the-go snacking, lunchboxes, and quick treats."
+              to="/products/single"
+              image={hero.single}
+              ctaClass="btn-red"
+              ctaText="Explore Single Biscuits"
+            />
+            <Card
+              num="02 — Category"
+              title="Bulk Biscuits"
+              desc="Family-size value packs for events, sharing, or stocking up — same Golden Fresh quality, bigger boxes."
+              to="/products/bulk"
+              image={hero.bulk}
+              ctaClass="btn-secondary"
+              ctaText="Explore Bulk Biscuits"
+            />
           </div>
         </div>
       </section>

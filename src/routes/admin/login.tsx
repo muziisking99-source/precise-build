@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminAuth } from "@/components/admin/AdminAuth";
-import { LogoMark } from "@/components/admin/AdminShell";
+import { Logo } from "@/components/Logo";
 
 export const Route = createFileRoute("/admin/login")({
   component: LoginPage,
@@ -36,7 +36,7 @@ function LoginPage() {
   return (
     <div className="admin-login">
       <div className="admin-login-card">
-        <LogoMark size={56} />
+        <div className="admin-login-logo"><Logo height={64} /></div>
         <div className="brand">Golden Fresh</div>
         <div className="eyebrow">Admin Portal</div>
         <hr />

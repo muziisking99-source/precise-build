@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { SectionTag, RedBand, GoldBand } from "../components/Layout";
 import { Section, SectionHead } from "../components/Section";
 import { Reveal } from "../components/Effects";
-import { productTopStyle } from "../lib/uiTint";
+
 import { CHARACTERS, SupaDupa, GingerMan, LuvALotGirl, AllStarFootballer, JokerHat } from "../components/Characters";
 import { SnapHero } from "../components/SnapHero";
 import { Logo } from "../components/Logo";
@@ -39,7 +39,7 @@ const FALLBACK_TESTIMONIALS = [
   { quote: "My oupa ate Just Ginger. My kids eat Just Ginger. That's South African heritage.", name: "Liesel V.", location: "Stellenbosch, WC" },
 ];
 
-type RangeRow = { id: string; slug: string; name: string; description: string | null; sort_order: number };
+type RangeRow = { id: string; slug: string; name: string; description: string | null; sort_order: number; product_count?: number; image_url?: string | null };
 type CharacterRow = { id: string; name: string; range: string | null; description: string | null; pill_text: string | null; image_url: string | null };
 type TestimonialRow = { id: string; quote: string; name: string; location: string | null };
 
@@ -50,8 +50,20 @@ function Index() {
   const [ribbon, setRibbon] = useState<string[]>(FALLBACK_RIBBON);
 
   useEffect(() => {
-    supabase.from("product_ranges").select("id, slug, name, description, sort_order").order("sort_order")
-      .then(({ data }) => { if (data && data.length) setRanges(data as RangeRow[]); });
+    (async () => {
+      const { data } = await supabase
+        .from("product_ranges")
+        .select("id, slug, name, description, sort_order, products(image_url)")
+        .order("sort_order");
+      if (data && data.length) {
+        const mapped: RangeRow[] = (data as any[]).map((r) => {
+          const products = (r.products ?? []) as { image_url: string | null }[];
+          const firstImg = products.find((p) => p.image_url)?.image_url ?? null;
+          return { id: r.id, slug: r.slug, name: r.name, description: r.description, sort_order: r.sort_order, product_count: products.length, image_url: firstImg };
+        });
+        setRanges(mapped);
+      }
+    })();
     supabase.from("characters").select("id, name, range, description, pill_text, image_url").eq("is_visible", true).order("sort_order")
       .then(({ data }) => { if (data && data.length) setCharacters(data as CharacterRow[]); });
     supabase.from("testimonials").select("id, quote, name, location").eq("is_visible", true).order("sort_order").limit(6)
@@ -63,9 +75,9 @@ function Index() {
       });
   }, []);
 
-  const teasers = (ranges.length ? ranges : []).slice(0, 6);
   const chars = characters.length ? characters : CHARACTERS.map((c) => ({ id: c.name, name: c.name, range: c.range, description: c.desc, pill_text: c.tag, image_url: null }));
   const testis = testimonials.length ? testimonials : FALLBACK_TESTIMONIALS.map((t, i) => ({ id: String(i), ...t }));
+  const [featured, ...restRanges] = ranges;
 
   return (
     <>
@@ -87,30 +99,49 @@ function Index() {
             subtitle="Nine ranges, baked in Lenasia and loved across all nine provinces."
           />
         </Reveal>
-        <div className="grid-zigzag">
-          {teasers.map((p, i) => {
-            const m = MASCOT_BY_SLUG[p.slug] ?? { Comp: SupaDupa, color: "#FFF200" };
-            const Mascot = m.Comp;
-            return (
-              <Reveal
-                key={p.id}
-                className={`prod-card prod-card--zigzag ${i % 2 === 1 ? "prod-card--reverse" : ""}`}
-              >
-                <div className="prod-top prod-mascot" style={productTopStyle(m.color)}>
-                  <Mascot size={100} />
-                </div>
-                <div className="prod-body">
-                  <div className="prod-pill">Range</div>
-                  <div className="prod-name">{p.name}</div>
-                  <p className="prod-desc">{p.description ?? ""}</p>
-                  <Link to="/products/single" className="prod-link">Find It →</Link>
-                </div>
-              </Reveal>
-            );
-          })}
-        </div>
+        {featured && (
+          <Reveal className="range-featured" style={{ ["--range-colour" as any]: MASCOT_BY_SLUG[featured.slug]?.color ?? "#D4920A" }}>
+            <Link to="/products" className="range-featured-link">
+              {featured.image_url ? (
+                <img src={featured.image_url} alt={featured.name} />
+              ) : (
+                <div className="range-featured-fallback" aria-hidden>🍪</div>
+              )}
+              <div className="range-featured-content">
+                <span className="range-num">01 — Featured Range</span>
+                <h3>{featured.name}</h3>
+                <p>{featured.description ?? "Discover the range that started a South African biscuit tradition."}</p>
+                <span className="range-featured-cta">Explore Range →</span>
+              </div>
+            </Link>
+          </Reveal>
+        )}
+
+        {restRanges.length > 0 && (
+          <div className="ranges-grid">
+            {restRanges.map((r, i) => {
+              const colour = MASCOT_BY_SLUG[r.slug]?.color ?? "#D4920A";
+              const count = r.product_count ?? 0;
+              return (
+                <Reveal key={r.id} className="range-card" style={{ ["--range-colour" as any]: colour }}>
+                  <Link to="/products" className="range-card-link">
+                    <div className={`range-card-image ${r.image_url ? "" : "no-image"}`}>
+                      {r.image_url ? <img src={r.image_url} alt={r.name} /> : <span className="range-card-fallback" aria-hidden>🍪</span>}
+                    </div>
+                    <div className="range-card-body">
+                      <span className="range-card-count">{String(i + 2).padStart(2, "0")} · {count} {count === 1 ? "product" : "products"}</span>
+                      <div className="range-card-name">{r.name}</div>
+                      <span className="range-card-arrow">Explore →</span>
+                    </div>
+                  </Link>
+                </Reveal>
+              );
+            })}
+          </div>
+        )}
+
         <div className="section-cta">
-          <Link to="/products" className="btn btn-red">View All Products →</Link>
+          <Link to="/products" className="btn-outline-dark">View All Products →</Link>
         </div>
       </Section>
 
