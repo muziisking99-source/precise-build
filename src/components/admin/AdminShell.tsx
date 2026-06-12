@@ -3,6 +3,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { type ReactNode, useState } from "react";
 import { Home, Package, Smile, Sparkles, MessageSquareQuote, Mail, Settings, LogOut, Menu, X } from "lucide-react";
 import { useAdminAuth } from "./AdminAuth";
+import { Logo } from "@/components/Logo";
 
 const NAV = [
   { to: "/admin/dashboard", label: "Dashboard", icon: Home },
