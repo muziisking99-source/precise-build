@@ -16,8 +16,8 @@ export function Nav() {
 
   return (
     <nav className={`nav ${scrolled ? "nav--scrolled" : ""}`}>
-      <Link to="/" className="nav-brand" style={{ textDecoration: "none" }}>
-        <Logo height={40} />
+      <Link to="/" className="nav-brand nav-logo" style={{ textDecoration: "none" }}>
+        <Logo height={44} />
       </Link>
       <div className={`nav-links ${open ? "open" : ""}`}>
         <Link to="/" activeOptions={{ exact: true }} activeProps={{ className: "active" }} onClick={() => setOpen(false)}>Home</Link>
@@ -53,8 +53,8 @@ export function Footer() {
     <footer className="footer">
       <div className="footer-grid">
         <div className="footer-col">
-          <div className="footer-brand">
-            <Logo height={64} />
+          <div className="footer-brand footer-logo">
+            <Logo height={36} />
           </div>
           <p className="footer-tag">{cfg.footer_tagline ?? "Delivering local lekkerness since 1998. Proudly South African."}</p>
           <div className="footer-social">
