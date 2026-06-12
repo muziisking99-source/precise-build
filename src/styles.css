@@ -618,12 +618,35 @@
   background: white;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 28px 20px;
+  padding: 20px 20px 24px;
   text-align: center;
   box-shadow: var(--shadow-diffuse);
   transition: transform .25s, border-color .25s;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.char-card-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-sm);
+  min-height: 168px;
+  padding: clamp(16px, 3vw, 24px);
+  margin-bottom: 4px;
+}
+.char-card-img {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  max-height: 140px;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  transition: transform .35s;
 }
 .char-card::before {
   content: '';
@@ -637,9 +660,10 @@
 }
 .char-card:hover { transform: translateY(-2px); border-color: var(--green); }
 .char-card:hover::before { transform: scaleX(1); }
-.char-card svg { transition: transform .35s; }
-.char-card:hover svg { transform: translateY(-4px) scale(1.03); }
-.char-name { font-family: var(--font-display); font-size: 22px; color: var(--ink); margin-top: 14px; }
+.char-card-visual svg { transition: transform .35s; max-height: 120px; width: auto; }
+.char-card:hover .char-card-img,
+.char-card:hover .char-card-visual svg { transform: translateY(-4px) scale(1.03); }
+.char-name { font-family: var(--font-display); font-size: 22px; color: var(--ink); margin-top: 12px; }
 .char-range {
   font-size: 11px; font-weight: 600;
   color: var(--green-dk);

@@ -161,7 +161,13 @@ function Index() {
             const Comp = fallback?.Comp ?? SupaDupa;
             return (
               <Reveal key={c.id} className="char-card">
-                {c.image_url ? <img src={c.image_url} alt={c.name} style={{ width: 110, height: 110, objectFit: "contain" }} /> : <Comp />}
+                <div className="char-card-visual">
+                  {c.image_url ? (
+                    <img src={c.image_url} alt={c.name} className="char-card-img" />
+                  ) : (
+                    <Comp size={100} />
+                  )}
+                </div>
                 <div className="char-name">{c.name}</div>
                 <div className="char-range">{c.range}</div>
                 <p className="char-desc">{c.description}</p>
