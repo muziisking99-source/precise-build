@@ -39,7 +39,7 @@ const FALLBACK_TESTIMONIALS = [
   { quote: "My oupa ate Just Ginger. My kids eat Just Ginger. That's South African heritage.", name: "Liesel V.", location: "Stellenbosch, WC" },
 ];
 
-type RangeRow = { id: string; slug: string; name: string; description: string | null; sort_order: number };
+type RangeRow = { id: string; slug: string; name: string; description: string | null; sort_order: number; product_count?: number; image_url?: string | null };
 type CharacterRow = { id: string; name: string; range: string | null; description: string | null; pill_text: string | null; image_url: string | null };
 type TestimonialRow = { id: string; quote: string; name: string; location: string | null };
 
@@ -50,8 +50,20 @@ function Index() {
   const [ribbon, setRibbon] = useState<string[]>(FALLBACK_RIBBON);
 
   useEffect(() => {
-    supabase.from("product_ranges").select("id, slug, name, description, sort_order").order("sort_order")
-      .then(({ data }) => { if (data && data.length) setRanges(data as RangeRow[]); });
+    (async () => {
+      const { data } = await supabase
+        .from("product_ranges")
+        .select("id, slug, name, description, sort_order, products(image_url)")
+        .order("sort_order");
+      if (data && data.length) {
+        const mapped: RangeRow[] = (data as any[]).map((r) => {
+          const products = (r.products ?? []) as { image_url: string | null }[];
+          const firstImg = products.find((p) => p.image_url)?.image_url ?? null;
+          return { id: r.id, slug: r.slug, name: r.name, description: r.description, sort_order: r.sort_order, product_count: products.length, image_url: firstImg };
+        });
+        setRanges(mapped);
+      }
+    })();
     supabase.from("characters").select("id, name, range, description, pill_text, image_url").eq("is_visible", true).order("sort_order")
       .then(({ data }) => { if (data && data.length) setCharacters(data as CharacterRow[]); });
     supabase.from("testimonials").select("id, quote, name, location").eq("is_visible", true).order("sort_order").limit(6)
@@ -63,9 +75,9 @@ function Index() {
       });
   }, []);
 
-  const teasers = (ranges.length ? ranges : []).slice(0, 6);
   const chars = characters.length ? characters : CHARACTERS.map((c) => ({ id: c.name, name: c.name, range: c.range, description: c.desc, pill_text: c.tag, image_url: null }));
   const testis = testimonials.length ? testimonials : FALLBACK_TESTIMONIALS.map((t, i) => ({ id: String(i), ...t }));
+  const [featured, ...restRanges] = ranges;
 
   return (
     <>
