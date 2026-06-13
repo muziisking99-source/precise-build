@@ -1379,14 +1379,8 @@ html { scroll-snap-type: y proximity; }
   transform-origin: center center;
 }
 .snap-panel--navy {
-  background: linear-gradient(
-    175deg,
-    var(--snap-warm-deep) 0%,
-    var(--snap-warm) 42%,
-    color-mix(in srgb, var(--wheat) 38%, var(--snap-warm-light)) 78%,
-    color-mix(in srgb, #FDF3D8 30%, var(--snap-warm-light)) 100%
-  );
-  color: white;
+  background: #E7D4B3;
+  color: var(--ink);
 }
 .snap-panel--navy::after {
   /* soft gold atmosphere — matches wheat animation + cream panel below */
