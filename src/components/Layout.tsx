@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
 import { supabase } from "@/integrations/supabase/client";
+import { FALLBACK_SINGLE_RANGES, fetchSingleProductRanges, type RangeLink } from "@/lib/productRanges";
 
 export function Nav() {
   const [open, setOpen] = useState(false);
@@ -33,10 +34,7 @@ export function Nav() {
   );
 }
 
-const PRODUCT_LINKS = [
-  "Glucose Energy", "Just Ginger", "Luv-A-Lot", "Trio", "All-Star",
-  "Joker", "Marie", "Supa Dupa", "Cream Biscuits",
-];
+const PRODUCT_LINKS = FALLBACK_SINGLE_RANGES;
 
 const DEFAULT_FOOTER_TAGLINE = "Delight in every Bite. Baked in Lenasia since 1998.";
 const LEGACY_FOOTER_TAGLINE = /Lekker biscuits for every SA family|Delivering local lekkerness/i;
@@ -48,6 +46,12 @@ function resolveFooterTagline(value?: string) {
 
 export function Footer() {
   const [cfg, setCfg] = useState<Record<string, string>>({});
+  const [ranges, setRanges] = useState<RangeLink[]>(PRODUCT_LINKS);
+
+  useEffect(() => {
+    fetchSingleProductRanges().then(setRanges);
+  }, []);
+
   useEffect(() => {
     supabase.from("site_settings").select("key, value").then(({ data }) => {
       if (!data) return;
@@ -75,8 +79,10 @@ export function Footer() {
         </div>
         <div className="footer-col">
           <div className="footer-col-head">Products</div>
-          {PRODUCT_LINKS.map((p) => (
-            <Link key={p} to="/products">{p}</Link>
+          {ranges.map((r) => (
+            <Link key={r.slug} to="/products/single" search={{ range: r.slug }}>
+              {r.name}
+            </Link>
           ))}
         </div>
         <div className="footer-col">

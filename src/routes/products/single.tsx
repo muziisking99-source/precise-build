@@ -18,6 +18,9 @@ const RANGE_MASCOT_FALLBACK: Record<string, ComponentType<{ size?: number }>> = 
 };
 
 export const Route = createFileRoute("/products/single")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    range: typeof search.range === "string" ? search.range : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Single Biscuits — Golden Fresh" },
@@ -56,9 +59,14 @@ function RangeMascot({
 }
 
 function SingleProducts() {
+  const { range: rangeFromUrl } = Route.useSearch();
   const [filter, setFilter] = useState("all");
   const [ranges, setRanges] = useState<DbRange[] | null>(null);
   const [characters, setCharacters] = useState<RangeCharacter[]>([]);
+
+  useEffect(() => {
+    if (rangeFromUrl) setFilter(rangeFromUrl);
+  }, [rangeFromUrl]);
 
   useEffect(() => {
     supabase
