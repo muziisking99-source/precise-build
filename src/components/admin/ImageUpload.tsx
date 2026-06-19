@@ -1,9 +1,11 @@
 "use client";
 import { useRef, useState } from "react";
-import { Upload, Wand2, X } from "lucide-react";
+import { Upload, Wand2, ZoomIn, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { shouldStripBackground, stripEdgeBlackBackground } from "@/lib/stripEdgeBlackBackground";
+import { enlargeImage } from "@/lib/enlargeImage";
+import { DEFAULT_PACK_ENLARGE_SCALE } from "@/lib/productPackImage";
 
 type Props = {
   bucket: "product-images" | "character-images" | "hero-images";
@@ -100,6 +102,34 @@ export function ImageUpload({ bucket, value, onChange, prefix = "img" }: Props) 
     }
   };
 
+  const enlargePackImage = async () => {
+    if (!value || !canStrip) return;
+    const oldName = storageObjectName(value, bucket);
+    if (!oldName) {
+      toast.error("Could not read stored image path");
+      return;
+    }
+    setUploading(true);
+    try {
+      const { data, error } = await supabase.storage.from(bucket).download(oldName);
+      if (error || !data) throw error ?? new Error("Download failed");
+      const file = new File([data], oldName, { type: data.type || "image/png" });
+      const processed = await enlargeImage(file);
+      if (processed === file) {
+        toast.message("Image unchanged");
+        return;
+      }
+      toast.message(`Enlarged ${Math.round((DEFAULT_PACK_ENLARGE_SCALE - 1) * 100)}% — re-uploading…`);
+      const localUrl = URL.createObjectURL(processed);
+      setPreview(localUrl);
+      await uploadBlob(processed, value);
+    } catch (e: any) {
+      toast.error(e.message ?? "Could not enlarge image");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const shown = preview || value;
   const uploadHint =
     bucket === "character-images"
@@ -133,6 +163,11 @@ export function ImageUpload({ bucket, value, onChange, prefix = "img" }: Props) 
           {canStrip && value && (
             <button type="button" className="admin-btn-ghost" onClick={fixBackground} disabled={uploading}>
               <Wand2 size={14} /> Fix background
+            </button>
+          )}
+          {canStrip && value && (
+            <button type="button" className="admin-btn-ghost" onClick={enlargePackImage} disabled={uploading}>
+              <ZoomIn size={14} /> Enlarge {Math.round((DEFAULT_PACK_ENLARGE_SCALE - 1) * 100)}%
             </button>
           )}
           <button type="button" className="admin-btn-ghost danger" onClick={() => { setPreview(null); onChange(null); }}>

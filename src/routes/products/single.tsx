@@ -1,11 +1,21 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ComponentType, type CSSProperties } from "react";
 import { SectionTag, GoldBand } from "../../components/Layout";
 import { PageHero } from "../../components/PageHero";
 import { Reveal } from "../../components/Effects";
 import { productTopStyle } from "../../lib/uiTint";
 import { SINGLE_RANGES } from "../../data/products";
 import { supabase } from "@/integrations/supabase/client";
+import { productPackImageScale } from "@/lib/productPackImage";
+import { characterForRange, type RangeCharacter } from "@/lib/rangeCharacter";
+import { ProductImageLightbox } from "../../components/ProductImageLightbox";
+import { SupaDupa } from "../../components/Characters";
+
+const RANGE_MASCOT_FALLBACK: Record<string, ComponentType<{ size?: number }>> = {
+  glucose: SupaDupa,
+  supadupa: SupaDupa,
+  trio: SupaDupa,
+};
 
 export const Route = createFileRoute("/products/single")({
   head: () => ({
@@ -20,9 +30,46 @@ export const Route = createFileRoute("/products/single")({
 type DbProduct = { id: string; name: string; description: string | null; image_url: string | null; pill_text: string | null; is_visible: boolean; sort_order: number };
 type DbRange = { id: string; slug: string; name: string; description: string | null; sort_order: number; products: DbProduct[] };
 
+function RangeMascot({
+  slug,
+  mascot,
+}: {
+  slug: string;
+  name: string;
+  mascot?: RangeCharacter | null;
+}) {
+  const Mascot = mascot?.Comp ?? RANGE_MASCOT_FALLBACK[slug];
+
+  if (!mascot?.image_url && !Mascot) return null;
+
+  return (
+    <div className="range-mascot">
+      <div className="range-mascot-stage">
+        {mascot?.image_url ? (
+          <img src={mascot.image_url} alt={mascot.name} className="range-mascot-img" />
+        ) : Mascot ? (
+          <Mascot size={120} />
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 function SingleProducts() {
   const [filter, setFilter] = useState("all");
   const [ranges, setRanges] = useState<DbRange[] | null>(null);
+  const [characters, setCharacters] = useState<RangeCharacter[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("characters")
+      .select("name, range, image_url")
+      .eq("is_visible", true)
+      .order("sort_order")
+      .then(({ data }) => {
+        if (data?.length) setCharacters(data as RangeCharacter[]);
+      });
+  }, []);
 
   useEffect(() => {
     supabase
@@ -85,7 +132,9 @@ function SingleProducts() {
         ))}
       </div>
 
-      {visible.map((r) => (
+      {visible.map((r) => {
+        const packScale = productPackImageScale(r.key);
+        return (
         <section key={r.key} className="range-section">
           <Reveal className="range-head">
             <div className="range-head-text">
@@ -93,17 +142,27 @@ function SingleProducts() {
               <h2>{r.name}</h2>
               <p>{r.desc}</p>
             </div>
-            {r.Mascot && (() => {
-              const Mascot = r.Mascot;
-              return <div className="range-mascot"><Mascot size={140} /></div>;
-            })()}
+            <RangeMascot
+              slug={r.key}
+              name={r.name}
+              mascot={characterForRange(r.key, r.name, characters)}
+            />
           </Reveal>
           <div className="grid-3">
             {r.products.map((p) => (
               <Reveal key={p.name} className="prod-card">
-                <div className={`prod-top prod-mascot${p.image_url ? " prod-top--pack" : ""}`} style={p.image_url ? undefined : productTopStyle(p.color)}>
+                <div
+                  className={`prod-top prod-mascot${p.image_url ? " prod-top--pack" : ""}${packScale > 1 ? " prod-top--pack-zoom" : ""}`}
+                  style={
+                    p.image_url
+                      ? packScale > 1
+                        ? ({ "--pack-scale": packScale } as CSSProperties)
+                        : undefined
+                      : productTopStyle(p.color)
+                  }
+                >
                   {p.image_url ? (
-                    <img src={p.image_url} alt={p.name} className="product-pack-img" />
+                    <ProductImageLightbox src={p.image_url} alt={p.name} />
                   ) : r.Mascot ? (() => {
                     const Mascot = r.Mascot!;
                     return <Mascot size={90} />;
@@ -114,7 +173,6 @@ function SingleProducts() {
                   )}
                 </div>
                 <div className="prod-body">
-                  <div className="prod-pill">{p.pill ?? r.name}</div>
                   <div className="prod-name">{p.name}</div>
                   <p className="prod-desc">{p.desc}</p>
                   <a className="prod-link" href="#">Find It →</a>
@@ -123,7 +181,8 @@ function SingleProducts() {
             ))}
           </div>
         </section>
-      ))}
+        );
+      })}
 
       <GoldBand title="Collect the Gang" body="Nine ranges. Five characters. One proudly South African brand." cta="Shop All Products" />
     </>

@@ -28,6 +28,10 @@ const FALLBACK_SITE = {
 
 const FALLBACK_RIBBON = ["Glucose Energy", "Just Ginger", "Luv-A-Lot", "Trio", "All-Star", "Joker", "Marie", "Supa Dupa", "Cream Biscuits", "Proudly South African"];
 
+const FEATURED_RANGE_DISPLAY: Record<string, string> = {
+  glucose: "Energy Glucose",
+};
+
 const MASCOT_BY_SLUG: Record<string, { Comp: React.ComponentType<{ size?: number }>; color: string }> = {
   glucose: { Comp: SupaDupa, color: "#FFF200" },
   supadupa: { Comp: SupaDupa, color: "#FFF200" },
@@ -120,14 +124,13 @@ function Index() {
             <Link to="/products" className="range-featured-link">
               <div className="range-featured-media">
                 {featured.image_url ? (
-                  <img src={featured.image_url} alt={featured.name} />
+                  <img src={featured.image_url} alt={FEATURED_RANGE_DISPLAY[featured.slug] ?? featured.name} />
                 ) : (
                   <div className="range-featured-fallback" aria-hidden />
                 )}
               </div>
               <div className="range-featured-content">
-                <span className="range-num">01 — Featured Range</span>
-                <h3>{featured.name}</h3>
+                <h3>{FEATURED_RANGE_DISPLAY[featured.slug] ?? featured.name}</h3>
                 <p>{featured.description ?? "Discover the range that started a South African biscuit tradition."}</p>
                 <span className="range-featured-cta">Explore Range →</span>
               </div>

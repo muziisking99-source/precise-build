@@ -6,6 +6,7 @@ import { Reveal } from "../../components/Effects";
 import { productTopStyle } from "../../lib/uiTint";
 import { BULK_PRODUCTS } from "../../data/products";
 import { supabase } from "@/integrations/supabase/client";
+import { ProductImageLightbox } from "../../components/ProductImageLightbox";
 
 export const Route = createFileRoute("/products/bulk")({
   head: () => ({
@@ -61,7 +62,7 @@ function BulkProducts() {
               <Reveal key={`${p.name}-${idx}`} className="bulk-card">
                 <div className={`bulk-card-img${p.image_url ? " bulk-card-img--pack" : ""}`} style={p.image_url ? undefined : productTopStyle(p.color)}>
                   {p.image_url ? (
-                    <img src={p.image_url} alt={p.name} className="product-pack-img" />
+                    <ProductImageLightbox src={p.image_url} alt={p.name} />
                   ) : fb?.Mascot ? (() => {
                     const Mascot = fb.Mascot;
                     return <Mascot size={90} />;
