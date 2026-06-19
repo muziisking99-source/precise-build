@@ -1619,7 +1619,7 @@ html { scroll-snap-type: y proximity; }
   color: var(--ink);
 }
 .snap-panel--navy::after {
-  /* soft gold atmosphere — matches wheat animation + cream panel below */
+  /* soft gold atmosphere — matches biscuit animation + cream panel below */
   content: '';
   position: absolute; inset: 0;
   background:
@@ -2204,6 +2204,7 @@ body.category-transition-lock {
 
 /* === Hero animated backgrounds === */
 .hero-orbs,
+.hero-biscuit-field,
 .hero-wheat-field,
 .hero-crumbs,
 .hero2-glow {
@@ -2288,6 +2289,29 @@ body.category-transition-lock {
   100% { transform: translate(0,0); }
 }
 
+.hero-biscuit {
+  position: absolute;
+  bottom: -72px;
+  opacity: 0;
+  will-change: transform, opacity;
+  transform: translateZ(0) scale(var(--s, 1));
+  animation-name: biscuitRise;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  filter: drop-shadow(0 4px 10px rgba(90, 52, 10, 0.12));
+}
+.hero-biscuit svg { width: 100%; height: auto; display: block; }
+
+@keyframes biscuitRise {
+  0%   { transform: translate3d(0, var(--start-y, 0), 0) rotate(var(--rot, 0deg)) scale(var(--s, 1)); opacity: 0; }
+  8%   { opacity: 0.78; }
+  92%  { opacity: 0.52; }
+  100% {
+    transform: translate3d(var(--drift, 0), calc(var(--start-y, 0px) - 115vh), 0) rotate(var(--tumble, 0deg)) scale(var(--s, 1));
+    opacity: 0;
+  }
+}
+
 .hero-wheat-grain {
   position: absolute;
   bottom: -60px;
@@ -2355,9 +2379,12 @@ body.category-transition-lock {
 
 @media (prefers-reduced-motion: reduce) {
   .hero-orb,
+  .hero-biscuit,
   .hero-wheat-grain,
   .hero-crumb,
   .hero2-glow,
   .snap-panel--cream { animation: none !important; }
-  .hero-wheat-grain, .hero-crumb { opacity: 0 !important; }
+  .hero-biscuit,
+  .hero-wheat-grain,
+  .hero-crumb { opacity: 0 !important; }
 }

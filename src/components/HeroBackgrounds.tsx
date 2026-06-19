@@ -1,26 +1,45 @@
 import { useMemo } from "react";
 
-const WHEAT_SVG = (
-  <svg viewBox="0 0 24 48" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden>
-    <line x1="12" y1="48" x2="12" y2="4" stroke="#D4920A" strokeWidth="1.5" opacity="0.75" />
-    <ellipse cx="12" cy="8" rx="4" ry="7" fill="#E8B830" opacity="0.65" />
-    <ellipse cx="6" cy="16" rx="3.5" ry="6" fill="#D4920A" opacity="0.5" transform="rotate(-30 6 16)" />
-    <ellipse cx="18" cy="16" rx="3.5" ry="6" fill="#D4920A" opacity="0.5" transform="rotate(30 18 16)" />
-    <ellipse cx="5" cy="26" rx="3" ry="5.5" fill="#E8B830" opacity="0.4" transform="rotate(-25 5 26)" />
-    <ellipse cx="19" cy="26" rx="3" ry="5.5" fill="#E8B830" opacity="0.4" transform="rotate(25 19 26)" />
+const BISCUIT_ROUND = (
+  <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+    <circle cx="24" cy="26" r="19" fill="#B8844A" opacity="0.22" />
+    <circle cx="24" cy="24" r="18" fill="#E8C07A" stroke="#C59B6D" strokeWidth="1.5" />
+    <circle cx="24" cy="24" r="14" fill="none" stroke="#D4920A" strokeWidth="0.8" opacity="0.45" />
+    <circle cx="17" cy="19" r="1.4" fill="#A87008" opacity="0.35" />
+    <circle cx="24" cy="16" r="1.4" fill="#A87008" opacity="0.35" />
+    <circle cx="31" cy="19" r="1.4" fill="#A87008" opacity="0.35" />
+    <circle cx="19" cy="27" r="1.4" fill="#A87008" opacity="0.35" />
+    <circle cx="29" cy="27" r="1.4" fill="#A87008" opacity="0.35" />
+    <circle cx="24" cy="30" r="1.4" fill="#A87008" opacity="0.35" />
   </svg>
 );
 
-const WHEAT_SVG_ALT = (
-  <svg viewBox="0 0 24 48" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden style={{ transform: "scaleX(-1)" }}>
-    <line x1="12" y1="48" x2="12" y2="4" stroke="#E8B830" strokeWidth="1.5" opacity="0.7" />
-    <ellipse cx="12" cy="8" rx="4" ry="7" fill="#D4920A" opacity="0.6" />
-    <ellipse cx="7" cy="18" rx="3.5" ry="6" fill="#C88400" opacity="0.45" transform="rotate(-25 7 18)" />
-    <ellipse cx="17" cy="18" rx="3.5" ry="6" fill="#C88400" opacity="0.45" transform="rotate(25 17 18)" />
-    <ellipse cx="6" cy="28" rx="3" ry="5" fill="#E8B830" opacity="0.38" transform="rotate(-20 6 28)" />
-    <ellipse cx="18" cy="28" rx="3" ry="5" fill="#D4920A" opacity="0.38" transform="rotate(20 18 28)" />
+const BISCUIT_GLOUCOSE = (
+  <svg viewBox="0 0 56 36" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+    <rect x="4" y="8" width="48" height="24" rx="5" fill="#B8844A" opacity="0.2" />
+    <rect x="4" y="6" width="48" height="24" rx="5" fill="#F0D49A" stroke="#C59B6D" strokeWidth="1.5" />
+    <rect x="8" y="10" width="40" height="16" rx="3" fill="none" stroke="#D4920A" strokeWidth="0.8" opacity="0.4" />
+    <circle cx="18" cy="18" r="2" fill="#D4920A" opacity="0.55" />
+    <circle cx="28" cy="18" r="2" fill="#D4920A" opacity="0.55" />
+    <circle cx="38" cy="18" r="2" fill="#D4920A" opacity="0.55" />
+    <circle cx="23" cy="14" r="1.5" fill="#D4920A" opacity="0.4" />
+    <circle cx="33" cy="14" r="1.5" fill="#D4920A" opacity="0.4" />
+    <circle cx="23" cy="22" r="1.5" fill="#D4920A" opacity="0.4" />
+    <circle cx="33" cy="22" r="1.5" fill="#D4920A" opacity="0.4" />
   </svg>
 );
+
+const BISCUIT_MARIE = (
+  <svg viewBox="0 0 40 48" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+    <rect x="5" y="7" width="30" height="36" rx="4" fill="#B8844A" opacity="0.2" />
+    <rect x="5" y="5" width="30" height="36" rx="4" fill="#F5E6C8" stroke="#C59B6D" strokeWidth="1.5" />
+    <rect x="9" y="9" width="22" height="28" rx="2" fill="none" stroke="#D4920A" strokeWidth="0.8" opacity="0.38" />
+    <path d="M9 14 H31 M9 20 H31 M9 26 H31 M9 32 H31" stroke="#D4920A" strokeWidth="0.6" opacity="0.28" />
+    <path d="M14 9 V37 M20 9 V37 M26 9 V37" stroke="#D4920A" strokeWidth="0.6" opacity="0.28" />
+  </svg>
+);
+
+const BISCUIT_VARIANTS = [BISCUIT_ROUND, BISCUIT_GLOUCOSE, BISCUIT_MARIE] as const;
 
 function rand(min: number, max: number) {
   return min + Math.random() * (max - min);
@@ -28,18 +47,21 @@ function rand(min: number, max: number) {
 
 export function HeroNavyBackground() {
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-  const count = isMobile ? 10 : 26;
+  const count = isMobile ? 22 : 48;
 
-  const grains = useMemo(
+  const biscuits = useMemo(
     () =>
       Array.from({ length: count }, (_, i) => ({
-        left: `${rand(-5, 105)}%`,
-        delay: `${rand(0, 14)}s`,
-        duration: `${rand(10, 20)}s`,
-        scale: rand(0.7, 1.8),
-        drift: `${rand(-80, 80)}px`,
-        rot: `${rand(-25, 25)}deg`,
-        variant: i % 2,
+        left: `${rand(-8, 108)}%`,
+        delay: `${rand(0, 9)}s`,
+        duration: `${rand(9, 18)}s`,
+        scale: rand(0.65, 2.1),
+        drift: `${rand(-110, 110)}px`,
+        rot: `${rand(-40, 40)}deg`,
+        tumble: `${rand(-160, 160)}deg`,
+        startY: `${rand(0, -68)}vh`,
+        variant: i % BISCUIT_VARIANTS.length,
+        width: i % 3 === 1 ? rand(40, 54) : i % 3 === 2 ? rand(28, 38) : rand(34, 48),
       })),
     [count]
   );
@@ -56,21 +78,24 @@ export function HeroNavyBackground() {
         <div className="hero-orb hero-orb--extra" />
         <div className="hero-orb hero-orb--extra" />
       </div>
-      <div className="hero-wheat-field" aria-hidden>
-        {grains.map((g, i) => (
+      <div className="hero-biscuit-field" aria-hidden>
+        {biscuits.map((b, i) => (
           <div
             key={i}
-            className="hero-wheat-grain"
+            className="hero-biscuit"
             style={{
-              left: g.left,
-              animationDelay: g.delay,
-              animationDuration: g.duration,
-              ["--drift" as string]: g.drift,
-              ["--rot" as string]: g.rot,
-              ["--s" as string]: g.scale,
+              left: b.left,
+              width: b.width,
+              animationDelay: b.delay,
+              animationDuration: b.duration,
+              ["--drift" as string]: b.drift,
+              ["--rot" as string]: b.rot,
+              ["--tumble" as string]: b.tumble,
+              ["--start-y" as string]: b.startY,
+              ["--s" as string]: b.scale,
             }}
           >
-            {g.variant === 0 ? WHEAT_SVG : WHEAT_SVG_ALT}
+            {BISCUIT_VARIANTS[b.variant]}
           </div>
         ))}
       </div>

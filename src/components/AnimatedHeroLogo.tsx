@@ -21,7 +21,7 @@ const elementsVariants = {
   visible: { opacity: 1, x: 0, scale: 1 },
 };
 
-export function AnimatedHeroLogo({ height = 364, className = "" }: AnimatedHeroLogoProps) {
+export function AnimatedHeroLogo({ height = 437, className = "" }: AnimatedHeroLogoProps) {
   const reduced = prefersReducedMotion();
   const [play, setPlay] = useState(reduced);
   const aspect = 1920 / 1610;

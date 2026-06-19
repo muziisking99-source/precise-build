@@ -192,7 +192,7 @@ export function SnapHero() {
           innerClassName="snap-inner--split"
           aside={
             <div className="snap-logo-desktop">
-              <AnimatedHeroLogo height={364} />
+              <AnimatedHeroLogo height={437} />
             </div>
           }
         >
@@ -209,7 +209,7 @@ export function SnapHero() {
             )}
             <BrandHeading p={panel1} />
             <div className="snap-logo-mobile">
-              <AnimatedHeroLogo height={182} />
+              <AnimatedHeroLogo height={218} />
             </div>
             {panel1.subtext && <p className="snap-sub">{panel1.subtext}</p>}
             {panel1.cta_2_text && (
