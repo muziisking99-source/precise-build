@@ -1563,6 +1563,11 @@ html { scroll-snap-type: y proximity; }
   align-items: center;
   gap: clamp(32px, 5vw, 64px);
 }
+.snap-copy-motion {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 3vh, 36px);
+}
 .snap-copy {
   display: flex;
   flex-direction: column;
@@ -1579,6 +1584,26 @@ html { scroll-snap-type: y proximity; }
   max-width: 100%;
   height: auto;
   filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.25));
+}
+
+.animated-hero-logo {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.25));
+  will-change: transform;
+}
+.animated-hero-logo__layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform, opacity;
 }
 @media (max-width: 1024px) {
   .snap-inner--split {

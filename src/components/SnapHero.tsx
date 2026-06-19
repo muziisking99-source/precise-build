@@ -1,8 +1,10 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { HeroNavyBackground, HeroCreamBackground } from "./HeroBackgrounds";
-import { Logo } from "./Logo";
+import { AnimatedHeroLogo } from "./AnimatedHeroLogo";
 import { prefersReducedMotion, spring } from "./motion/transitions";
 import { supabase } from "@/integrations/supabase/client";
 import { DEFAULT_HERO_PANELS, panelByNumber, resolveHeroPanelsFromDb, type HeroPanelRow } from "@/data/heroDefaults";
@@ -20,6 +22,7 @@ function Panel({
   registerRef,
   background,
   children,
+  aside,
   innerClassName = "",
   hint = true,
 }: {
@@ -28,11 +31,38 @@ function Panel({
   registerRef: (i: number, el: HTMLElement | null) => void;
   background: React.ReactNode;
   children: React.ReactNode;
+  aside?: React.ReactNode;
   innerClassName?: string;
   hint?: boolean;
 }) {
   const reduced = prefersReducedMotion();
   const isFirstPanel = index === 0;
+  const [play, setPlay] = useState(reduced);
+
+  useEffect(() => {
+    if (reduced) return;
+    const id = requestAnimationFrame(() => setPlay(true));
+    return () => cancelAnimationFrame(id);
+  }, [reduced]);
+
+  const motionProps = isFirstPanel
+    ? { animate: play ? "visible" : "hidden" }
+    : {
+        whileInView: "visible" as const,
+        viewport: { once: true, amount: 0.2 },
+      };
+
+  const inner = (
+    <motion.div
+      className={aside ? "snap-copy-motion" : `snap-inner ${innerClassName}`.trim()}
+      variants={contentEnter}
+      initial={reduced ? "visible" : "hidden"}
+      {...motionProps}
+      transition={{ ...spring, delay: isFirstPanel ? 0.08 : 0 }}
+    >
+      {children}
+    </motion.div>
+  );
 
   return (
     <section
@@ -43,20 +73,14 @@ function Panel({
       <div className="snap-panel-bg" aria-hidden>
         {background}
       </div>
-      <motion.div
-        className={`snap-inner ${innerClassName}`.trim()}
-        variants={contentEnter}
-        initial={reduced ? "visible" : "hidden"}
-        {...(isFirstPanel
-          ? { animate: "visible" }
-          : {
-              whileInView: "visible",
-              viewport: { once: true, amount: 0.2 },
-            })}
-        transition={{ ...spring, delay: isFirstPanel ? 0.08 : 0 }}
-      >
-        {children}
-      </motion.div>
+      {aside ? (
+        <div className={`snap-inner ${innerClassName}`.trim()}>
+          {inner}
+          {aside}
+        </div>
+      ) : (
+        inner
+      )}
       {hint && <div className="snap-scroll-hint">Scroll</div>}
     </section>
   );
@@ -176,6 +200,11 @@ export function SnapHero() {
           registerRef={register}
           background={<HeroNavyBackground />}
           innerClassName="snap-inner--split"
+          aside={
+            <div className="snap-logo-desktop">
+              <AnimatedHeroLogo height={364} />
+            </div>
+          }
         >
           <div className="snap-copy">
             {panel1.badge_text && (
@@ -186,7 +215,7 @@ export function SnapHero() {
             )}
             <BrandHeading p={panel1} />
             <div className="snap-logo-mobile">
-              <Logo height={182} className="snap-logo-img" />
+              <AnimatedHeroLogo height={182} />
             </div>
             {panel1.subtext && <p className="snap-sub">{panel1.subtext}</p>}
             {panel1.cta_2_text && (
@@ -194,9 +223,6 @@ export function SnapHero() {
                 <Link to="/about" className="snap-cta-ghost">{panel1.cta_2_text}</Link>
               </div>
             )}
-          </div>
-          <div className="snap-logo-desktop">
-            <Logo height={364} className="snap-logo-img" />
           </div>
         </Panel>
       )}
