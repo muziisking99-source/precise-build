@@ -38,6 +38,14 @@ const PRODUCT_LINKS = [
   "Joker", "Marie", "Supa Dupa", "Cream Biscuits",
 ];
 
+const DEFAULT_FOOTER_TAGLINE = "Delight in every Bite. Baked in Lenasia since 1998.";
+const LEGACY_FOOTER_TAGLINE = /Lekker biscuits for every SA family|Delivering local lekkerness/i;
+
+function resolveFooterTagline(value?: string) {
+  if (!value || LEGACY_FOOTER_TAGLINE.test(value)) return DEFAULT_FOOTER_TAGLINE;
+  return value;
+}
+
 export function Footer() {
   const [cfg, setCfg] = useState<Record<string, string>>({});
   useEffect(() => {
@@ -49,6 +57,8 @@ export function Footer() {
     });
   }, []);
 
+  const footerTagline = resolveFooterTagline(cfg.footer_tagline);
+
   return (
     <footer className="footer">
       <div className="footer-grid">
@@ -56,7 +66,7 @@ export function Footer() {
           <div className="footer-brand footer-logo">
             <Logo height={36} />
           </div>
-          <p className="footer-tag">{cfg.footer_tagline ?? "Delivering local lekkerness since 1998. Proudly South African."}</p>
+          <p className="footer-tag">{footerTagline}</p>
           <div className="footer-social">
             <a href={cfg.facebook_url || "#"}>Facebook</a>
             <a href={cfg.instagram_url || "#"}>Instagram</a>

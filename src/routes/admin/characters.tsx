@@ -70,6 +70,9 @@ function CharactersAdmin() {
 
   return (
     <AdminShell title="Characters">
+      <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 13, margin: "0 0 20px", maxWidth: 720 }}>
+        Upload PNG mascots with transparent backgrounds. Images are not auto-processed — avoid black studio backgrounds in the file.
+      </p>
       <div className="admin-section-head">
         <h2>Biscuit Gang</h2>
         <button className="admin-btn-red" onClick={openNew}>+ Add Character</button>

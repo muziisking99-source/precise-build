@@ -725,6 +725,12 @@
   letter-spacing: .08em;
   margin-top: 4px;
 }
+.heritage-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
 .heritage-badge {
   display: inline-flex;
   flex-direction: column;
@@ -741,8 +747,13 @@
   font-size: 48px;
   line-height: 1;
 }
-.heritage-logo-wrap { max-width: 320px; }
-.heritage-logo-wrap img { width: 100%; height: auto; }
+.heritage-logo-wrap {
+  max-width: 320px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.heritage-logo-wrap img { width: auto; max-width: 100%; height: auto; }
 .heritage-badge-text {
   font-size: 12px;
   font-weight: 600;
@@ -1469,17 +1480,6 @@ html { scroll-snap-type: y proximity; }
 .snap-h1 .red  { color: var(--red-lt); }
 .snap-h1 .white { color: white; }
 
-.snap-tagline {
-  font-family: var(--font-display);
-  font-size: clamp(24px, 3.8vw, 40px);
-  font-style: italic;
-  font-weight: 400;
-  color: var(--red-lt);
-  letter-spacing: 0.01em;
-  margin: clamp(8px, 1.5vh, 16px) 0 0;
-  line-height: 1.15;
-}
-
 .snap-sub {
   font: 400 17px/1.7 var(--font-body);
   color: rgba(255, 255, 255, 0.78);
@@ -1836,12 +1836,6 @@ html { scroll-snap-type: y proximity; }
   padding: 20px 22px 22px;
   background: white;
   border-top: 1px solid rgba(0,0,0,0.06);
-}
-.range-card-count {
-  font-size: 11px; font-weight: 800;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  color: #D4920A;
-  margin-bottom: 10px; display: block;
 }
 .range-card-name {
   font-family: var(--font-display);

@@ -19,6 +19,13 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+const FALLBACK_SITE = {
+  heritage_ranges: "11",
+  heritage_families: "5M+",
+  home_ranges_subtitle: "11 ranges, baked in Lenasia and loved across all nine provinces.",
+  gold_band_body: "11 ranges. Every flavour. Every South African table.",
+};
+
 const FALLBACK_RIBBON = ["Glucose Energy", "Just Ginger", "Luv-A-Lot", "Trio", "All-Star", "Joker", "Marie", "Supa Dupa", "Cream Biscuits", "Proudly South African"];
 
 const MASCOT_BY_SLUG: Record<string, { Comp: React.ComponentType<{ size?: number }>; color: string }> = {
@@ -39,7 +46,7 @@ const FALLBACK_TESTIMONIALS = [
   { quote: "My oupa ate Just Ginger. My kids eat Just Ginger. That's South African heritage.", name: "Liesel V.", location: "Stellenbosch, WC" },
 ];
 
-type RangeRow = { id: string; slug: string; name: string; description: string | null; sort_order: number; product_count?: number; image_url?: string | null };
+type RangeRow = { id: string; slug: string; name: string; description: string | null; sort_order: number; image_url?: string | null };
 type CharacterRow = { id: string; name: string; range: string | null; description: string | null; pill_text: string | null; image_url: string | null };
 type TestimonialRow = { id: string; quote: string; name: string; location: string | null };
 
@@ -48,6 +55,7 @@ function Index() {
   const [characters, setCharacters] = useState<CharacterRow[]>([]);
   const [testimonials, setTestimonials] = useState<TestimonialRow[]>([]);
   const [ribbon, setRibbon] = useState<string[]>(FALLBACK_RIBBON);
+  const [siteCopy, setSiteCopy] = useState(FALLBACK_SITE);
 
   useEffect(() => {
     (async () => {
@@ -59,7 +67,7 @@ function Index() {
         const mapped: RangeRow[] = (data as any[]).map((r) => {
           const products = (r.products ?? []) as { image_url: string | null }[];
           const firstImg = products.find((p) => p.image_url)?.image_url ?? null;
-          return { id: r.id, slug: r.slug, name: r.name, description: r.description, sort_order: r.sort_order, product_count: products.length, image_url: firstImg };
+          return { id: r.id, slug: r.slug, name: r.name, description: r.description, sort_order: r.sort_order, image_url: firstImg };
         });
         setRanges(mapped);
       }
@@ -68,10 +76,18 @@ function Index() {
       .then(({ data }) => { if (data && data.length) setCharacters(data as CharacterRow[]); });
     supabase.from("testimonials").select("id, quote, name, location").eq("is_visible", true).order("sort_order").limit(6)
       .then(({ data }) => { if (data && data.length) setTestimonials(data as TestimonialRow[]); });
-    supabase.from("site_settings").select("key, value").eq("key", "ribbon_items")
+    supabase.from("site_settings").select("key, value").in("key", ["ribbon_items", ...Object.keys(FALLBACK_SITE)])
       .then(({ data }) => {
-        const v = data?.[0]?.value;
-        if (v) setRibbon(v.split(/\s*·\s*|\s*\|\s*|,\s*/).filter(Boolean));
+        if (!data?.length) return;
+        const copy = { ...FALLBACK_SITE };
+        data.forEach((row) => {
+          if (row.key === "ribbon_items" && row.value) {
+            setRibbon(row.value.split(/\s*·\s*|\s*\|\s*|,\s*/).filter(Boolean));
+          } else if (row.key in copy && row.value) {
+            copy[row.key as keyof typeof copy] = row.value;
+          }
+        });
+        setSiteCopy(copy);
       });
   }, []);
 
@@ -96,7 +112,7 @@ function Index() {
           <SectionHead
             eyebrow="Our Ranges"
             title={<>A Biscuit for Every <span className="accent">Moment</span></>}
-            subtitle="Nine ranges, baked in Lenasia and loved across all nine provinces."
+            subtitle={siteCopy.home_ranges_subtitle}
           />
         </Reveal>
         {featured && (
@@ -121,9 +137,8 @@ function Index() {
 
         {restRanges.length > 0 && (
           <div className="ranges-grid">
-            {restRanges.map((r, i) => {
+            {restRanges.map((r) => {
               const colour = MASCOT_BY_SLUG[r.slug]?.color ?? "#D4920A";
-              const count = r.product_count ?? 0;
               return (
                 <Reveal key={r.id} className="range-card" style={{ ["--range-colour" as any]: colour }}>
                   <Link to="/products" className="range-card-link">
@@ -131,7 +146,6 @@ function Index() {
                       {r.image_url ? <img src={r.image_url} alt={r.name} /> : <span className="range-card-fallback" aria-hidden />}
                     </div>
                     <div className="range-card-body">
-                      <span className="range-card-count">{String(i + 2).padStart(2, "0")} · {count} {count === 1 ? "product" : "products"}</span>
                       <div className="range-card-name">{r.name}</div>
                       <span className="range-card-arrow">Explore →</span>
                     </div>
@@ -180,7 +194,7 @@ function Index() {
 
       <Section variant="cream">
         <div className="heritage-grid">
-          <Reveal>
+          <Reveal className="heritage-visual">
             <div className="heritage-logo-wrap">
               <Logo height={220} />
             </div>
@@ -197,15 +211,15 @@ function Index() {
             </p>
             <div className="heritage-stats">
               <div className="heritage-stat"><div className="heritage-stat-num">25+</div><div className="heritage-stat-label">Years Baking</div></div>
-              <div className="heritage-stat"><div className="heritage-stat-num">11</div><div className="heritage-stat-label">Ranges</div></div>
+              <div className="heritage-stat"><div className="heritage-stat-num">{siteCopy.heritage_ranges}</div><div className="heritage-stat-label">Ranges</div></div>
               <div className="heritage-stat"><div className="heritage-stat-num">9</div><div className="heritage-stat-label">Provinces</div></div>
-              <div className="heritage-stat"><div className="heritage-stat-num">5M+</div><div className="heritage-stat-label">Happy Families</div></div>
+              <div className="heritage-stat"><div className="heritage-stat-num">{siteCopy.heritage_families}</div><div className="heritage-stat-label">Happy Families</div></div>
             </div>
           </Reveal>
         </div>
       </Section>
 
-      <GoldBand title="Find Your Favourite Biscuit!" body="Nine ranges. Every flavour. Every South African table." cta="Shop All Products" />
+      <GoldBand title="Find Your Favourite Biscuit!" body={siteCopy.gold_band_body} cta="Shop All Products" />
 
       <Section variant="white">
         <Reveal>

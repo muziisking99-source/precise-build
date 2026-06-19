@@ -181,6 +181,9 @@ function ProductsAdmin() {
 
   return (
     <AdminShell title="Products">
+      <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 13, margin: "0 0 20px", maxWidth: 720 }}>
+        Range cards on the home page use the first product image in each range. Upload pack shots with a white or transparent background.
+      </p>
       <div className="admin-products-layout">
         <div className="admin-range-list">
           <div className="admin-range-list-head">

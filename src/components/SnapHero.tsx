@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { HeroNavyBackground, HeroCreamBackground } from "./HeroBackgrounds";
 import { Logo } from "./Logo";
 import { prefersReducedMotion, spring } from "./motion/transitions";
+import { supabase } from "@/integrations/supabase/client";
+import { DEFAULT_HERO_PANELS, panelByNumber, resolveHeroPanelsFromDb, type HeroPanelRow } from "@/data/heroDefaults";
 
 type PanelKind = "navy" | "cream";
 
@@ -60,9 +62,71 @@ function Panel({
   );
 }
 
+function BrandHeading({ p }: { p: HeroPanelRow }) {
+  return (
+    <h1 className="snap-h1">
+      {p.heading_1 && (
+        <>
+          <span className="gold">{p.heading_1}</span>
+          <br />
+        </>
+      )}
+      {p.heading_2 && (
+        <>
+          <span className="white">{p.heading_2}</span>
+          <br />
+        </>
+      )}
+      {p.heading_3 && <span className="red">{p.heading_3}</span>}
+      {p.heading_4 && (
+        <>
+          <br />
+          <span className="white">{p.heading_4}</span>
+        </>
+      )}
+    </h1>
+  );
+}
+
+function ProductsHeading({ p }: { p: HeroPanelRow }) {
+  return (
+    <h1 className="snap-h1" style={{ color: "var(--ink)" }}>
+      {p.heading_1 && (
+        <>
+          {p.heading_1}
+          <br />
+        </>
+      )}
+      {p.heading_2 && <span style={{ color: "var(--red)" }}>{p.heading_2}</span>}
+      {p.heading_3 && (
+        <>
+          <br />
+          {p.heading_3}
+        </>
+      )}
+    </h1>
+  );
+}
+
 export function SnapHero() {
   const panelsRef = useRef<Array<HTMLElement | null>>([]);
   const [active, setActive] = useState(0);
+  const [heroPanels, setHeroPanels] = useState<HeroPanelRow[]>(DEFAULT_HERO_PANELS);
+
+  useEffect(() => {
+    supabase
+      .from("hero_panels")
+      .select("*")
+      .order("panel_number")
+      .then(({ data }) => {
+        if (!data?.length) return;
+        setHeroPanels(resolveHeroPanelsFromDb(data as HeroPanelRow[]));
+      });
+  }, []);
+
+  const panel1 = panelByNumber(heroPanels, 1);
+  const panel2 = panelByNumber(heroPanels, 2);
+  const showPanel2 = panel2.is_active !== false;
 
   const register = (i: number, el: HTMLElement | null) => {
     panelsRef.current[i] = el;
@@ -82,16 +146,18 @@ export function SnapHero() {
     );
     panelsRef.current.forEach((el) => el && io.observe(el));
     return () => io.disconnect();
-  }, []);
+  }, [showPanel2]);
 
   const goTo = (i: number) => {
     panelsRef.current[i]?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const navLabels = showPanel2 ? ["Home", "Products"] : ["Home"];
+
   return (
     <div className="snap-wrap">
       <nav className="dot-nav" aria-label="Section navigation">
-        {["Home", "Products"].map((label, i) => (
+        {navLabels.map((label, i) => (
           <button
             key={label}
             type="button"
@@ -103,64 +169,56 @@ export function SnapHero() {
         ))}
       </nav>
 
-      <Panel
-        kind="navy"
-        index={0}
-        registerRef={register}
-        background={<HeroNavyBackground />}
-        innerClassName="snap-inner--split"
-      >
-        <div className="snap-copy">
-          <div className="snap-badge" style={{ color: "var(--red)" }}>
-            <span className="snap-badge-dot" style={{ background: "var(--red)" }} />
-            Proudly South African · Est. 1998
+      {panel1.is_active !== false && (
+        <Panel
+          kind="navy"
+          index={0}
+          registerRef={register}
+          background={<HeroNavyBackground />}
+          innerClassName="snap-inner--split"
+        >
+          <div className="snap-copy">
+            {panel1.badge_text && (
+              <div className="snap-badge" style={{ color: "var(--red)" }}>
+                <span className="snap-badge-dot" style={{ background: "var(--red)" }} />
+                {panel1.badge_text}
+              </div>
+            )}
+            <BrandHeading p={panel1} />
+            <div className="snap-logo-mobile">
+              <Logo height={182} className="snap-logo-img" />
+            </div>
+            {panel1.subtext && <p className="snap-sub">{panel1.subtext}</p>}
+            {panel1.cta_2_text && (
+              <div className="snap-ctas">
+                <Link to="/about" className="snap-cta-ghost">{panel1.cta_2_text}</Link>
+              </div>
+            )}
           </div>
-          <h1 className="snap-h1">
-            <span className="white">Lekker</span>
-            <br />
-            <span className="gold">Biscuits</span>
-            <br />
-            <span className="white">For Every</span>
-            <br />
-            <span className="white">SA </span>
-            <span className="red">Family.</span>
-          </h1>
-          <p className="snap-tagline">Delight in every Bite</p>
-          <div className="snap-logo-mobile">
-            <Logo height={182} className="snap-logo-img" />
+          <div className="snap-logo-desktop">
+            <Logo height={364} className="snap-logo-img" />
           </div>
-          <p className="snap-sub">
-            From Lenasia to the nation — quality at honest prices, baked since 1998.
-          </p>
-          <div className="snap-ctas">
-            <Link to="/about" className="snap-cta-ghost">Our Story →</Link>
-          </div>
-        </div>
-        <div className="snap-logo-desktop">
-          <Logo height={364} className="snap-logo-img" />
-        </div>
-      </Panel>
+        </Panel>
+      )}
 
-      <Panel
-        kind="cream"
-        index={1}
-        registerRef={register}
-        background={<HeroCreamBackground />}
-        hint={false}
-      >
-        <div className="snap-badge" style={{ color: "var(--red)" }}>
-          <span className="snap-badge-dot" style={{ background: "var(--red)" }} />
-          11 Ranges · One Nation
-        </div>
-        <h1 className="snap-h1" style={{ color: "var(--ink)" }}>
-          11 Ranges.
-          <br />
-          <span style={{ color: "var(--red)" }}>One Nation.</span>
-        </h1>
-        <p className="snap-sub">
-          Glucose Energy, Just Ginger, Luv-A-Lot, All-Star, Joker and more — baked in Lenasia, loved in every province.
-        </p>
-      </Panel>
+      {showPanel2 && (
+        <Panel
+          kind="cream"
+          index={1}
+          registerRef={register}
+          background={<HeroCreamBackground />}
+          hint={false}
+        >
+          {panel2.badge_text && (
+            <div className="snap-badge" style={{ color: "var(--red)" }}>
+              <span className="snap-badge-dot" style={{ background: "var(--red)" }} />
+              {panel2.badge_text}
+            </div>
+          )}
+          <ProductsHeading p={panel2} />
+          {panel2.subtext && <p className="snap-sub">{panel2.subtext}</p>}
+        </Panel>
+      )}
     </div>
   );
 }
