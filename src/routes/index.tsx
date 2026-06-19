@@ -197,9 +197,9 @@ function Index() {
             </p>
             <div className="heritage-stats">
               <div className="heritage-stat"><div className="heritage-stat-num">25+</div><div className="heritage-stat-label">Years Baking</div></div>
-              <div className="heritage-stat"><div className="heritage-stat-num">9</div><div className="heritage-stat-label">Ranges</div></div>
+              <div className="heritage-stat"><div className="heritage-stat-num">11</div><div className="heritage-stat-label">Ranges</div></div>
               <div className="heritage-stat"><div className="heritage-stat-num">9</div><div className="heritage-stat-label">Provinces</div></div>
-              <div className="heritage-stat"><div className="heritage-stat-num">1M+</div><div className="heritage-stat-label">Happy Families</div></div>
+              <div className="heritage-stat"><div className="heritage-stat-num">5M+</div><div className="heritage-stat-label">Happy Families</div></div>
             </div>
           </Reveal>
         </div>

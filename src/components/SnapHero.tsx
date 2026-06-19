@@ -125,8 +125,9 @@ export function SnapHero() {
             <span className="white">SA </span>
             <span className="red">Family.</span>
           </h1>
+          <p className="snap-tagline">Delight in every Bite</p>
           <div className="snap-logo-mobile">
-            <Logo height={140} className="snap-logo-img" />
+            <Logo height={182} className="snap-logo-img" />
           </div>
           <p className="snap-sub">
             From Lenasia to the nation — quality at honest prices, baked since 1998.
@@ -136,7 +137,7 @@ export function SnapHero() {
           </div>
         </div>
         <div className="snap-logo-desktop">
-          <Logo height={280} className="snap-logo-img" />
+          <Logo height={364} className="snap-logo-img" />
         </div>
       </Panel>
 
@@ -149,10 +150,10 @@ export function SnapHero() {
       >
         <div className="snap-badge" style={{ color: "var(--red)" }}>
           <span className="snap-badge-dot" style={{ background: "var(--red)" }} />
-          Nine Ranges · One Nation
+          11 Ranges · One Nation
         </div>
         <h1 className="snap-h1" style={{ color: "var(--ink)" }}>
-          Nine Ranges.
+          11 Ranges.
           <br />
           <span style={{ color: "var(--red)" }}>One Nation.</span>
         </h1>

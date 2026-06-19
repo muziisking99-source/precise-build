@@ -1475,6 +1475,17 @@ html { scroll-snap-type: y proximity; }
 .snap-h1 .red  { color: var(--red-lt); }
 .snap-h1 .white { color: white; }
 
+.snap-tagline {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3.8vw, 40px);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--red-lt);
+  letter-spacing: 0.01em;
+  margin: clamp(8px, 1.5vh, 16px) 0 0;
+  line-height: 1.15;
+}
+
 .snap-sub {
   font: 400 17px/1.7 var(--font-body);
   color: rgba(255, 255, 255, 0.78);
