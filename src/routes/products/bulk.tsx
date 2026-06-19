@@ -1,14 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { PageHero } from "../../components/PageHero";
 import { Section } from "../../components/Section";
 import { Reveal } from "../../components/Effects";
 import { productTopStyle } from "../../lib/uiTint";
 import { BULK_PRODUCTS } from "../../data/products";
-import { supabase } from "@/integrations/supabase/client";
 import { ProductImageLightbox } from "../../components/ProductImageLightbox";
+import { ProductsLoading } from "../../components/ProductsLoading";
+import { bulkProductsQueryOptions } from "@/lib/queries/options";
 
 export const Route = createFileRoute("/products/bulk")({
+  loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(bulkProductsQueryOptions()),
   head: () => ({
     meta: [
       { title: "Bulk Biscuits — Golden Fresh" },
@@ -18,31 +20,14 @@ export const Route = createFileRoute("/products/bulk")({
   component: BulkProducts,
 });
 
-type DbProduct = { id: string; name: string; image_url: string | null; is_visible: boolean; sort_order: number };
-
 function BulkProducts() {
-  const [items, setItems] = useState<{ name: string; image_url: string | null; color: string }[] | null>(null);
+  const { data: items, isPending } = useQuery(bulkProductsQueryOptions());
 
-  useEffect(() => {
-    (async () => {
-      const { data: r } = await supabase.from("product_ranges").select("id").eq("slug", "bulk").maybeSingle();
-      if (!r) return;
-      const { data: ps } = await supabase
-        .from("products")
-        .select("id, name, image_url, is_visible, sort_order")
-        .eq("range_id", (r as { id: string }).id)
-        .eq("is_visible", true)
-        .order("sort_order");
-      if (ps && ps.length) {
-        setItems((ps as DbProduct[]).map((p, i) => {
-          const fb = BULK_PRODUCTS[i % BULK_PRODUCTS.length];
-          return { name: p.name, image_url: p.image_url, color: fb?.color ?? "#C59B6D" };
-        }));
-      }
-    })();
-  }, []);
-
-  const list = items ?? BULK_PRODUCTS.map((p) => ({ name: p.name, image_url: null as string | null, color: p.color }));
+  const list = !isPending && items && items.length
+    ? items
+    : !isPending
+      ? BULK_PRODUCTS.map((p) => ({ name: p.name, image_url: null as string | null, color: p.color }))
+      : [];
 
   return (
     <>
@@ -54,6 +39,9 @@ function BulkProducts() {
         <Link to="/products" className="products-back">← All categories</Link>
       </PageHero>
 
+      {isPending ? (
+        <ProductsLoading variant="bulk" />
+      ) : (
       <Section variant="cream" className="bulk-section">
         <div className="bulk-grid">
           {list.map((p, idx) => {
@@ -78,6 +66,7 @@ function BulkProducts() {
           })}
         </div>
       </Section>
+      )}
     </>
   );
 }

@@ -1,15 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState, type ComponentType, type CSSProperties } from "react";
 import { SectionTag } from "../../components/Layout";
 import { PageHero } from "../../components/PageHero";
 import { Reveal } from "../../components/Effects";
 import { productTopStyle } from "../../lib/uiTint";
 import { SINGLE_RANGES } from "../../data/products";
-import { supabase } from "@/integrations/supabase/client";
 import { productPackImageScale } from "@/lib/productPackImage";
 import { characterForRange, type RangeCharacter } from "@/lib/rangeCharacter";
 import { ProductImageLightbox } from "../../components/ProductImageLightbox";
+import { ProductsLoading } from "../../components/ProductsLoading";
 import { SupaDupa } from "../../components/Characters";
+import {
+  rangeCharactersQueryOptions,
+  singleCatalogQueryOptions,
+} from "@/lib/queries/options";
 
 const RANGE_MASCOT_FALLBACK: Record<string, ComponentType<{ size?: number }>> = {
   glucose: SupaDupa,
@@ -18,6 +23,12 @@ const RANGE_MASCOT_FALLBACK: Record<string, ComponentType<{ size?: number }>> = 
 };
 
 export const Route = createFileRoute("/products/single")({
+  loader: async ({ context: { queryClient } }) => {
+    await Promise.all([
+      queryClient.ensureQueryData(singleCatalogQueryOptions()),
+      queryClient.ensureQueryData(rangeCharactersQueryOptions()),
+    ]);
+  },
   validateSearch: (search: Record<string, unknown>) => ({
     range: typeof search.range === "string" ? search.range : undefined,
   }),
@@ -29,9 +40,6 @@ export const Route = createFileRoute("/products/single")({
   }),
   component: SingleProducts,
 });
-
-type DbProduct = { id: string; name: string; description: string | null; image_url: string | null; pill_text: string | null; is_visible: boolean; sort_order: number };
-type DbRange = { id: string; slug: string; name: string; description: string | null; sort_order: number; products: DbProduct[] };
 
 function RangeMascot({
   slug,
@@ -61,41 +69,14 @@ function RangeMascot({
 function SingleProducts() {
   const { range: rangeFromUrl } = Route.useSearch();
   const [filter, setFilter] = useState("all");
-  const [ranges, setRanges] = useState<DbRange[] | null>(null);
-  const [characters, setCharacters] = useState<RangeCharacter[]>([]);
+  const { data: ranges, isPending } = useQuery(singleCatalogQueryOptions());
+  const { data: characters = [] } = useQuery(rangeCharactersQueryOptions());
 
   useEffect(() => {
     if (rangeFromUrl) setFilter(rangeFromUrl);
   }, [rangeFromUrl]);
 
-  useEffect(() => {
-    supabase
-      .from("characters")
-      .select("name, range, image_url")
-      .eq("is_visible", true)
-      .order("sort_order")
-      .then(({ data }) => {
-        if (data?.length) setCharacters(data as RangeCharacter[]);
-      });
-  }, []);
-
-  useEffect(() => {
-    supabase
-      .from("product_ranges")
-      .select("id, slug, name, description, sort_order, products(*)")
-      .order("sort_order")
-      .then(({ data }) => {
-        if (!data) return;
-        const filtered = (data as DbRange[])
-          .filter((r) => r.slug !== "bulk")
-          .map((r) => ({ ...r, products: (r.products ?? []).filter((p) => p.is_visible).sort((a, b) => a.sort_order - b.sort_order) }))
-          .filter((r) => r.products.length > 0);
-        setRanges(filtered);
-      });
-  }, []);
-
-  // Build view model: prefer DB if present, otherwise fallback to hardcoded SINGLE_RANGES
-  const view = ranges && ranges.length
+  const view = !isPending && ranges && ranges.length
     ? ranges.map((r) => {
         const fb = SINGLE_RANGES.find((s) => s.key === r.slug || s.name === r.name);
         return {
@@ -113,11 +94,13 @@ function SingleProducts() {
           })),
         };
       })
-    : SINGLE_RANGES.map((r) => ({
-        key: r.key, name: r.name, desc: r.desc, Mascot: r.Mascot,
-        color: r.products[0]?.color ?? "#FFF200",
-        products: r.products.map((p) => ({ name: p.name, desc: p.desc, color: p.color, image_url: null as string | null, pill: r.name })),
-      }));
+    : !isPending
+      ? SINGLE_RANGES.map((r) => ({
+          key: r.key, name: r.name, desc: r.desc, Mascot: r.Mascot,
+          color: r.products[0]?.color ?? "#FFF200",
+          products: r.products.map((p) => ({ name: p.name, desc: p.desc, color: p.color, image_url: null as string | null, pill: r.name })),
+        }))
+      : [];
 
   const TABS = [{ key: "all", label: "All" }, ...view.map((r) => ({ key: r.key, label: r.name }))];
   const visible = filter === "all" ? view : view.filter((r) => r.key === filter);
@@ -132,6 +115,10 @@ function SingleProducts() {
         <Link to="/products" className="products-back">← All categories</Link>
       </PageHero>
 
+      {isPending ? (
+        <ProductsLoading variant="single" />
+      ) : (
+        <>
       <div className="filter-tabs">
         {TABS.map((t) => (
           <button key={t.key} type="button" className={`filter-tab ${filter === t.key ? "active" : ""}`} onClick={() => setFilter(t.key)}>
@@ -191,6 +178,8 @@ function SingleProducts() {
         </section>
         );
       })}
+        </>
+      )}
 
     </>
   );

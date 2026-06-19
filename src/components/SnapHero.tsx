@@ -3,11 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import { HeroNavyBackground, HeroCreamBackground } from "./HeroBackgrounds";
 import { AnimatedHeroLogo } from "./AnimatedHeroLogo";
+import { SiteSectionLoading } from "./SiteSectionLoading";
 import { prefersReducedMotion, spring } from "./motion/transitions";
-import { supabase } from "@/integrations/supabase/client";
-import { DEFAULT_HERO_PANELS, panelByNumber, resolveHeroPanelsFromDb, type HeroPanelRow } from "@/data/heroDefaults";
+import { panelByNumber, type HeroPanelRow } from "@/data/heroDefaults";
+import { heroPanelsQueryOptions } from "@/lib/queries/options";
 
 type PanelKind = "navy" | "cream";
 
@@ -135,22 +137,10 @@ function ProductsHeading({ p }: { p: HeroPanelRow }) {
 export function SnapHero() {
   const panelsRef = useRef<Array<HTMLElement | null>>([]);
   const [active, setActive] = useState(0);
-  const [heroPanels, setHeroPanels] = useState<HeroPanelRow[]>(DEFAULT_HERO_PANELS);
-
-  useEffect(() => {
-    supabase
-      .from("hero_panels")
-      .select("*")
-      .order("panel_number")
-      .then(({ data }) => {
-        if (!data?.length) return;
-        setHeroPanels(resolveHeroPanelsFromDb(data as HeroPanelRow[]));
-      });
-  }, []);
-
-  const panel1 = panelByNumber(heroPanels, 1);
-  const panel2 = panelByNumber(heroPanels, 2);
-  const showPanel2 = panel2.is_active !== false;
+  const { data: heroPanels, isPending: heroLoading } = useQuery(heroPanelsQueryOptions());
+  const panel1 = panelByNumber(heroPanels ?? [], 1);
+  const panel2 = panelByNumber(heroPanels ?? [], 2);
+  const showPanel2 = !heroLoading && panel2.is_active !== false;
 
   const register = (i: number, el: HTMLElement | null) => {
     panelsRef.current[i] = el;
@@ -193,7 +183,7 @@ export function SnapHero() {
         ))}
       </nav>
 
-      {panel1.is_active !== false && (
+      {(heroLoading || panel1.is_active !== false) && (
         <Panel
           kind="navy"
           index={0}
@@ -207,6 +197,10 @@ export function SnapHero() {
           }
         >
           <div className="snap-copy">
+            {heroLoading ? (
+              <SiteSectionLoading variant="hero-copy" />
+            ) : (
+              <>
             {panel1.badge_text && (
               <div className="snap-badge" style={{ color: "var(--red)" }}>
                 <span className="snap-badge-dot" style={{ background: "var(--red)" }} />
@@ -223,6 +217,8 @@ export function SnapHero() {
                 <Link to="/about" className="snap-cta-ghost">{panel1.cta_2_text}</Link>
               </div>
             )}
+              </>
+            )}
           </div>
         </Panel>
       )}
@@ -235,6 +231,10 @@ export function SnapHero() {
           background={<HeroCreamBackground />}
           hint={false}
         >
+          {heroLoading ? (
+            <SiteSectionLoading variant="hero-copy" />
+          ) : (
+            <>
           {panel2.badge_text && (
             <div className="snap-badge" style={{ color: "var(--red)" }}>
               <span className="snap-badge-dot" style={{ background: "var(--red)" }} />
@@ -243,6 +243,8 @@ export function SnapHero() {
           )}
           <ProductsHeading p={panel2} />
           {panel2.subtext && <p className="snap-sub">{panel2.subtext}</p>}
+            </>
+          )}
         </Panel>
       )}
     </div>

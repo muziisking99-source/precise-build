@@ -1,12 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { Mail, MapPin, Factory, Clock, Phone } from "lucide-react";
 import { PageHero } from "../components/PageHero";
 import { Section, SectionHead } from "../components/Section";
 import { Reveal } from "../components/Effects";
-import { supabase } from "@/integrations/supabase/client";
+import { SiteSectionLoading } from "../components/SiteSectionLoading";
+import { siteSettingsQueryOptions } from "@/lib/queries/options";
 
 export const Route = createFileRoute("/contact")({
+  loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(siteSettingsQueryOptions()),
   head: () => ({
     meta: [
       { title: "Contact — Golden Fresh Biscuits" },
@@ -28,16 +31,8 @@ const DEFAULTS: Record<string, string> = {
 
 function Contact() {
   const [sent, setSent] = useState(false);
-  const [cfg, setCfg] = useState<Record<string, string>>(DEFAULTS);
-
-  useEffect(() => {
-    supabase.from("site_settings").select("key, value").then(({ data }) => {
-      if (!data) return;
-      const next = { ...DEFAULTS };
-      (data as { key: string; value: string }[]).forEach((s) => { if (s.value) next[s.key] = s.value; });
-      setCfg(next);
-    });
-  }, []);
+  const { data: settings, isPending } = useQuery(siteSettingsQueryOptions());
+  const cfg = { ...DEFAULTS, ...settings };
 
   const rows = [
     cfg.contact_email && { icon: Mail, text: cfg.contact_email },
@@ -63,21 +58,27 @@ function Contact() {
               title={<>Let&apos;s <span className="accent">Talk</span></>}
             />
             <div style={{ marginTop: 28 }}>
-              {rows.map((row) => {
-                const Icon = row.icon;
-                return (
-                  <div key={row.text} className="contact-info-item">
-                    <span className="contact-info-icon"><Icon strokeWidth={1.75} /></span>
-                    <span>{row.text}</span>
-                  </div>
-                );
-              })}
+              {isPending ? (
+                <SiteSectionLoading variant="contact" />
+              ) : (
+                rows.map((row) => {
+                  const Icon = row.icon;
+                  return (
+                    <div key={row.text} className="contact-info-item">
+                      <span className="contact-info-icon"><Icon strokeWidth={1.75} /></span>
+                      <span>{row.text}</span>
+                    </div>
+                  );
+                })
+              )}
             </div>
-            <div className="contact-social">
-              <a href={cfg.facebook_url || "#"}>Facebook</a>
-              <a href={cfg.instagram_url || "#"}>Instagram</a>
-              <a href={cfg.tiktok_url || "#"}>TikTok</a>
-            </div>
+            {!isPending && (
+              <div className="contact-social">
+                <a href={cfg.facebook_url || "#"}>Facebook</a>
+                <a href={cfg.instagram_url || "#"}>Instagram</a>
+                <a href={cfg.tiktok_url || "#"}>TikTok</a>
+              </div>
+            )}
           </Reveal>
 
 

@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Logo } from "./Logo";
-import { supabase } from "@/integrations/supabase/client";
-import { FALLBACK_SINGLE_RANGES, fetchSingleProductRanges, type RangeLink } from "@/lib/productRanges";
+import { SiteSectionLoading } from "./SiteSectionLoading";
+import { siteSettingsQueryOptions, singleRangesQueryOptions } from "@/lib/queries/options";
 
 export function Nav() {
   const [open, setOpen] = useState(false);
@@ -33,8 +34,6 @@ export function Nav() {
   );
 }
 
-const PRODUCT_LINKS = FALLBACK_SINGLE_RANGES;
-
 const DEFAULT_FOOTER_TAGLINE = "Delight in every Bite. Baked in Lenasia since 1998.";
 const LEGACY_FOOTER_TAGLINE = /Lekker biscuits for every SA family|Delivering local lekkerness/i;
 
@@ -44,21 +43,8 @@ function resolveFooterTagline(value?: string) {
 }
 
 export function Footer() {
-  const [cfg, setCfg] = useState<Record<string, string>>({});
-  const [ranges, setRanges] = useState<RangeLink[]>(PRODUCT_LINKS);
-
-  useEffect(() => {
-    fetchSingleProductRanges().then(setRanges);
-  }, []);
-
-  useEffect(() => {
-    supabase.from("site_settings").select("key, value").then(({ data }) => {
-      if (!data) return;
-      const next: Record<string, string> = {};
-      (data as { key: string; value: string }[]).forEach((s) => { if (s.value) next[s.key] = s.value; });
-      setCfg(next);
-    });
-  }, []);
+  const { data: cfg = {} } = useQuery(siteSettingsQueryOptions());
+  const { data: ranges = [], isPending: rangesLoading } = useQuery(singleRangesQueryOptions());
 
   const footerTagline = resolveFooterTagline(cfg.footer_tagline);
 
@@ -78,11 +64,15 @@ export function Footer() {
         </div>
         <div className="footer-col">
           <div className="footer-col-head">Products</div>
-          {ranges.map((r) => (
-            <Link key={r.slug} to="/products/single" search={{ range: r.slug }}>
-              {r.name}
-            </Link>
-          ))}
+          {rangesLoading ? (
+            <SiteSectionLoading variant="footer-links" />
+          ) : (
+            ranges.map((r) => (
+              <Link key={r.slug} to="/products/single" search={{ range: r.slug }}>
+                {r.name}
+              </Link>
+            ))
+          )}
         </div>
         <div className="footer-col">
           <div className="footer-col-head">Company</div>

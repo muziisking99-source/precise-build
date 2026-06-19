@@ -1,10 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { PageHero } from "../../components/PageHero";
 import { Reveal } from "../../components/Effects";
-import { supabase } from "@/integrations/supabase/client";
+import { CategoryExploreLink } from "../../components/CategoryExploreLink";
+import { categoryHeroesQueryOptions } from "@/lib/queries/options";
 
 export const Route = createFileRoute("/products/")({
+  loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(categoryHeroesQueryOptions()),
   head: () => ({
     meta: [
       { title: "Product Categories — Golden Fresh Biscuits" },
@@ -14,33 +16,29 @@ export const Route = createFileRoute("/products/")({
   component: ProductCategories,
 });
 
-type CatHero = { single: string | null; bulk: string | null };
-
 function ProductCategories() {
-  const [hero, setHero] = useState<CatHero>({ single: null, bulk: null });
-
-  useEffect(() => {
-    (async () => {
-      const { data } = await supabase
-        .from("products")
-        .select("image_url, product_ranges!inner(category)")
-        .not("image_url", "is", null)
-        .limit(50);
-      const next: CatHero = { single: null, bulk: null };
-      (data ?? []).forEach((r: any) => {
-        const cat = r.product_ranges?.category;
-        if (cat === "single" && !next.single) next.single = r.image_url;
-        if (cat === "bulk" && !next.bulk) next.bulk = r.image_url;
-      });
-      setHero(next);
-    })();
-  }, []);
+  const { data: hero = { single: null, bulk: null } } = useQuery(categoryHeroesQueryOptions());
 
   const Card = ({
-    num, title, desc, to, image, ctaClass, ctaText,
-  }: { num: string; title: string; desc: string; to: string; image: string | null; ctaClass: string; ctaText: string }) => (
+    num, title, desc, to, image, ctaClass, ctaText, category,
+  }: {
+    num: string;
+    title: string;
+    desc: string;
+    to: "/products/single" | "/products/bulk";
+    image: string | null;
+    ctaClass: string;
+    ctaText: string;
+    category: "single" | "bulk";
+  }) => (
     <Reveal className="category-card">
-      <Link to={to} className="category-card-link">
+      <CategoryExploreLink
+        to={to}
+        category={category}
+        title={title}
+        image={image}
+        className="category-card-link"
+      >
         <div className={`category-card-image ${image ? "" : "no-image"}`}>
           {image ? <img src={image} alt={title} /> : <span className="category-card-fallback" aria-hidden />}
         </div>
@@ -52,7 +50,7 @@ function ProductCategories() {
         <div className="category-card-body">
           <span className={`btn ${ctaClass} cat-card-btn`}>{ctaText} →</span>
         </div>
-      </Link>
+      </CategoryExploreLink>
     </Reveal>
   );
 
@@ -75,6 +73,7 @@ function ProductCategories() {
               image={hero.single}
               ctaClass="btn-red"
               ctaText="Explore Single Biscuits"
+              category="single"
             />
             <Card
               num="02 — Category"
@@ -84,6 +83,7 @@ function ProductCategories() {
               image={hero.bulk}
               ctaClass="btn-secondary"
               ctaText="Explore Bulk Biscuits"
+              category="bulk"
             />
           </div>
         </div>
