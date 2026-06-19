@@ -111,8 +111,8 @@ export function SnapHero() {
         innerClassName="snap-inner--split"
       >
         <div className="snap-copy">
-          <div className="snap-badge">
-            <span className="snap-badge-dot" />
+          <div className="snap-badge" style={{ color: "var(--red)" }}>
+            <span className="snap-badge-dot" style={{ background: "var(--red)" }} />
             Proudly South African · Est. 1998
           </div>
           <h1 className="snap-h1">
