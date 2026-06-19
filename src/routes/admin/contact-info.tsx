@@ -17,6 +17,7 @@ const FIELDS: { key: string; label: string; type?: string; textarea?: boolean }[
   { key: "contact_hours", label: "Hours" },
   { key: "facebook_url", label: "Facebook URL", type: "url" },
   { key: "instagram_url", label: "Instagram URL", type: "url" },
+  { key: "tiktok_url", label: "TikTok URL", type: "url" },
 ];
 
 function ContactInfoAdmin() {

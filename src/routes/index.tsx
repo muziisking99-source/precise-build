@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { SectionTag, GoldBand } from "../components/Layout";
+import { SectionTag } from "../components/Layout";
 import { Section, SectionHead } from "../components/Section";
 import { Reveal } from "../components/Effects";
 
@@ -23,7 +23,6 @@ const FALLBACK_SITE = {
   heritage_ranges: "11",
   heritage_families: "5M+",
   home_ranges_subtitle: "11 ranges, baked in Lenasia and loved across all nine provinces.",
-  gold_band_body: "11 ranges. Every flavour. Every South African table.",
 };
 
 const FALLBACK_RIBBON = ["Glucose Energy", "Just Ginger", "Luv-A-Lot", "Trio", "All-Star", "Joker", "Marie", "Supa Dupa", "Cream Biscuits", "Proudly South African"];
@@ -221,8 +220,6 @@ function Index() {
           </Reveal>
         </div>
       </Section>
-
-      <GoldBand title="Find Your Favourite Biscuit!" body={siteCopy.gold_band_body} cta="Shop All Products" />
 
       <Section variant="white">
         <Reveal>

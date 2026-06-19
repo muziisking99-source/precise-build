@@ -26,7 +26,6 @@ export function Nav() {
         <Link to="/products" activeProps={{ className: "active" }} onClick={() => setOpen(false)}>Products</Link>
         <Link to="/contact" activeProps={{ className: "active" }} onClick={() => setOpen(false)}>Contact</Link>
       </div>
-      <button type="button" className="nav-cta">Find a Store</button>
       <button type="button" className="nav-burger" onClick={() => setOpen((o) => !o)} aria-label="Menu">
         <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden><path d="M4 8h20M4 14h20M4 20h20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
       </button>
@@ -74,7 +73,7 @@ export function Footer() {
           <div className="footer-social">
             <a href={cfg.facebook_url || "#"}>Facebook</a>
             <a href={cfg.instagram_url || "#"}>Instagram</a>
-            <a href="#">YouTube</a>
+            <a href={cfg.tiktok_url || "#"}>TikTok</a>
           </div>
         </div>
         <div className="footer-col">

@@ -23,6 +23,7 @@ const DEFAULTS: Record<string, string> = {
   contact_hours: "Monday – Friday, 8am – 5pm",
   facebook_url: "#",
   instagram_url: "#",
+  tiktok_url: "#",
 };
 
 function Contact() {
@@ -75,7 +76,7 @@ function Contact() {
             <div className="contact-social">
               <a href={cfg.facebook_url || "#"}>Facebook</a>
               <a href={cfg.instagram_url || "#"}>Instagram</a>
-              <a href="#">YouTube</a>
+              <a href={cfg.tiktok_url || "#"}>TikTok</a>
             </div>
           </Reveal>
 

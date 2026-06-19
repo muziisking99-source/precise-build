@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState, type ComponentType, type CSSProperties } from "react";
-import { SectionTag, GoldBand } from "../../components/Layout";
+import { SectionTag } from "../../components/Layout";
 import { PageHero } from "../../components/PageHero";
 import { Reveal } from "../../components/Effects";
 import { productTopStyle } from "../../lib/uiTint";
@@ -192,7 +192,6 @@ function SingleProducts() {
         );
       })}
 
-      <GoldBand title="Collect the Gang" body="Nine ranges. Five characters. One proudly South African brand." cta="Shop All Products" />
     </>
   );
 }
