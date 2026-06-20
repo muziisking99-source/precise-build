@@ -6,6 +6,7 @@ import { prefersReducedMotion } from "./motion/transitions";
 import { useCategoryTransition, type CategoryKey } from "./motion/CategoryTransition";
 import {
   bulkProductsQueryOptions,
+  categoryCatalogQueryOptions,
   rangeCharactersQueryOptions,
   singleCatalogQueryOptions,
 } from "@/lib/queries/options";
@@ -38,6 +39,8 @@ export function CategoryExploreLink({
       void queryClient.prefetchQuery(rangeCharactersQueryOptions());
     } else if (category === "bulk") {
       void queryClient.prefetchQuery(bulkProductsQueryOptions());
+    } else {
+      void queryClient.prefetchQuery(categoryCatalogQueryOptions(category));
     }
   };
 

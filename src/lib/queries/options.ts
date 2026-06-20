@@ -2,6 +2,8 @@ import { queryOptions } from "@tanstack/react-query";
 import { queryKeys } from "./keys";
 import {
   fetchBulkProducts,
+  fetchCategoryBySlug,
+  fetchCategoryCatalog,
   fetchCategoryCarouselImages,
   fetchProductCategories,
   fetchHeroPanels,
@@ -65,6 +67,20 @@ export const testimonialsQueryOptions = () =>
     queryKey: queryKeys.testimonials,
     queryFn: fetchVisibleTestimonials,
     staleTime: STALE_TIME,
+  });
+
+export const categoryBySlugQueryOptions = (slug: string) =>
+  queryOptions({
+    queryKey: [...queryKeys.categoryMeta, slug] as const,
+    queryFn: () => fetchCategoryBySlug(slug),
+    staleTime: ADMIN_CONTENT_STALE_TIME,
+  });
+
+export const categoryCatalogQueryOptions = (slug: string) =>
+  queryOptions({
+    queryKey: [...queryKeys.categoryCatalog, slug] as const,
+    queryFn: () => fetchCategoryCatalog(slug),
+    staleTime: ADMIN_CONTENT_STALE_TIME,
   });
 
 export const productCategoriesQueryOptions = () =>

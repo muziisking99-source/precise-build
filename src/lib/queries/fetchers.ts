@@ -206,6 +206,37 @@ export async function fetchProductCategories(): Promise<ProductCategoryRow[]> {
   return (data?.length ? data : DEFAULT_PRODUCT_CATEGORIES) as ProductCategoryRow[];
 }
 
+export async function fetchCategoryBySlug(slug: string): Promise<ProductCategoryRow | null> {
+  const { data, error } = await supabase
+    .from("product_categories")
+    .select("*")
+    .eq("slug", slug)
+    .eq("is_visible", true)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return data as ProductCategoryRow;
+}
+
+export async function fetchCategoryCatalog(categorySlug: string): Promise<DbRange[]> {
+  const { data } = await supabase
+    .from("product_ranges")
+    .select("id, slug, name, description, category, sort_order, products(*)")
+    .eq("category", categorySlug)
+    .order("sort_order");
+
+  if (!data) return [];
+
+  return (data as DbRange[])
+    .map((r) => ({
+      ...r,
+      products: (r.products ?? [])
+        .filter((p) => p.is_visible)
+        .sort((a, b) => a.sort_order - b.sort_order),
+    }))
+    .filter((r) => r.products.length > 0);
+}
+
 export async function fetchCategoryCarouselImages(): Promise<CategoryCarouselImages> {
   const { data: categories } = await supabase
     .from("product_categories")

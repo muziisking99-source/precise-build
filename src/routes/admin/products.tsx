@@ -54,6 +54,12 @@ function slugify(value: string) {
     .replace(/^-|-$/g, "");
 }
 
+function resolveCategoryRoutePath(slug: string, current?: string | null) {
+  const trimmed = current?.trim();
+  if (trimmed && trimmed !== "/products" && trimmed !== "/products/") return trimmed;
+  return `/products/${slug}`;
+}
+
 function emptyCategory(sortOrder: number): Category {
   return {
     id: "",
@@ -62,7 +68,7 @@ function emptyCategory(sortOrder: number): Category {
     description: "",
     cta_text: "",
     cta_variant: "red",
-    route_path: "/products",
+    route_path: "",
     sort_order: sortOrder,
     is_visible: true,
   };
@@ -211,6 +217,7 @@ function ProductsAdmin() {
     }
     close();
     if (activeRange) loadProducts(activeRange);
+    if (activeCategory) invalidatePublicCategories();
   };
 
   const confirmDelete = async () => {
@@ -224,6 +231,7 @@ function ProductsAdmin() {
     toast.success("Deleted");
     setToDelete(null);
     if (activeRange) loadProducts(activeRange);
+    invalidatePublicCategories();
   };
 
   const openNewRange = () => {
@@ -325,6 +333,8 @@ function ProductsAdmin() {
   const invalidatePublicCategories = () => {
     void queryClient.invalidateQueries({ queryKey: queryKeys.productCategories });
     void queryClient.invalidateQueries({ queryKey: queryKeys.categoryHeroes });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.categoryCatalog });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.categoryMeta });
   };
 
   const saveCategory = async () => {
@@ -343,7 +353,7 @@ function ProductsAdmin() {
       description: editingCategory.description?.trim() || null,
       cta_text: editingCategory.cta_text?.trim() || null,
       cta_variant: editingCategory.cta_variant,
-      route_path: editingCategory.route_path.trim() || "/products",
+      route_path: resolveCategoryRoutePath(slug, editingCategory.route_path),
       sort_order: editingCategory.sort_order,
       is_visible: editingCategory.is_visible,
     };
@@ -653,8 +663,8 @@ function ProductsAdmin() {
             </div>
             <div className="admin-field">
               <label className="admin-label">Link URL</label>
-              <input className="admin-input" value={editingCategory.route_path} onChange={(e) => setEditingCategory({ ...editingCategory, route_path: e.target.value })} placeholder="/products/single" />
-              <small style={{ color: "rgba(255,255,255,0.4)", fontSize: 11 }}>Where the category card links to when clicked</small>
+              <input className="admin-input" value={editingCategory.route_path} onChange={(e) => setEditingCategory({ ...editingCategory, route_path: e.target.value })} placeholder={`/products/${editingCategory.slug || "your-slug"}`} />
+              <small style={{ color: "rgba(255,255,255,0.4)", fontSize: 11 }}>Leave blank to use /products/your-slug automatically</small>
             </div>
             <div className="admin-field">
               <Toggle checked={editingCategory.is_visible} onChange={(v) => setEditingCategory({ ...editingCategory, is_visible: v })} label={editingCategory.is_visible ? "Visible on Products page" : "Hidden"} />

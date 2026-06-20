@@ -37,7 +37,7 @@ function ProductCategories() {
       <section className="section section-cream products-landing">
         <div className="container">
           <div className="cat-grid category-grid">
-            {categories.map((cat) => {
+            {categories.map((cat, catIndex) => {
               const images = carousel[cat.slug] ?? [];
               const ctaClass = cat.cta_variant === "secondary" ? "btn-secondary" : "btn-red";
               const ctaText = cat.cta_text ?? `Explore ${cat.title}`;
@@ -52,7 +52,7 @@ function ProductCategories() {
                     className="category-card-link"
                   >
                     <div className={`category-card-image ${images.length ? "" : "no-image"}`}>
-                      <CategoryImageCarousel images={images} alt={cat.title} />
+                      <CategoryImageCarousel images={images} alt={cat.title} priority={catIndex < 3} />
                     </div>
                     <div className="category-card-copy">
                       <h3 className="category-card-title">{cat.title}</h3>

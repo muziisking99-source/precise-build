@@ -9,4 +9,6 @@ export const queryKeys = {
   productCategories: ["product-categories"] as const,
   singleCatalog: ["single-catalog"] as const,
   bulkProducts: ["bulk-products"] as const,
+  categoryCatalog: ["category-catalog"] as const,
+  categoryMeta: ["category-meta"] as const,
 };

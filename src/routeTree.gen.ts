@@ -18,6 +18,7 @@ import { Route as ProductsIndexRouteImport } from './routes/products/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as ProductsSingleRouteImport } from './routes/products/single'
 import { Route as ProductsBulkRouteImport } from './routes/products/bulk'
+import { Route as ProductsCategorySlugRouteImport } from './routes/products/$categorySlug'
 import { Route as AdminTestimonialsRouteImport } from './routes/admin/testimonials'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminProductsRouteImport } from './routes/admin/products'
@@ -71,6 +72,11 @@ const ProductsSingleRoute = ProductsSingleRouteImport.update({
 const ProductsBulkRoute = ProductsBulkRouteImport.update({
   id: '/bulk',
   path: '/bulk',
+  getParentRoute: () => ProductsRoute,
+} as any)
+const ProductsCategorySlugRoute = ProductsCategorySlugRouteImport.update({
+  id: '/$categorySlug',
+  path: '/$categorySlug',
   getParentRoute: () => ProductsRoute,
 } as any)
 const AdminTestimonialsRoute = AdminTestimonialsRouteImport.update({
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/admin/products': typeof AdminProductsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
+  '/products/$categorySlug': typeof ProductsCategorySlugRoute
   '/products/bulk': typeof ProductsBulkRoute
   '/products/single': typeof ProductsSingleRoute
   '/admin/': typeof AdminIndexRoute
@@ -152,6 +159,7 @@ export interface FileRoutesByTo {
   '/admin/products': typeof AdminProductsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
+  '/products/$categorySlug': typeof ProductsCategorySlugRoute
   '/products/bulk': typeof ProductsBulkRoute
   '/products/single': typeof ProductsSingleRoute
   '/admin': typeof AdminIndexRoute
@@ -173,6 +181,7 @@ export interface FileRoutesById {
   '/admin/products': typeof AdminProductsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
+  '/products/$categorySlug': typeof ProductsCategorySlugRoute
   '/products/bulk': typeof ProductsBulkRoute
   '/products/single': typeof ProductsSingleRoute
   '/admin/': typeof AdminIndexRoute
@@ -195,6 +204,7 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/settings'
     | '/admin/testimonials'
+    | '/products/$categorySlug'
     | '/products/bulk'
     | '/products/single'
     | '/admin/'
@@ -213,6 +223,7 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/settings'
     | '/admin/testimonials'
+    | '/products/$categorySlug'
     | '/products/bulk'
     | '/products/single'
     | '/admin'
@@ -233,6 +244,7 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/settings'
     | '/admin/testimonials'
+    | '/products/$categorySlug'
     | '/products/bulk'
     | '/products/single'
     | '/admin/'
@@ -310,6 +322,13 @@ declare module '@tanstack/react-router' {
       path: '/bulk'
       fullPath: '/products/bulk'
       preLoaderRoute: typeof ProductsBulkRouteImport
+      parentRoute: typeof ProductsRoute
+    }
+    '/products/$categorySlug': {
+      id: '/products/$categorySlug'
+      path: '/$categorySlug'
+      fullPath: '/products/$categorySlug'
+      preLoaderRoute: typeof ProductsCategorySlugRouteImport
       parentRoute: typeof ProductsRoute
     }
     '/admin/testimonials': {
@@ -407,12 +426,14 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface ProductsRouteChildren {
+  ProductsCategorySlugRoute: typeof ProductsCategorySlugRoute
   ProductsBulkRoute: typeof ProductsBulkRoute
   ProductsSingleRoute: typeof ProductsSingleRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
 }
 
 const ProductsRouteChildren: ProductsRouteChildren = {
+  ProductsCategorySlugRoute: ProductsCategorySlugRoute,
   ProductsBulkRoute: ProductsBulkRoute,
   ProductsSingleRoute: ProductsSingleRoute,
   ProductsIndexRoute: ProductsIndexRoute,

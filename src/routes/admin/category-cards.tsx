@@ -175,7 +175,7 @@ function CategoryCardsAdmin() {
   return (
     <AdminShell title="Category Cards">
       <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 13, margin: "0 0 20px", maxWidth: 720 }}>
-        Upload images for the product category cards on the Products page. They rotate every 0.5 seconds.
+        Upload images for the product category cards on the Products page. They rotate every 1 second.
         If no images are uploaded here, product pack shots are used as a fallback.
       </p>
 
@@ -223,7 +223,7 @@ function CategoryCardsAdmin() {
             <div className="admin-img-empty">
               <Upload size={20} />
               <span>{uploading ? "Uploading…" : "Click to upload carousel images"}</span>
-              <small>JPG, PNG, WebP · max 5MB · switches every 0.5s on the site</small>
+              <small>JPG, PNG, WebP · max 5MB · switches every 1s on the site</small>
             </div>
           </div>
         ) : (
