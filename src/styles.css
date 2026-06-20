@@ -1886,12 +1886,12 @@ html { scroll-snap-type: y proximity; }
 /* === Products page: premium category cards === */
 .category-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  max-width: 1080px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 1200px;
   margin: 0 auto;
 }
-@media (max-width: 768px) { .category-grid { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .category-grid { grid-template-columns: 1fr; } }
 .category-card {
   position: relative;
   border-radius: 12px;

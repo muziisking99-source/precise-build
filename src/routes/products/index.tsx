@@ -4,10 +4,15 @@ import { PageHero } from "../../components/PageHero";
 import { Reveal } from "../../components/Effects";
 import { CategoryExploreLink } from "../../components/CategoryExploreLink";
 import { CategoryImageCarousel } from "../../components/CategoryImageCarousel";
-import { categoryHeroesQueryOptions } from "@/lib/queries/options";
+import { categoryHeroesQueryOptions, productCategoriesQueryOptions } from "@/lib/queries/options";
 
 export const Route = createFileRoute("/products/")({
-  loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(categoryHeroesQueryOptions()),
+  loader: async ({ context: { queryClient } }) => {
+    await Promise.all([
+      queryClient.fetchQuery(productCategoriesQueryOptions()),
+      queryClient.fetchQuery(categoryHeroesQueryOptions()),
+    ]);
+  },
   head: () => ({
     meta: [
       { title: "Product Categories — Golden Fresh Biscuits" },
@@ -18,40 +23,8 @@ export const Route = createFileRoute("/products/")({
 });
 
 function ProductCategories() {
-  const { data: carousel = { single: [], bulk: [] } } = useQuery(categoryHeroesQueryOptions());
-
-  const Card = ({
-    title, desc, to, images, ctaClass, ctaText, category,
-  }: {
-    title: string;
-    desc: string;
-    to: "/products/single" | "/products/bulk";
-    images: string[];
-    ctaClass: string;
-    ctaText: string;
-    category: "single" | "bulk";
-  }) => (
-    <Reveal className="category-card">
-      <CategoryExploreLink
-        to={to}
-        category={category}
-        title={title}
-        image={images[0] ?? null}
-        className="category-card-link"
-      >
-        <div className={`category-card-image ${images.length ? "" : "no-image"}`}>
-          <CategoryImageCarousel images={images} alt={title} />
-        </div>
-        <div className="category-card-copy">
-          <h3 className="category-card-title">{title}</h3>
-          <p className="category-card-sub">{desc}</p>
-        </div>
-        <div className="category-card-body">
-          <span className={`btn ${ctaClass} cat-card-btn`}>{ctaText} →</span>
-        </div>
-      </CategoryExploreLink>
-    </Reveal>
-  );
+  const { data: categories = [] } = useQuery(productCategoriesQueryOptions());
+  const { data: carousel = {} } = useQuery(categoryHeroesQueryOptions());
 
   return (
     <>
@@ -64,24 +37,34 @@ function ProductCategories() {
       <section className="section section-cream products-landing">
         <div className="container">
           <div className="cat-grid category-grid">
-            <Card
-              title="Single Biscuits"
-              desc="Individually wrapped for freshness — perfect for on-the-go snacking, lunchboxes, and quick treats."
-              to="/products/single"
-              images={carousel.single}
-              ctaClass="btn-red"
-              ctaText="Explore Single Biscuits"
-              category="single"
-            />
-            <Card
-              title="Bulk Biscuits"
-              desc="Family-size value packs for events, sharing, or stocking up — same Golden Fresh quality, bigger boxes."
-              to="/products/bulk"
-              images={carousel.bulk}
-              ctaClass="btn-secondary"
-              ctaText="Explore Bulk Biscuits"
-              category="bulk"
-            />
+            {categories.map((cat) => {
+              const images = carousel[cat.slug] ?? [];
+              const ctaClass = cat.cta_variant === "secondary" ? "btn-secondary" : "btn-red";
+              const ctaText = cat.cta_text ?? `Explore ${cat.title}`;
+
+              return (
+                <Reveal key={cat.id} className="category-card">
+                  <CategoryExploreLink
+                    to={cat.route_path}
+                    category={cat.slug}
+                    title={cat.title}
+                    image={images[0] ?? null}
+                    className="category-card-link"
+                  >
+                    <div className={`category-card-image ${images.length ? "" : "no-image"}`}>
+                      <CategoryImageCarousel images={images} alt={cat.title} />
+                    </div>
+                    <div className="category-card-copy">
+                      <h3 className="category-card-title">{cat.title}</h3>
+                      {cat.description && <p className="category-card-sub">{cat.description}</p>}
+                    </div>
+                    <div className="category-card-body">
+                      <span className={`btn ${ctaClass} cat-card-btn`}>{ctaText} →</span>
+                    </div>
+                  </CategoryExploreLink>
+                </Reveal>
+              );
+            })}
           </div>
         </div>
       </section>

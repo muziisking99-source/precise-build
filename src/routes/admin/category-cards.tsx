@@ -13,16 +13,13 @@ export const Route = createFileRoute("/admin/category-cards")({
 
 type CarouselRow = {
   id: string;
-  category: "single" | "bulk";
+  category: string;
   image_url: string;
   sort_order: number;
   is_visible: boolean;
 };
 
-const TABS: { key: "single" | "bulk"; label: string }[] = [
-  { key: "single", label: "Single Biscuits" },
-  { key: "bulk", label: "Bulk Biscuits" },
-];
+type CategoryTab = { slug: string; title: string };
 
 const MAX_BYTES = 5 * 1024 * 1024;
 const ACCEPT = ["image/jpeg", "image/png", "image/webp"];
@@ -33,21 +30,29 @@ function storageObjectName(value: string) {
 
 function CategoryCardsAdmin() {
   const { user } = useAdminAuth();
-  const [activeTab, setActiveTab] = useState<"single" | "bulk">("single");
+  const [tabs, setTabs] = useState<CategoryTab[]>([]);
+  const [activeTab, setActiveTab] = useState<string>("single");
   const [rows, setRows] = useState<CarouselRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
-    const { data, error } = await supabase
-      .from("category_carousel_images")
-      .select("*")
-      .order("sort_order");
+    const [{ data: categories, error: catErr }, { data, error }] = await Promise.all([
+      supabase.from("product_categories").select("slug, title").order("sort_order"),
+      supabase.from("category_carousel_images").select("*").order("sort_order"),
+    ]);
+    if (catErr) {
+      toast.error(catErr.message);
+      return;
+    }
     if (error) {
       toast.error(error.message);
       return;
     }
+    const nextTabs = (categories as CategoryTab[]) ?? [];
+    setTabs(nextTabs);
+    setActiveTab((prev) => (nextTabs.some((t) => t.slug === prev) ? prev : nextTabs[0]?.slug ?? "single"));
     setRows((data as CarouselRow[]) ?? []);
   };
 
@@ -93,7 +98,7 @@ function CategoryCardsAdmin() {
 
       if (error) throw error;
       setRows((prev) => [...prev, data as CarouselRow]);
-      logActivity("Category carousel image added", TABS.find((t) => t.key === activeTab)?.label ?? activeTab, user?.email ?? null);
+      logActivity("Category carousel image added", tabs.find((t) => t.slug === activeTab)?.title ?? activeTab, user?.email ?? null);
       toast.success("Image added to carousel");
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : "Upload failed");
@@ -113,7 +118,7 @@ function CategoryCardsAdmin() {
     if (oldName) await supabase.storage.from("product-images").remove([oldName]);
 
     setRows((prev) => prev.filter((r) => r.id !== row.id));
-    logActivity("Category carousel image removed", TABS.find((t) => t.key === row.category)?.label ?? row.category, user?.email ?? null);
+    logActivity("Category carousel image removed", tabs.find((t) => t.slug === row.category)?.title ?? row.category, user?.email ?? null);
     toast.success("Image removed");
   };
 
@@ -175,14 +180,14 @@ function CategoryCardsAdmin() {
       </p>
 
       <div className="admin-panel-tabs">
-        {TABS.map((tab) => (
+        {tabs.map((tab) => (
           <button
-            key={tab.key}
+            key={tab.slug}
             type="button"
-            className={`admin-panel-tab ${activeTab === tab.key ? "active" : ""}`}
-            onClick={() => setActiveTab(tab.key)}
+            className={`admin-panel-tab ${activeTab === tab.slug ? "active" : ""}`}
+            onClick={() => setActiveTab(tab.slug)}
           >
-            {tab.label}
+            {tab.title}
           </button>
         ))}
       </div>
@@ -191,7 +196,7 @@ function CategoryCardsAdmin() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, marginBottom: 20 }}>
           <div>
             <h3 style={{ font: "400 18px 'Abril Fatface', serif", color: "#fff", margin: 0 }}>
-              {TABS.find((t) => t.key === activeTab)?.label} carousel
+              {tabs.find((t) => t.slug === activeTab)?.title ?? "Category"} carousel
             </h3>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, margin: "6px 0 0" }}>
               {categoryRows.length} image{categoryRows.length === 1 ? "" : "s"}

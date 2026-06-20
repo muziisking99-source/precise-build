@@ -39,7 +39,19 @@ export type TestimonialRow = {
   location: string | null;
 };
 
-export type CategoryCarouselImages = { single: string[]; bulk: string[] };
+export type ProductCategoryRow = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  cta_text: string | null;
+  cta_variant: "red" | "secondary";
+  route_path: string;
+  sort_order: number;
+  is_visible: boolean;
+};
+
+export type CategoryCarouselImages = Record<string, string[]>;
 
 export type DbProduct = {
   id: string;
@@ -56,6 +68,7 @@ export type DbRange = {
   slug: string;
   name: string;
   description: string | null;
+  category?: string;
   sort_order: number;
   products: DbProduct[];
 };
@@ -153,8 +166,57 @@ export async function fetchVisibleTestimonials(): Promise<TestimonialRow[]> {
   return (data ?? []) as TestimonialRow[];
 }
 
+const DEFAULT_PRODUCT_CATEGORIES: ProductCategoryRow[] = [
+  {
+    id: "default-single",
+    slug: "single",
+    title: "Single Biscuits",
+    description: "Individually wrapped for freshness — perfect for on-the-go snacking, lunchboxes, and quick treats.",
+    cta_text: "Explore Single Biscuits",
+    cta_variant: "red",
+    route_path: "/products/single",
+    sort_order: 1,
+    is_visible: true,
+  },
+  {
+    id: "default-bulk",
+    slug: "bulk",
+    title: "Bulk Biscuits",
+    description: "Family-size value packs for events, sharing, or stocking up — same Golden Fresh quality, bigger boxes.",
+    cta_text: "Explore Bulk Biscuits",
+    cta_variant: "secondary",
+    route_path: "/products/bulk",
+    sort_order: 2,
+    is_visible: true,
+  },
+];
+
+export async function fetchProductCategories(): Promise<ProductCategoryRow[]> {
+  const { data, error } = await supabase
+    .from("product_categories")
+    .select("*")
+    .eq("is_visible", true)
+    .order("sort_order");
+
+  if (error) {
+    console.error("[fetchProductCategories]", error.message);
+    return DEFAULT_PRODUCT_CATEGORIES;
+  }
+
+  return (data?.length ? data : DEFAULT_PRODUCT_CATEGORIES) as ProductCategoryRow[];
+}
+
 export async function fetchCategoryCarouselImages(): Promise<CategoryCarouselImages> {
-  const next: CategoryCarouselImages = { single: [], bulk: [] };
+  const { data: categories } = await supabase
+    .from("product_categories")
+    .select("slug")
+    .eq("is_visible", true)
+    .order("sort_order");
+
+  const next: CategoryCarouselImages = {};
+  (categories ?? []).forEach((cat: { slug: string }) => {
+    next[cat.slug] = [];
+  });
 
   const { data: carousel } = await supabase
     .from("category_carousel_images")
@@ -163,13 +225,12 @@ export async function fetchCategoryCarouselImages(): Promise<CategoryCarouselIma
     .order("sort_order");
 
   (carousel ?? []).forEach((row: { category: string; image_url: string }) => {
-    if (row.category === "single") next.single.push(row.image_url);
-    if (row.category === "bulk") next.bulk.push(row.image_url);
+    if (!next[row.category]) next[row.category] = [];
+    next[row.category].push(row.image_url);
   });
 
-  const needSingle = next.single.length === 0;
-  const needBulk = next.bulk.length === 0;
-  if (!needSingle && !needBulk) return next;
+  const emptySlugs = Object.entries(next).filter(([, imgs]) => imgs.length === 0).map(([slug]) => slug);
+  if (!emptySlugs.length) return next;
 
   const { data } = await supabase
     .from("products")
@@ -179,8 +240,8 @@ export async function fetchCategoryCarouselImages(): Promise<CategoryCarouselIma
 
   (data ?? []).forEach((r: { image_url: string; product_ranges?: { category?: string } }) => {
     const cat = r.product_ranges?.category;
-    if (needSingle && cat === "single" && !next.single.includes(r.image_url)) next.single.push(r.image_url);
-    if (needBulk && cat === "bulk" && !next.bulk.includes(r.image_url)) next.bulk.push(r.image_url);
+    if (!cat || !emptySlugs.includes(cat)) return;
+    if (!next[cat].includes(r.image_url)) next[cat].push(r.image_url);
   });
 
   return next;
@@ -189,13 +250,13 @@ export async function fetchCategoryCarouselImages(): Promise<CategoryCarouselIma
 export async function fetchSingleCatalog(): Promise<DbRange[]> {
   const { data } = await supabase
     .from("product_ranges")
-    .select("id, slug, name, description, sort_order, products(*)")
+    .select("id, slug, name, description, category, sort_order, products(*)")
+    .eq("category", "single")
     .order("sort_order");
 
   if (!data) return [];
 
   return (data as DbRange[])
-    .filter((r) => r.slug !== "bulk")
     .map((r) => ({
       ...r,
       products: (r.products ?? [])

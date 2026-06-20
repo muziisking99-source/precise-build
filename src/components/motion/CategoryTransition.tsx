@@ -14,7 +14,7 @@ import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import { prefersReducedMotion, spring } from "./transitions";
 
-export type CategoryKey = "single" | "bulk";
+export type CategoryKey = string;
 export type CategoryTransitionPhase = "idle" | "expand" | "hold" | "exit";
 
 type TransitionPayload = {
@@ -36,10 +36,20 @@ const CategoryTransitionContext = createContext<CategoryTransitionContextValue |
 const expandTween = { duration: 0.62, ease: [0.22, 1, 0.36, 1] as const };
 const revealTween = { duration: 0.48, ease: [0.4, 0, 0.2, 1] as const };
 
-const ACCENT: Record<CategoryKey, string> = {
+const ACCENT: Record<string, string> = {
   single: "var(--red)",
   bulk: "var(--gold)",
 };
+
+function categoryAccent(slug: string) {
+  return ACCENT[slug] ?? "var(--red)";
+}
+
+function categoryEyebrow(slug: string) {
+  if (slug === "single") return "Single Packs";
+  if (slug === "bulk") return "Bulk Range";
+  return "Products";
+}
 
 function rectToTransform(rect: DOMRect) {
   const vw = window.innerWidth;
@@ -95,7 +105,7 @@ function CategoryTransitionOverlay({
       >
         <motion.div
           className="category-transition-overlay__wash"
-          style={{ background: ACCENT[payload.category] }}
+          style={{ background: categoryAccent(payload.category) }}
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ ...spring, delay: 0.1 }}
@@ -124,7 +134,7 @@ function CategoryTransitionOverlay({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0.18 }}
           >
-            {payload.category === "single" ? "Single Packs" : "Bulk Range"}
+            {categoryEyebrow(payload.category)}
           </motion.p>
           <motion.h2
             className="category-transition-overlay__title"

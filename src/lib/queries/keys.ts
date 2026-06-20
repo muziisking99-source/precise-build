@@ -6,6 +6,7 @@ export const queryKeys = {
   characters: ["characters"] as const,
   testimonials: ["testimonials"] as const,
   categoryHeroes: ["category-heroes"] as const,
+  productCategories: ["product-categories"] as const,
   singleCatalog: ["single-catalog"] as const,
   bulkProducts: ["bulk-products"] as const,
 };

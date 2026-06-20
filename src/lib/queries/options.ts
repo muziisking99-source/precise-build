@@ -3,6 +3,7 @@ import { queryKeys } from "./keys";
 import {
   fetchBulkProducts,
   fetchCategoryCarouselImages,
+  fetchProductCategories,
   fetchHeroPanels,
   fetchHomeRanges,
   fetchRangeCharacters,
@@ -14,6 +15,8 @@ import {
 } from "./fetchers";
 
 export const STALE_TIME = 1000 * 60 * 5;
+/** Admin-editable content — refetch often so public site picks up changes quickly */
+export const ADMIN_CONTENT_STALE_TIME = 0;
 
 export const siteSettingsQueryOptions = () =>
   queryOptions({
@@ -64,11 +67,18 @@ export const testimonialsQueryOptions = () =>
     staleTime: STALE_TIME,
   });
 
+export const productCategoriesQueryOptions = () =>
+  queryOptions({
+    queryKey: queryKeys.productCategories,
+    queryFn: fetchProductCategories,
+    staleTime: ADMIN_CONTENT_STALE_TIME,
+  });
+
 export const categoryHeroesQueryOptions = () =>
   queryOptions({
     queryKey: queryKeys.categoryHeroes,
     queryFn: fetchCategoryCarouselImages,
-    staleTime: STALE_TIME,
+    staleTime: ADMIN_CONTENT_STALE_TIME,
   });
 
 export const singleCatalogQueryOptions = () =>
@@ -98,11 +108,12 @@ export async function prefetchHomePage(queryClient: {
 }
 
 export async function prefetchProductRoutes(queryClient: {
-  ensureQueryData: (options: ReturnType<typeof categoryHeroesQueryOptions>) => Promise<unknown>;
+  fetchQuery: (options: ReturnType<typeof productCategoriesQueryOptions>) => Promise<unknown>;
   prefetchQuery: (options: ReturnType<typeof singleCatalogQueryOptions>) => Promise<unknown>;
 }) {
   await Promise.all([
-    queryClient.ensureQueryData(categoryHeroesQueryOptions()),
+    queryClient.fetchQuery(productCategoriesQueryOptions()),
+    queryClient.fetchQuery(categoryHeroesQueryOptions()),
     queryClient.prefetchQuery(singleCatalogQueryOptions()),
     queryClient.prefetchQuery(bulkProductsQueryOptions()),
     queryClient.prefetchQuery(rangeCharactersQueryOptions()),

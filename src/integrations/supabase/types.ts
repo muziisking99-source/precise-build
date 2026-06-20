@@ -158,6 +158,48 @@ export type Database = {
         }
         Relationships: []
       }
+      product_categories: {
+        Row: {
+          id: string
+          slug: string
+          title: string
+          description: string | null
+          cta_text: string | null
+          cta_variant: string
+          route_path: string
+          sort_order: number
+          is_visible: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          title: string
+          description?: string | null
+          cta_text?: string | null
+          cta_variant?: string
+          route_path?: string
+          sort_order?: number
+          is_visible?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          title?: string
+          description?: string | null
+          cta_text?: string | null
+          cta_variant?: string
+          route_path?: string
+          sort_order?: number
+          is_visible?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       product_ranges: {
         Row: {
           category: string

@@ -11,7 +11,7 @@ import {
 } from "@/lib/queries/options";
 
 type CategoryExploreLinkProps = {
-  to: "/products/single" | "/products/bulk";
+  to: string;
   category: CategoryKey;
   title: string;
   image: string | null;
@@ -36,7 +36,7 @@ export function CategoryExploreLink({
     if (category === "single") {
       void queryClient.prefetchQuery(singleCatalogQueryOptions());
       void queryClient.prefetchQuery(rangeCharactersQueryOptions());
-    } else {
+    } else if (category === "bulk") {
       void queryClient.prefetchQuery(bulkProductsQueryOptions());
     }
   };
