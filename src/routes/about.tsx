@@ -1,12 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Factory, Coins, Leaf, Handshake, Sparkles, Heart, Flag } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { SectionTag } from "../components/Layout";
 import { PageHero } from "../components/PageHero";
 import { Section, SectionHead } from "../components/Section";
 import { Reveal } from "../components/Effects";
+import { resolveSiteStats } from "@/lib/siteCopy";
+import { siteSettingsQueryOptions } from "@/lib/queries/options";
 
 export const Route = createFileRoute("/about")({
+  loader: ({ context: { queryClient } }) => queryClient.fetchQuery(siteSettingsQueryOptions()),
   head: () => ({
     meta: [
       { title: "About Us — Golden Fresh Biscuits" },
@@ -38,6 +42,9 @@ const ROW_VALUES: { icon: LucideIcon; t: string; b: string }[] = [
 ];
 
 function About() {
+  const { data: settings = {} } = useQuery(siteSettingsQueryOptions());
+  const stats = resolveSiteStats(settings);
+
   return (
     <>
       <PageHero
@@ -107,10 +114,10 @@ function About() {
       </Section>
 
       <div className="stats-bar">
-        <div><div className="stats-bar-num">25+</div><div className="stats-bar-label">Years</div></div>
-        <div><div className="stats-bar-num">9</div><div className="stats-bar-label">Ranges</div></div>
-        <div><div className="stats-bar-num">9</div><div className="stats-bar-label">Provinces</div></div>
-        <div><div className="stats-bar-num">1M+</div><div className="stats-bar-label">Families</div></div>
+        <div><div className="stats-bar-num">{stats.years}</div><div className="stats-bar-label">Years</div></div>
+        <div><div className="stats-bar-num">{stats.ranges}</div><div className="stats-bar-label">Ranges</div></div>
+        <div><div className="stats-bar-num">{stats.provinces}</div><div className="stats-bar-label">Provinces</div></div>
+        <div><div className="stats-bar-num">{stats.families}</div><div className="stats-bar-label">Families</div></div>
       </div>
     </>
   );

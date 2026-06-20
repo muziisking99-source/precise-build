@@ -24,7 +24,7 @@ export const siteSettingsQueryOptions = () =>
   queryOptions({
     queryKey: queryKeys.siteSettings,
     queryFn: fetchSiteSettings,
-    staleTime: STALE_TIME,
+    staleTime: ADMIN_CONTENT_STALE_TIME,
   });
 
 export const heroPanelsQueryOptions = () =>

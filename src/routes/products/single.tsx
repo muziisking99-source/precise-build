@@ -1,26 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState, type ComponentType, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { SectionTag } from "../../components/Layout";
 import { PageHero } from "../../components/PageHero";
 import { Reveal } from "../../components/Effects";
+import { RangeMascot, ProductMascotFallback } from "../../components/RangeMascot";
 import { productTopStyle } from "../../lib/uiTint";
 import { SINGLE_RANGES } from "../../data/products";
 import { productPackImageScale } from "@/lib/productPackImage";
-import { characterForRange, type RangeCharacter } from "@/lib/rangeCharacter";
+import { characterForRange } from "@/lib/rangeCharacter";
 import { ProductImageLightbox } from "../../components/ProductImageLightbox";
 import { ProductsLoading } from "../../components/ProductsLoading";
-import { SupaDupa } from "../../components/Characters";
 import {
   rangeCharactersQueryOptions,
   singleCatalogQueryOptions,
 } from "@/lib/queries/options";
-
-const RANGE_MASCOT_FALLBACK: Record<string, ComponentType<{ size?: number }>> = {
-  glucose: SupaDupa,
-  supadupa: SupaDupa,
-  trio: SupaDupa,
-};
 
 export const Route = createFileRoute("/products/single")({
   loader: async ({ context: { queryClient } }) => {
@@ -41,31 +35,6 @@ export const Route = createFileRoute("/products/single")({
   component: SingleProducts,
 });
 
-function RangeMascot({
-  slug,
-  mascot,
-}: {
-  slug: string;
-  name: string;
-  mascot?: RangeCharacter | null;
-}) {
-  const Mascot = mascot?.Comp ?? RANGE_MASCOT_FALLBACK[slug];
-
-  if (!mascot?.image_url && !Mascot) return null;
-
-  return (
-    <div className="range-mascot">
-      <div className="range-mascot-stage">
-        {mascot?.image_url ? (
-          <img src={mascot.image_url} alt={mascot.name} className="range-mascot-img" />
-        ) : Mascot ? (
-          <Mascot size={120} />
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
 function SingleProducts() {
   const { range: rangeFromUrl } = Route.useSearch();
   const [filter, setFilter] = useState("all");
@@ -79,11 +48,12 @@ function SingleProducts() {
   const view = !isPending && ranges && ranges.length
     ? ranges.map((r) => {
         const fb = SINGLE_RANGES.find((s) => s.key === r.slug || s.name === r.name);
+        const mascot = characterForRange(r.slug, r.name, characters);
         return {
           key: r.slug,
           name: r.name,
           desc: r.description ?? fb?.desc ?? "",
-          Mascot: fb?.Mascot,
+          mascot,
           color: fb?.products?.[0]?.color ?? "#FFF200",
           products: r.products.map((p) => ({
             name: p.name,
@@ -96,7 +66,7 @@ function SingleProducts() {
       })
     : !isPending
       ? SINGLE_RANGES.map((r) => ({
-          key: r.key, name: r.name, desc: r.desc, Mascot: r.Mascot,
+          key: r.key, name: r.name, desc: r.desc, mascot: characterForRange(r.key, r.name, characters),
           color: r.products[0]?.color ?? "#FFF200",
           products: r.products.map((p) => ({ name: p.name, desc: p.desc, color: p.color, image_url: null as string | null, pill: r.name })),
         }))
@@ -137,11 +107,7 @@ function SingleProducts() {
               <h2>{r.name}</h2>
               <p>{r.desc}</p>
             </div>
-            <RangeMascot
-              slug={r.key}
-              name={r.name}
-              mascot={characterForRange(r.key, r.name, characters)}
-            />
+            <RangeMascot slug={r.key} mascot={r.mascot} />
           </Reveal>
           <div className="grid-3">
             {r.products.map((p) => (
@@ -158,13 +124,8 @@ function SingleProducts() {
                 >
                   {p.image_url ? (
                     <ProductImageLightbox src={p.image_url} alt={p.name} />
-                  ) : r.Mascot ? (() => {
-                    const Mascot = r.Mascot!;
-                    return <Mascot size={90} />;
-                  })() : (
-                    <span className="prod-initial" style={{ color: p.color, borderColor: p.color }}>
-                      {p.name.charAt(0)}
-                    </span>
+                  ) : (
+                    <ProductMascotFallback mascot={r.mascot} color={p.color} name={p.name} />
                   )}
                 </div>
                 <div className="prod-body">

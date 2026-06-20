@@ -6,10 +6,11 @@ import { PageHero } from "../components/PageHero";
 import { Section, SectionHead } from "../components/Section";
 import { Reveal } from "../components/Effects";
 import { SiteSectionLoading } from "../components/SiteSectionLoading";
+import { resolveContactInfo } from "@/lib/siteCopy";
 import { siteSettingsQueryOptions } from "@/lib/queries/options";
 
 export const Route = createFileRoute("/contact")({
-  loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(siteSettingsQueryOptions()),
+  loader: ({ context: { queryClient } }) => queryClient.fetchQuery(siteSettingsQueryOptions()),
   head: () => ({
     meta: [
       { title: "Contact — Golden Fresh Biscuits" },
@@ -19,20 +20,10 @@ export const Route = createFileRoute("/contact")({
   component: Contact,
 });
 
-const DEFAULTS: Record<string, string> = {
-  contact_email: "info@goldenfresh.co.za",
-  contact_phone: "",
-  contact_address: "Lenasia, Johannesburg, South Africa",
-  contact_hours: "Monday – Friday, 8am – 5pm",
-  facebook_url: "#",
-  instagram_url: "#",
-  tiktok_url: "#",
-};
-
 function Contact() {
   const [sent, setSent] = useState(false);
   const { data: settings, isPending } = useQuery(siteSettingsQueryOptions());
-  const cfg = { ...DEFAULTS, ...settings };
+  const cfg = resolveContactInfo(settings);
 
   const rows = [
     cfg.contact_email && { icon: Mail, text: cfg.contact_email },

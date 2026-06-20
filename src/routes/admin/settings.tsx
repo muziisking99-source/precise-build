@@ -1,10 +1,12 @@
 "use client";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { logActivity, useAdminAuth } from "@/components/admin/AdminAuth";
+import { queryKeys } from "@/lib/queries/keys";
 
 export const Route = createFileRoute("/admin/settings")({
   component: SettingsAdmin,
@@ -13,16 +15,21 @@ export const Route = createFileRoute("/admin/settings")({
 const SETTING_KEYS = [
   "ribbon_items",
   "footer_tagline",
+  "heritage_years",
   "heritage_ranges",
+  "heritage_provinces",
   "heritage_families",
   "home_ranges_subtitle",
 ] as const;
 
 function SettingsAdmin() {
   const { user } = useAdminAuth();
+  const queryClient = useQueryClient();
   const [ribbon, setRibbon] = useState("");
   const [tagline, setTagline] = useState("Delight in every Bite. Baked in Lenasia since 1998.");
+  const [heritageYears, setHeritageYears] = useState("25+");
   const [heritageRanges, setHeritageRanges] = useState("11");
+  const [heritageProvinces, setHeritageProvinces] = useState("9");
   const [heritageFamilies, setHeritageFamilies] = useState("5M+");
   const [homeRangesSubtitle, setHomeRangesSubtitle] = useState("11 ranges, baked in Lenasia and loved across all nine provinces.");
 
@@ -31,7 +38,9 @@ function SettingsAdmin() {
       (data ?? []).forEach((r: { key: string; value: string | null }) => {
         if (r.key === "ribbon_items") setRibbon(r.value ?? "");
         if (r.key === "footer_tagline") setTagline(r.value && !/Lekker biscuits for every SA family|Delivering local lekkerness/i.test(r.value) ? r.value : "Delight in every Bite. Baked in Lenasia since 1998.");
+        if (r.key === "heritage_years") setHeritageYears(r.value ?? "25+");
         if (r.key === "heritage_ranges") setHeritageRanges(r.value ?? "11");
+        if (r.key === "heritage_provinces") setHeritageProvinces(r.value ?? "9");
         if (r.key === "heritage_families") setHeritageFamilies(r.value ?? "5M+");
         if (r.key === "home_ranges_subtitle") setHomeRangesSubtitle(r.value ?? "");
       });
@@ -42,13 +51,16 @@ function SettingsAdmin() {
     const rows = [
       { key: "ribbon_items", value: ribbon },
       { key: "footer_tagline", value: tagline },
+      { key: "heritage_years", value: heritageYears },
       { key: "heritage_ranges", value: heritageRanges },
+      { key: "heritage_provinces", value: heritageProvinces },
       { key: "heritage_families", value: heritageFamilies },
       { key: "home_ranges_subtitle", value: homeRangesSubtitle },
     ];
     const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "key" });
     if (error) { toast.error(error.message); return; }
     logActivity("Site settings updated", null, user?.email ?? null);
+    void queryClient.invalidateQueries({ queryKey: queryKeys.siteSettings });
     toast.success("Settings saved");
   };
 
@@ -76,12 +88,22 @@ function SettingsAdmin() {
       <div className="admin-card" style={{ maxWidth: 760 }}>
         <h3 style={{ font: "400 18px 'Abril Fatface', serif", color: "#fff", margin: "0 0 16px" }}>Heritage Stats</h3>
         <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, margin: "0 0 16px" }}>
-          Shown in the Our Heritage section on the home page.
+          Shown on the About page stats bar and the Our Heritage section on the home page.
         </p>
         <div className="admin-row">
           <div className="admin-field">
+            <label className="admin-label">Years</label>
+            <input className="admin-input" value={heritageYears} onChange={(e) => setHeritageYears(e.target.value)} placeholder="25+" />
+          </div>
+          <div className="admin-field">
             <label className="admin-label">Ranges count</label>
             <input className="admin-input" value={heritageRanges} onChange={(e) => setHeritageRanges(e.target.value)} placeholder="11" />
+          </div>
+        </div>
+        <div className="admin-row">
+          <div className="admin-field">
+            <label className="admin-label">Provinces</label>
+            <input className="admin-input" value={heritageProvinces} onChange={(e) => setHeritageProvinces(e.target.value)} placeholder="9" />
           </div>
           <div className="admin-field">
             <label className="admin-label">Happy families</label>

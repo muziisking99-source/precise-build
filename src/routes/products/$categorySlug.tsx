@@ -4,20 +4,26 @@ import { useState, type CSSProperties } from "react";
 import { SectionTag } from "../../components/Layout";
 import { PageHero } from "../../components/PageHero";
 import { Reveal } from "../../components/Effects";
+import { RangeMascot, ProductMascotFallback } from "../../components/RangeMascot";
 import { productTopStyle } from "../../lib/uiTint";
 import { productPackImageScale } from "@/lib/productPackImage";
+import { characterForRange } from "@/lib/rangeCharacter";
 import { ProductImageLightbox } from "../../components/ProductImageLightbox";
 import { ProductsLoading } from "../../components/ProductsLoading";
 import {
   categoryBySlugQueryOptions,
   categoryCatalogQueryOptions,
+  rangeCharactersQueryOptions,
 } from "@/lib/queries/options";
 
 export const Route = createFileRoute("/products/$categorySlug")({
   loader: async ({ params, context: { queryClient } }) => {
     const category = await queryClient.fetchQuery(categoryBySlugQueryOptions(params.categorySlug));
     if (!category) throw notFound();
-    await queryClient.fetchQuery(categoryCatalogQueryOptions(params.categorySlug));
+    await Promise.all([
+      queryClient.fetchQuery(categoryCatalogQueryOptions(params.categorySlug)),
+      queryClient.fetchQuery(rangeCharactersQueryOptions()),
+    ]);
   },
   head: ({ params }) => ({
     meta: [{ title: `${params.categorySlug} — Golden Fresh` }],
@@ -30,18 +36,24 @@ function CategoryProducts() {
   const [filter, setFilter] = useState("all");
   const { data: category } = useQuery(categoryBySlugQueryOptions(categorySlug));
   const { data: ranges, isPending } = useQuery(categoryCatalogQueryOptions(categorySlug));
+  const { data: characters = [] } = useQuery(rangeCharactersQueryOptions());
 
-  const view = (ranges ?? []).map((r) => ({
-    key: r.slug,
-    name: r.name,
-    desc: r.description ?? "",
-    products: r.products.map((p) => ({
-      name: p.name,
-      desc: p.description ?? "",
+  const view = (ranges ?? []).map((r) => {
+    const mascot = characterForRange(r.slug, r.name, characters);
+    return {
+      key: r.slug,
+      name: r.name,
+      desc: r.description ?? "",
+      mascot,
       color: "#C59B6D",
-      image_url: p.image_url,
-    })),
-  }));
+      products: r.products.map((p) => ({
+        name: p.name,
+        desc: p.description ?? "",
+        color: "#C59B6D",
+        image_url: p.image_url,
+      })),
+    };
+  });
 
   const tabs = [{ key: "all", label: "All" }, ...view.map((r) => ({ key: r.key, label: r.name }))];
   const visible = filter === "all" ? view : view.filter((r) => r.key === filter);
@@ -93,6 +105,7 @@ function CategoryProducts() {
                     <h2>{r.name}</h2>
                     {r.desc && <p>{r.desc}</p>}
                   </div>
+                  <RangeMascot slug={r.key} mascot={r.mascot} />
                 </Reveal>
                 <div className="grid-3">
                   {r.products.map((p) => (
@@ -110,9 +123,7 @@ function CategoryProducts() {
                         {p.image_url ? (
                           <ProductImageLightbox src={p.image_url} alt={p.name} />
                         ) : (
-                          <span className="prod-initial" style={{ color: p.color, borderColor: p.color }}>
-                            {p.name.charAt(0)}
-                          </span>
+                          <ProductMascotFallback mascot={r.mascot} color={p.color} name={p.name} />
                         )}
                       </div>
                       <div className="prod-body">

@@ -41,6 +41,7 @@ export function CategoryExploreLink({
       void queryClient.prefetchQuery(bulkProductsQueryOptions());
     } else {
       void queryClient.prefetchQuery(categoryCatalogQueryOptions(category));
+      void queryClient.prefetchQuery(rangeCharactersQueryOptions());
     }
   };
 

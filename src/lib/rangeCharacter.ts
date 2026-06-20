@@ -39,7 +39,11 @@ export function characterForRange(
   const keys = [slug, rangeName, ...(SLUG_CHARACTER_KEYS[slug] ?? [])];
 
   const dbMatch = fromDb.find(
-    (c) => matchesKeys(c.range ?? "", keys) || matchesKeys(c.name, keys),
+    (c) =>
+      matchesKeys(c.range ?? "", keys) ||
+      matchesKeys(c.name, keys) ||
+      matchesKeys(rangeName, [c.range ?? ""]) ||
+      matchesKeys(slug, [c.range ?? ""]),
   );
   if (dbMatch) {
     const fallback = CHARACTERS.find((c) => matchesKeys(c.range, keys) || matchesKeys(c.name, keys));

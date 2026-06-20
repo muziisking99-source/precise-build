@@ -26,10 +26,12 @@ export function SiteSectionLoading({ variant }: SiteSectionLoadingProps) {
 
   if (variant === "characters") {
     return (
-      <div className="char-scroll site-loading-characters" aria-busy="true" aria-label="Loading characters">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="products-loading-char-card" />
-        ))}
+      <div className="char-marquee site-loading-characters" aria-busy="true" aria-label="Loading characters">
+        <div className="char-marquee-track">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="products-loading-char-card" />
+          ))}
+        </div>
       </div>
     );
   }

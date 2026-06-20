@@ -5,10 +5,12 @@ import { Section, SectionHead } from "../components/Section";
 import { Reveal } from "../components/Effects";
 import { SiteSectionLoading } from "../components/SiteSectionLoading";
 
+import { CharacterMarquee } from "../components/CharacterMarquee";
 import { CHARACTERS, SupaDupa, GingerMan, LuvALotGirl, AllStarFootballer, JokerHat } from "../components/Characters";
 import { SnapHero } from "../components/SnapHero";
 import { Logo } from "../components/Logo";
 import { parseRibbonItems } from "@/lib/queries/fetchers";
+import { resolveSiteStats } from "@/lib/siteCopy";
 import {
   charactersQueryOptions,
   homeRangesQueryOptions,
@@ -75,6 +77,7 @@ function Index() {
     heritage_families: settings?.heritage_families || FALLBACK_SITE.heritage_families,
     home_ranges_subtitle: settings?.home_ranges_subtitle || FALLBACK_SITE.home_ranges_subtitle,
   };
+  const stats = resolveSiteStats(settings);
 
   const chars = characters.length
     ? characters
@@ -177,27 +180,7 @@ function Index() {
         {charactersLoading ? (
           <SiteSectionLoading variant="characters" />
         ) : (
-          <div className="char-scroll">
-            {chars.map((c) => {
-              const fallback = CHARACTERS.find((x) => x.name === c.name || x.range === c.range);
-              const Comp = fallback?.Comp ?? SupaDupa;
-              return (
-                <Reveal key={c.id} className="char-card">
-                  <div className="char-card-visual">
-                    {c.image_url ? (
-                      <img src={c.image_url} alt={c.name} className="char-card-img" />
-                    ) : (
-                      <Comp size={90} />
-                    )}
-                  </div>
-                  <div className="char-name">{c.name}</div>
-                  <div className="char-range">{c.range}</div>
-                  <p className="char-desc">{c.description}</p>
-                  <div className="char-pill">{c.pill_text}</div>
-                </Reveal>
-              );
-            })}
-          </div>
+          <CharacterMarquee characters={chars} />
         )}
       </Section>
 
@@ -219,10 +202,10 @@ function Index() {
               For over a quarter-century, Golden Fresh — a Yunma Foods brand — has been baking honest, affordable biscuits for South African families. From spaza shops to supermarkets, our range now fills lunchboxes in every province.
             </p>
             <div className="heritage-stats">
-              <div className="heritage-stat"><div className="heritage-stat-num">25+</div><div className="heritage-stat-label">Years Baking</div></div>
-              <div className="heritage-stat"><div className="heritage-stat-num">{siteCopy.heritage_ranges}</div><div className="heritage-stat-label">Ranges</div></div>
-              <div className="heritage-stat"><div className="heritage-stat-num">9</div><div className="heritage-stat-label">Provinces</div></div>
-              <div className="heritage-stat"><div className="heritage-stat-num">{siteCopy.heritage_families}</div><div className="heritage-stat-label">Happy Families</div></div>
+              <div className="heritage-stat"><div className="heritage-stat-num">{stats.years}</div><div className="heritage-stat-label">Years Baking</div></div>
+              <div className="heritage-stat"><div className="heritage-stat-num">{stats.ranges}</div><div className="heritage-stat-label">Ranges</div></div>
+              <div className="heritage-stat"><div className="heritage-stat-num">{stats.provinces}</div><div className="heritage-stat-label">Provinces</div></div>
+              <div className="heritage-stat"><div className="heritage-stat-num">{stats.families}</div><div className="heritage-stat-label">Happy Families</div></div>
             </div>
           </Reveal>
         </div>
