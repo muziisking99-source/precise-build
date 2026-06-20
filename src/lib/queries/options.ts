@@ -2,7 +2,7 @@ import { queryOptions } from "@tanstack/react-query";
 import { queryKeys } from "./keys";
 import {
   fetchBulkProducts,
-  fetchCategoryHeroImages,
+  fetchCategoryCarouselImages,
   fetchHeroPanels,
   fetchHomeRanges,
   fetchRangeCharacters,
@@ -67,7 +67,7 @@ export const testimonialsQueryOptions = () =>
 export const categoryHeroesQueryOptions = () =>
   queryOptions({
     queryKey: queryKeys.categoryHeroes,
-    queryFn: fetchCategoryHeroImages,
+    queryFn: fetchCategoryCarouselImages,
     staleTime: STALE_TIME,
   });
 

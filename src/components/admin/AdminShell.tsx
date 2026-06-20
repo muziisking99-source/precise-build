@@ -1,13 +1,14 @@
 "use client";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { type ReactNode, useState } from "react";
-import { Home, Package, Smile, Sparkles, MessageSquareQuote, Mail, Settings, LogOut, Menu, X } from "lucide-react";
+import { Home, Package, Smile, Sparkles, MessageSquareQuote, Mail, Settings, LogOut, Menu, X, LayoutGrid } from "lucide-react";
 import { useAdminAuth } from "./AdminAuth";
 import { Logo } from "@/components/Logo";
 
 const NAV = [
   { to: "/admin/dashboard", label: "Dashboard", icon: Home },
   { to: "/admin/products", label: "Products", icon: Package },
+  { to: "/admin/category-cards", label: "Category Cards", icon: LayoutGrid },
   { to: "/admin/characters", label: "Characters", icon: Smile },
   { to: "/admin/hero", label: "Hero Sections", icon: Sparkles },
   { to: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },

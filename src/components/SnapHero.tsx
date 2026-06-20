@@ -189,12 +189,6 @@ export function SnapHero() {
           index={0}
           registerRef={register}
           background={<HeroNavyBackground />}
-          innerClassName="snap-inner--split"
-          aside={
-            <div className="snap-logo-desktop">
-              <AnimatedHeroLogo height={437} />
-            </div>
-          }
         >
           <div className="snap-copy">
             {heroLoading ? (
@@ -207,7 +201,10 @@ export function SnapHero() {
                 {panel1.badge_text}
               </div>
             )}
-            <BrandHeading p={panel1} />
+            <div className="snap-hero-headline-row">
+              <BrandHeading p={panel1} />
+              <AnimatedHeroLogo matchHeadline />
+            </div>
             <div className="snap-logo-mobile">
               <AnimatedHeroLogo height={218} />
             </div>

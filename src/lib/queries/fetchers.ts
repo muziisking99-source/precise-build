@@ -39,7 +39,7 @@ export type TestimonialRow = {
   location: string | null;
 };
 
-export type CategoryHeroImages = { single: string | null; bulk: string | null };
+export type CategoryCarouselImages = { single: string[]; bulk: string[] };
 
 export type DbProduct = {
   id: string;
@@ -153,19 +153,36 @@ export async function fetchVisibleTestimonials(): Promise<TestimonialRow[]> {
   return (data ?? []) as TestimonialRow[];
 }
 
-export async function fetchCategoryHeroImages(): Promise<CategoryHeroImages> {
+export async function fetchCategoryCarouselImages(): Promise<CategoryCarouselImages> {
+  const next: CategoryCarouselImages = { single: [], bulk: [] };
+
+  const { data: carousel } = await supabase
+    .from("category_carousel_images")
+    .select("category, image_url")
+    .eq("is_visible", true)
+    .order("sort_order");
+
+  (carousel ?? []).forEach((row: { category: string; image_url: string }) => {
+    if (row.category === "single") next.single.push(row.image_url);
+    if (row.category === "bulk") next.bulk.push(row.image_url);
+  });
+
+  const needSingle = next.single.length === 0;
+  const needBulk = next.bulk.length === 0;
+  if (!needSingle && !needBulk) return next;
+
   const { data } = await supabase
     .from("products")
-    .select("image_url, product_ranges!inner(category)")
+    .select("image_url, sort_order, product_ranges!inner(category)")
     .not("image_url", "is", null)
-    .limit(50);
+    .order("sort_order");
 
-  const next: CategoryHeroImages = { single: null, bulk: null };
-  (data ?? []).forEach((r: any) => {
+  (data ?? []).forEach((r: { image_url: string; product_ranges?: { category?: string } }) => {
     const cat = r.product_ranges?.category;
-    if (cat === "single" && !next.single) next.single = r.image_url;
-    if (cat === "bulk" && !next.bulk) next.bulk = r.image_url;
+    if (needSingle && cat === "single" && !next.single.includes(r.image_url)) next.single.push(r.image_url);
+    if (needBulk && cat === "bulk" && !next.bulk.includes(r.image_url)) next.bulk.push(r.image_url);
   });
+
   return next;
 }
 

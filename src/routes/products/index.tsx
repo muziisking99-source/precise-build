@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PageHero } from "../../components/PageHero";
 import { Reveal } from "../../components/Effects";
 import { CategoryExploreLink } from "../../components/CategoryExploreLink";
+import { CategoryImageCarousel } from "../../components/CategoryImageCarousel";
 import { categoryHeroesQueryOptions } from "@/lib/queries/options";
 
 export const Route = createFileRoute("/products/")({
@@ -17,16 +18,15 @@ export const Route = createFileRoute("/products/")({
 });
 
 function ProductCategories() {
-  const { data: hero = { single: null, bulk: null } } = useQuery(categoryHeroesQueryOptions());
+  const { data: carousel = { single: [], bulk: [] } } = useQuery(categoryHeroesQueryOptions());
 
   const Card = ({
-    num, title, desc, to, image, ctaClass, ctaText, category,
+    title, desc, to, images, ctaClass, ctaText, category,
   }: {
-    num: string;
     title: string;
     desc: string;
     to: "/products/single" | "/products/bulk";
-    image: string | null;
+    images: string[];
     ctaClass: string;
     ctaText: string;
     category: "single" | "bulk";
@@ -36,14 +36,13 @@ function ProductCategories() {
         to={to}
         category={category}
         title={title}
-        image={image}
+        image={images[0] ?? null}
         className="category-card-link"
       >
-        <div className={`category-card-image ${image ? "" : "no-image"}`}>
-          {image ? <img src={image} alt={title} /> : <span className="category-card-fallback" aria-hidden />}
+        <div className={`category-card-image ${images.length ? "" : "no-image"}`}>
+          <CategoryImageCarousel images={images} alt={title} />
         </div>
         <div className="category-card-copy">
-          <span className="category-card-num">{num}</span>
           <h3 className="category-card-title">{title}</h3>
           <p className="category-card-sub">{desc}</p>
         </div>
@@ -66,21 +65,19 @@ function ProductCategories() {
         <div className="container">
           <div className="cat-grid category-grid">
             <Card
-              num="01 — Category"
               title="Single Biscuits"
               desc="Individually wrapped for freshness — perfect for on-the-go snacking, lunchboxes, and quick treats."
               to="/products/single"
-              image={hero.single}
+              images={carousel.single}
               ctaClass="btn-red"
               ctaText="Explore Single Biscuits"
               category="single"
             />
             <Card
-              num="02 — Category"
               title="Bulk Biscuits"
               desc="Family-size value packs for events, sharing, or stocking up — same Golden Fresh quality, bigger boxes."
               to="/products/bulk"
-              image={hero.bulk}
+              images={carousel.bulk}
               ctaClass="btn-secondary"
               ctaText="Explore Bulk Biscuits"
               category="bulk"

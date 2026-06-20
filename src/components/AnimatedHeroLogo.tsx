@@ -7,6 +7,7 @@ import { prefersReducedMotion, spring } from "./motion/transitions";
 type AnimatedHeroLogoProps = {
   height?: number;
   className?: string;
+  matchHeadline?: boolean;
 };
 
 const logoSpring = { ...spring, stiffness: 52, damping: 14 };
@@ -21,11 +22,13 @@ const elementsVariants = {
   visible: { opacity: 1, x: 0, scale: 1 },
 };
 
-export function AnimatedHeroLogo({ height = 437, className = "" }: AnimatedHeroLogoProps) {
+export function AnimatedHeroLogo({ height = 437, className = "", matchHeadline = false }: AnimatedHeroLogoProps) {
   const reduced = prefersReducedMotion();
   const [play, setPlay] = useState(reduced);
   const aspect = 1920 / 1610;
   const width = Math.round(height * aspect);
+  const sizeStyle = matchHeadline ? undefined : { width, height };
+  const rootClass = `animated-hero-logo${matchHeadline ? " animated-hero-logo--headline" : ""} ${className}`.trim();
 
   useEffect(() => {
     if (reduced) return;
@@ -36,8 +39,8 @@ export function AnimatedHeroLogo({ height = 437, className = "" }: AnimatedHeroL
   if (reduced) {
     return (
       <div
-        className={`animated-hero-logo ${className}`.trim()}
-        style={{ width, height }}
+        className={rootClass}
+        style={sizeStyle}
         role="img"
         aria-label="Golden Fresh Biscuits"
       >
@@ -63,8 +66,8 @@ export function AnimatedHeroLogo({ height = 437, className = "" }: AnimatedHeroL
 
   return (
     <div
-      className={`animated-hero-logo ${className}`.trim()}
-      style={{ width, height }}
+      className={rootClass}
+      style={sizeStyle}
       role="img"
       aria-label="Golden Fresh Biscuits"
     >

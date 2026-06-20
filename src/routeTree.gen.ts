@@ -26,6 +26,7 @@ import { Route as AdminHeroRouteImport } from './routes/admin/hero'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminContactInfoRouteImport } from './routes/admin/contact-info'
 import { Route as AdminCharactersRouteImport } from './routes/admin/characters'
+import { Route as AdminCategoryCardsRouteImport } from './routes/admin/category-cards'
 
 const ProductsRoute = ProductsRouteImport.update({
   id: '/products',
@@ -112,6 +113,11 @@ const AdminCharactersRoute = AdminCharactersRouteImport.update({
   path: '/characters',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCategoryCardsRoute = AdminCategoryCardsRouteImport.update({
+  id: '/category-cards',
+  path: '/category-cards',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/products': typeof ProductsRouteWithChildren
+  '/admin/category-cards': typeof AdminCategoryCardsRoute
   '/admin/characters': typeof AdminCharactersRoute
   '/admin/contact-info': typeof AdminContactInfoRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -136,6 +143,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/admin/category-cards': typeof AdminCategoryCardsRoute
   '/admin/characters': typeof AdminCharactersRoute
   '/admin/contact-info': typeof AdminContactInfoRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -156,6 +164,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/products': typeof ProductsRouteWithChildren
+  '/admin/category-cards': typeof AdminCategoryCardsRoute
   '/admin/characters': typeof AdminCharactersRoute
   '/admin/contact-info': typeof AdminContactInfoRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/products'
+    | '/admin/category-cards'
     | '/admin/characters'
     | '/admin/contact-info'
     | '/admin/dashboard'
@@ -194,6 +204,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/admin/category-cards'
     | '/admin/characters'
     | '/admin/contact-info'
     | '/admin/dashboard'
@@ -213,6 +224,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/products'
+    | '/admin/category-cards'
     | '/admin/characters'
     | '/admin/contact-info'
     | '/admin/dashboard'
@@ -356,10 +368,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCharactersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/category-cards': {
+      id: '/admin/category-cards'
+      path: '/category-cards'
+      fullPath: '/admin/category-cards'
+      preLoaderRoute: typeof AdminCategoryCardsRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
+  AdminCategoryCardsRoute: typeof AdminCategoryCardsRoute
   AdminCharactersRoute: typeof AdminCharactersRoute
   AdminContactInfoRoute: typeof AdminContactInfoRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
@@ -372,6 +392,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminCategoryCardsRoute: AdminCategoryCardsRoute,
   AdminCharactersRoute: AdminCharactersRoute,
   AdminContactInfoRoute: AdminContactInfoRoute,
   AdminDashboardRoute: AdminDashboardRoute,
