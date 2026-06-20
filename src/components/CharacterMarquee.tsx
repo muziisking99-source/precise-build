@@ -1,6 +1,7 @@
 "use client";
 
 import { CHARACTERS, SupaDupa } from "./Characters";
+import { mascotImageUrl } from "@/lib/carouselImageUrl";
 import { prefersReducedMotion } from "./motion/transitions";
 import type { CharacterRow } from "@/lib/queries/fetchers";
 
@@ -18,7 +19,13 @@ function CharacterCard({ character }: { character: CharacterRow }) {
     <article className="char-card">
       <div className="char-card-visual">
         {character.image_url ? (
-          <img src={character.image_url} alt={character.name} className="char-card-img" />
+          <img
+            src={mascotImageUrl(character.image_url)}
+            alt={character.name}
+            className="char-card-img"
+            loading="lazy"
+            decoding="async"
+          />
         ) : (
           <Comp size={90} />
         )}

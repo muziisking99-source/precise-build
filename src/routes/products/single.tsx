@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
+import { ProductsBackLink } from "../../components/ProductsBackLink";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState, type CSSProperties } from "react";
 import { SectionTag } from "../../components/Layout";
@@ -40,12 +41,13 @@ function SingleProducts() {
   const [filter, setFilter] = useState("all");
   const { data: ranges, isPending } = useQuery(singleCatalogQueryOptions());
   const { data: characters = [] } = useQuery(rangeCharactersQueryOptions());
+  const showLoading = isPending && ranges === undefined;
 
   useEffect(() => {
     if (rangeFromUrl) setFilter(rangeFromUrl);
   }, [rangeFromUrl]);
 
-  const view = !isPending && ranges && ranges.length
+  const view = ranges && ranges.length
     ? ranges.map((r) => {
         const fb = SINGLE_RANGES.find((s) => s.key === r.slug || s.name === r.name);
         const mascot = characterForRange(r.slug, r.name, characters);
@@ -64,7 +66,7 @@ function SingleProducts() {
           })),
         };
       })
-    : !isPending
+    : ranges !== undefined
       ? SINGLE_RANGES.map((r) => ({
           key: r.key, name: r.name, desc: r.desc, mascot: characterForRange(r.key, r.name, characters),
           color: r.products[0]?.color ?? "#FFF200",
@@ -82,10 +84,10 @@ function SingleProducts() {
         title={<>Our <span className="accent">Full Range</span></>}
         description="Nine ranges. Every moment. Every South African family."
       >
-        <Link to="/products" className="products-back">← All categories</Link>
+        <ProductsBackLink />
       </PageHero>
 
-      {isPending ? (
+      {showLoading ? (
         <ProductsLoading variant="single" />
       ) : (
         <>

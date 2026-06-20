@@ -73,28 +73,28 @@ export const categoryBySlugQueryOptions = (slug: string) =>
   queryOptions({
     queryKey: [...queryKeys.categoryMeta, slug] as const,
     queryFn: () => fetchCategoryBySlug(slug),
-    staleTime: ADMIN_CONTENT_STALE_TIME,
+    staleTime: STALE_TIME,
   });
 
 export const categoryCatalogQueryOptions = (slug: string) =>
   queryOptions({
     queryKey: [...queryKeys.categoryCatalog, slug] as const,
     queryFn: () => fetchCategoryCatalog(slug),
-    staleTime: ADMIN_CONTENT_STALE_TIME,
+    staleTime: STALE_TIME,
   });
 
 export const productCategoriesQueryOptions = () =>
   queryOptions({
     queryKey: queryKeys.productCategories,
     queryFn: fetchProductCategories,
-    staleTime: ADMIN_CONTENT_STALE_TIME,
+    staleTime: STALE_TIME,
   });
 
 export const categoryHeroesQueryOptions = () =>
   queryOptions({
     queryKey: queryKeys.categoryHeroes,
     queryFn: fetchCategoryCarouselImages,
-    staleTime: ADMIN_CONTENT_STALE_TIME,
+    staleTime: STALE_TIME,
   });
 
 export const singleCatalogQueryOptions = () =>
@@ -124,14 +124,13 @@ export async function prefetchHomePage(queryClient: {
 }
 
 export async function prefetchProductRoutes(queryClient: {
-  fetchQuery: (options: ReturnType<typeof productCategoriesQueryOptions>) => Promise<unknown>;
-  prefetchQuery: (options: ReturnType<typeof singleCatalogQueryOptions>) => Promise<unknown>;
+  ensureQueryData: (options: ReturnType<typeof productCategoriesQueryOptions>) => Promise<unknown>;
 }) {
   await Promise.all([
-    queryClient.fetchQuery(productCategoriesQueryOptions()),
-    queryClient.fetchQuery(categoryHeroesQueryOptions()),
-    queryClient.prefetchQuery(singleCatalogQueryOptions()),
-    queryClient.prefetchQuery(bulkProductsQueryOptions()),
-    queryClient.prefetchQuery(rangeCharactersQueryOptions()),
+    queryClient.ensureQueryData(productCategoriesQueryOptions()),
+    queryClient.ensureQueryData(categoryHeroesQueryOptions()),
+    queryClient.ensureQueryData(singleCatalogQueryOptions()),
+    queryClient.ensureQueryData(bulkProductsQueryOptions()),
+    queryClient.ensureQueryData(rangeCharactersQueryOptions()),
   ]);
 }

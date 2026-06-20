@@ -7,6 +7,8 @@ import { useCategoryTransition, type CategoryKey } from "./motion/CategoryTransi
 import {
   bulkProductsQueryOptions,
   categoryCatalogQueryOptions,
+  categoryHeroesQueryOptions,
+  productCategoriesQueryOptions,
   rangeCharactersQueryOptions,
   singleCatalogQueryOptions,
 } from "@/lib/queries/options";
@@ -34,6 +36,8 @@ export function CategoryExploreLink({
   const reduced = prefersReducedMotion();
 
   const prefetch = () => {
+    void queryClient.prefetchQuery(productCategoriesQueryOptions());
+    void queryClient.prefetchQuery(categoryHeroesQueryOptions());
     if (category === "single") {
       void queryClient.prefetchQuery(singleCatalogQueryOptions());
       void queryClient.prefetchQuery(rangeCharactersQueryOptions());

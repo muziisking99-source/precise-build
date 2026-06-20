@@ -1,14 +1,27 @@
+"use client";
+
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Logo } from "./Logo";
 import { SiteSectionLoading } from "./SiteSectionLoading";
-import { resolveFooterTagline, resolveContactInfo } from "@/lib/siteCopy";
-import { siteSettingsQueryOptions, singleRangesQueryOptions } from "@/lib/queries/options";
+import { resolveFooterTagline, resolveContactInfo, YUNMA_BRAND_LABEL } from "@/lib/siteCopy";
+import {
+  categoryHeroesQueryOptions,
+  productCategoriesQueryOptions,
+  siteSettingsQueryOptions,
+  singleRangesQueryOptions,
+} from "@/lib/queries/options";
 
 export function Nav() {
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const prefetchProducts = () => {
+    void queryClient.prefetchQuery(productCategoriesQueryOptions());
+    void queryClient.prefetchQuery(categoryHeroesQueryOptions());
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -25,7 +38,15 @@ export function Nav() {
       <div className={`nav-links ${open ? "open" : ""}`}>
         <Link to="/" activeOptions={{ exact: true }} activeProps={{ className: "active" }} onClick={() => setOpen(false)}>Home</Link>
         <Link to="/about" activeProps={{ className: "active" }} onClick={() => setOpen(false)}>About Us</Link>
-        <Link to="/products" activeProps={{ className: "active" }} onClick={() => setOpen(false)}>Products</Link>
+        <Link
+          to="/products"
+          activeProps={{ className: "active" }}
+          onClick={() => setOpen(false)}
+          onMouseEnter={prefetchProducts}
+          onFocus={prefetchProducts}
+        >
+          Products
+        </Link>
         <Link to="/contact" activeProps={{ className: "active" }} onClick={() => setOpen(false)}>Contact</Link>
       </div>
       <button type="button" className="nav-burger" onClick={() => setOpen((o) => !o)} aria-label="Menu">
@@ -90,7 +111,7 @@ export function Footer() {
           {contact.contact_phone && <p>{contact.contact_phone}</p>}
           <p>{contact.contact_address}</p>
           {contact.contact_hours && <p>{contact.contact_hours}</p>}
-          <p>A Yunma CC Foods Brand</p>
+          <p>{YUNMA_BRAND_LABEL}</p>
         </div>
       </div>
       <div className="footer-bot">

@@ -27,7 +27,7 @@ const VALUES: { icon: LucideIcon; t: string; b: string }[] = [
 ];
 
 const MILESTONES = [
-  { y: "1998", t: "Founded in Lenasia by Yunma Foods." },
+  { y: "1998", t: "Founded in Lenasia by Yunma Foods CC." },
   { y: "2002", t: "Glucose Energy becomes SA's go-to lunchbox biscuit." },
   { y: "2008", t: "Joker and All-Star ranges launched." },
   { y: "2015", t: "Expanded to all 9 provinces." },

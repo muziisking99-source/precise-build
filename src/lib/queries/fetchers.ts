@@ -7,6 +7,9 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import type { RangeCharacter } from "@/lib/rangeCharacter";
 
+const PRODUCT_FIELDS = "id, name, description, image_url, pill_text, is_visible, sort_order";
+const RANGE_WITH_PRODUCTS = `id, slug, name, description, category, sort_order, products(${PRODUCT_FIELDS})`;
+
 export type RangeLink = { slug: string; name: string };
 
 export const FALLBACK_SINGLE_RANGES: RangeLink[] = SINGLE_RANGES.map((r) => ({
@@ -73,7 +76,15 @@ export type DbRange = {
   products: DbProduct[];
 };
 
-export type BulkItem = { name: string; image_url: string | null; color: string };
+export type BulkItem = { name: string; image_url: string | null; color: string; description: string | null };
+
+function bulkFallback(name: string) {
+  const lower = name.toLowerCase();
+  return (
+    BULK_PRODUCTS.find((b) => b.name.toLowerCase() === lower) ??
+    BULK_PRODUCTS.find((b) => lower.includes(b.name.toLowerCase()) || b.name.toLowerCase().includes(lower))
+  );
+}
 
 export function isBulkRange(slug: string, category?: string | null) {
   return slug === "bulk" || category === "bulk";
@@ -221,7 +232,7 @@ export async function fetchCategoryBySlug(slug: string): Promise<ProductCategory
 export async function fetchCategoryCatalog(categorySlug: string): Promise<DbRange[]> {
   const { data } = await supabase
     .from("product_ranges")
-    .select("id, slug, name, description, category, sort_order, products(*)")
+    .select(RANGE_WITH_PRODUCTS)
     .eq("category", categorySlug)
     .order("sort_order");
 
@@ -238,22 +249,23 @@ export async function fetchCategoryCatalog(categorySlug: string): Promise<DbRang
 }
 
 export async function fetchCategoryCarouselImages(): Promise<CategoryCarouselImages> {
-  const { data: categories } = await supabase
-    .from("product_categories")
-    .select("slug")
-    .eq("is_visible", true)
-    .order("sort_order");
+  const [{ data: categories }, { data: carousel }] = await Promise.all([
+    supabase
+      .from("product_categories")
+      .select("slug")
+      .eq("is_visible", true)
+      .order("sort_order"),
+    supabase
+      .from("category_carousel_images")
+      .select("category, image_url")
+      .eq("is_visible", true)
+      .order("sort_order"),
+  ]);
 
   const next: CategoryCarouselImages = {};
   (categories ?? []).forEach((cat: { slug: string }) => {
     next[cat.slug] = [];
   });
-
-  const { data: carousel } = await supabase
-    .from("category_carousel_images")
-    .select("category, image_url")
-    .eq("is_visible", true)
-    .order("sort_order");
 
   (carousel ?? []).forEach((row: { category: string; image_url: string }) => {
     if (!next[row.category]) next[row.category] = [];
@@ -281,7 +293,7 @@ export async function fetchCategoryCarouselImages(): Promise<CategoryCarouselIma
 export async function fetchSingleCatalog(): Promise<DbRange[]> {
   const { data } = await supabase
     .from("product_ranges")
-    .select("id, slug, name, description, category, sort_order, products(*)")
+    .select(RANGE_WITH_PRODUCTS)
     .eq("category", "single")
     .order("sort_order");
 
@@ -308,15 +320,16 @@ export async function fetchBulkProducts(): Promise<BulkItem[]> {
 
   const { data: ps } = await supabase
     .from("products")
-    .select("id, name, image_url, is_visible, sort_order")
+    .select("id, name, description, image_url, is_visible, sort_order")
     .eq("range_id", (range as { id: string }).id)
     .eq("is_visible", true)
     .order("sort_order");
 
   if (!ps?.length) return [];
 
-  return (ps as DbProduct[]).map((p, i) => {
-    const fb = BULK_PRODUCTS[i % BULK_PRODUCTS.length];
-    return { name: p.name, image_url: p.image_url, color: fb?.color ?? "#C59B6D" };
+  return (ps as DbProduct[]).map((p) => {
+    const fb = bulkFallback(p.name);
+    const description = p.description?.trim() || fb?.desc || null;
+    return { name: p.name, image_url: p.image_url, color: fb?.color ?? "#C59B6D", description };
   });
 }

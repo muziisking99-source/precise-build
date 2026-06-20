@@ -97,15 +97,16 @@ export const SINGLE_RANGES: ProductRange[] = [
 export type BulkProduct = {
   name: string;
   color: string;
+  desc?: string;
   Mascot?: ComponentType<{ size?: number }>;
 };
 
 export const BULK_PRODUCTS: BulkProduct[] = [
-  { name: "Short bread", color: "#C59B6D" },
-  { name: "Choc chip biscuits", color: "#5C2F1B" },
-  { name: "Vanilla creams", color: "#1A4B8C" },
-  { name: "Lemon creams", color: "#FFF200" },
-  { name: "Chocolate creams", color: "#6B3A2A" },
-  { name: "Just ginger", color: "#8C6239", Mascot: GingerMan },
-  { name: "Luv-a-lot", color: "#D4237A", Mascot: LuvALotGirl },
+  { name: "Short bread", color: "#C59B6D", desc: "Buttery shortbread biscuits in a generous bulk pack — perfect for sharing." },
+  { name: "Choc chip biscuits", color: "#5C2F1B", desc: "Loaded with chocolate chips. A family favourite in value size." },
+  { name: "Vanilla creams", color: "#1A4B8C", desc: "Classic vanilla cream-filled biscuits. Stock up for lunchboxes and tea time." },
+  { name: "Lemon creams", color: "#FFF200", desc: "Zesty lemon cream biscuits in a bulk box built for busy households." },
+  { name: "Chocolate creams", color: "#6B3A2A", desc: "Rich chocolate cream biscuits — same Golden Fresh quality, bigger value." },
+  { name: "Just ginger", color: "#8C6239", desc: "Warm, spicy ginger biscuits with real heritage. Bulk pack for the whole family.", Mascot: GingerMan },
+  { name: "Luv-a-lot", color: "#D4237A", desc: "High-energy biscuits kids love. A schoolbag essential in bulk size.", Mascot: LuvALotGirl },
 ];

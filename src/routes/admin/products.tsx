@@ -335,6 +335,9 @@ function ProductsAdmin() {
     void queryClient.invalidateQueries({ queryKey: queryKeys.categoryHeroes });
     void queryClient.invalidateQueries({ queryKey: queryKeys.categoryCatalog });
     void queryClient.invalidateQueries({ queryKey: queryKeys.categoryMeta });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.singleCatalog });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.bulkProducts });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.homeRanges });
   };
 
   const saveCategory = async () => {

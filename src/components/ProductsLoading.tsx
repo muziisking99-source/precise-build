@@ -5,11 +5,13 @@ type ProductsLoadingProps = {
 export function ProductsLoading({ variant }: ProductsLoadingProps) {
   if (variant === "bulk") {
     return (
-      <div className="bulk-section section section-cream" aria-busy="true" aria-label="Loading products">
-        <div className="bulk-grid products-loading-bulk">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="products-loading-bulk-card" />
-          ))}
+      <div className="section section-cream" aria-busy="true" aria-label="Loading products">
+        <div className="range-section">
+          <div className="grid-3 bulk-product-grid products-loading-grid">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="products-loading-card" />
+            ))}
+          </div>
         </div>
       </div>
     );

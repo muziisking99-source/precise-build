@@ -16,6 +16,7 @@ const FIELDS: { key: string; label: string; type?: string; textarea?: boolean }[
   { key: "contact_email", label: "Email address", type: "email" },
   { key: "contact_phone", label: "Phone number" },
   { key: "contact_address", label: "Bakery address", textarea: true },
+  { key: "map_google_url", label: "Google Maps link (optional — uses address if empty)", type: "url" },
   { key: "contact_hours", label: "Hours" },
   { key: "facebook_url", label: "Facebook URL", type: "url" },
   { key: "instagram_url", label: "Instagram URL", type: "url" },

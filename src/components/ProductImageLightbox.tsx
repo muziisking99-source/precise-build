@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { productPackImageUrl } from "@/lib/carouselImageUrl";
 import { createPortal } from "react-dom";
 import { ZoomIn, X } from "lucide-react";
 
@@ -38,7 +39,7 @@ export function ProductImageLightbox({ src, alt, className = "product-pack-img" 
         onClick={() => setOpen(true)}
         aria-label={`View larger image of ${alt}`}
       >
-        <img src={src} alt={alt} className={className} />
+        <img src={productPackImageUrl(src)} alt={alt} className={className} loading="lazy" decoding="async" />
         <span className="prod-image-enlarge-hint" aria-hidden>
           <ZoomIn size={18} strokeWidth={2} />
         </span>

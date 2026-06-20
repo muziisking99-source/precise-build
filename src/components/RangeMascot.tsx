@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import { mascotImageUrl } from "@/lib/carouselImageUrl";
 import { SupaDupa } from "./Characters";
 import type { RangeCharacter } from "@/lib/rangeCharacter";
 
@@ -23,7 +24,7 @@ export function RangeMascot({ slug, mascot, size = 120 }: RangeMascotProps) {
     <div className="range-mascot">
       <div className="range-mascot-stage">
         {mascot?.image_url ? (
-          <img src={mascot.image_url} alt={mascot.name} className="range-mascot-img" />
+          <img src={mascotImageUrl(mascot.image_url)} alt={mascot.name} className="range-mascot-img" loading="lazy" decoding="async" />
         ) : Mascot ? (
           <Mascot size={size} />
         ) : null}
@@ -47,7 +48,7 @@ export function ProductMascotFallback({
   }
 
   if (mascot?.image_url) {
-    return <img src={mascot.image_url} alt={mascot.name} className="range-mascot-img" style={{ maxHeight: 90 }} />;
+    return <img src={mascotImageUrl(mascot.image_url)} alt={mascot.name} className="range-mascot-img" style={{ maxHeight: 90 }} loading="lazy" decoding="async" />;
   }
 
   return (

@@ -9,8 +9,9 @@ import { CharacterMarquee } from "../components/CharacterMarquee";
 import { CHARACTERS, SupaDupa, GingerMan, LuvALotGirl, AllStarFootballer, JokerHat } from "../components/Characters";
 import { SnapHero } from "../components/SnapHero";
 import { Logo } from "../components/Logo";
+import { rangeCardImageUrl } from "@/lib/carouselImageUrl";
 import { parseRibbonItems } from "@/lib/queries/fetchers";
-import { resolveSiteStats } from "@/lib/siteCopy";
+import { resolveSiteStats, YUNMA_BRAND_INLINE } from "@/lib/siteCopy";
 import {
   charactersQueryOptions,
   homeRangesQueryOptions,
@@ -127,7 +128,7 @@ function Index() {
                 <Link to="/products" className="range-featured-link">
                   <div className="range-featured-media">
                     {featured.image_url ? (
-                      <img src={featured.image_url} alt={FEATURED_RANGE_DISPLAY[featured.slug] ?? featured.name} />
+                      <img src={rangeCardImageUrl(featured.image_url)} alt={FEATURED_RANGE_DISPLAY[featured.slug] ?? featured.name} loading="lazy" decoding="async" />
                     ) : (
                       <div className="range-featured-fallback" aria-hidden />
                     )}
@@ -149,7 +150,7 @@ function Index() {
                     <Reveal key={r.id} className="range-card" style={{ ["--range-colour" as any]: colour }}>
                       <Link to="/products" className="range-card-link">
                         <div className={`range-card-image ${r.image_url ? "" : "no-image"}`}>
-                          {r.image_url ? <img src={r.image_url} alt={r.name} /> : <span className="range-card-fallback" aria-hidden />}
+                          {r.image_url ? <img src={rangeCardImageUrl(r.image_url)} alt={r.name} loading="lazy" decoding="async" /> : <span className="range-card-fallback" aria-hidden />}
                         </div>
                         <div className="range-card-body">
                           <div className="range-card-name">{r.name}</div>
@@ -199,7 +200,7 @@ function Index() {
             <SectionTag>Our Heritage</SectionTag>
             <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)" }}>Baked in Lenasia. <span style={{ color: "var(--red)" }}>Loved Nationwide.</span></h2>
             <p style={{ color: "var(--mid)", lineHeight: 1.7, marginTop: 18, fontSize: 16 }}>
-              For over a quarter-century, Golden Fresh — a Yunma Foods brand — has been baking honest, affordable biscuits for South African families. From spaza shops to supermarkets, our range now fills lunchboxes in every province.
+              For over a quarter-century, Golden Fresh — {YUNMA_BRAND_INLINE} — has been baking honest, affordable biscuits for South African families. From spaza shops to supermarkets, our range now fills lunchboxes in every province.
             </p>
             <div className="heritage-stats">
               <div className="heritage-stat"><div className="heritage-stat-num">{stats.years}</div><div className="heritage-stat-label">Years Baking</div></div>

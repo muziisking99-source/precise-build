@@ -6,7 +6,12 @@ import { useRouterState } from "@tanstack/react-router";
 import { Cursor } from "./Effects";
 import { Footer, Nav } from "./Layout";
 import { AnimatedOutlet } from "./motion/AnimatedOutlet";
-import { siteSettingsQueryOptions, singleRangesQueryOptions } from "@/lib/queries/options";
+import {
+  charactersQueryOptions,
+  homeRangesQueryOptions,
+  siteSettingsQueryOptions,
+  singleRangesQueryOptions,
+} from "@/lib/queries/options";
 
 export function RootLayout() {
   const queryClient = useQueryClient();
@@ -17,6 +22,8 @@ export function RootLayout() {
     if (isAdmin) return;
     void queryClient.prefetchQuery(siteSettingsQueryOptions());
     void queryClient.prefetchQuery(singleRangesQueryOptions());
+    void queryClient.prefetchQuery(homeRangesQueryOptions());
+    void queryClient.prefetchQuery(charactersQueryOptions());
   }, [isAdmin, queryClient]);
 
   if (isAdmin) {

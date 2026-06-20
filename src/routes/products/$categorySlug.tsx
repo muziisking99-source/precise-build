@@ -1,4 +1,5 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
+import { ProductsBackLink } from "../../components/ProductsBackLink";
 import { useQuery } from "@tanstack/react-query";
 import { useState, type CSSProperties } from "react";
 import { SectionTag } from "../../components/Layout";
@@ -37,6 +38,7 @@ function CategoryProducts() {
   const { data: category } = useQuery(categoryBySlugQueryOptions(categorySlug));
   const { data: ranges, isPending } = useQuery(categoryCatalogQueryOptions(categorySlug));
   const { data: characters = [] } = useQuery(rangeCharactersQueryOptions());
+  const showLoading = isPending && ranges === undefined;
 
   const view = (ranges ?? []).map((r) => {
     const mascot = characterForRange(r.slug, r.name, characters);
@@ -67,10 +69,10 @@ function CategoryProducts() {
         title={<>Our <span className="accent">{category.title}</span></>}
         description={category.description ?? ""}
       >
-        <Link to="/products" className="products-back">← All categories</Link>
+        <ProductsBackLink />
       </PageHero>
 
-      {isPending ? (
+      {showLoading ? (
         <ProductsLoading variant="single" />
       ) : visible.length === 0 ? (
         <div className="section section-cream">

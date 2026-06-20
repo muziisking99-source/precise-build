@@ -2,14 +2,10 @@
 
 import { AnimatePresence, motion, useIsPresent } from "framer-motion";
 import { Outlet, useMatch, useMatches } from "@tanstack/react-router";
-import { prefersReducedMotion, spring } from "./transitions";
+import { prefersReducedMotion } from "./transitions";
 import { useCategoryTransition } from "./CategoryTransition";
 
-const defaultEnter = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -12 },
-};
+const productFadeTransition = { duration: 0.32, ease: [0.4, 0, 0.2, 1] as const };
 
 function ProductsPageTransition({ children }: { children: React.ReactNode }) {
   const reduced = prefersReducedMotion();
@@ -24,11 +20,12 @@ function ProductsPageTransition({ children }: { children: React.ReactNode }) {
   if (fromCategory) {
     return (
       <motion.main
-        className={`page-transition-root products-transition-root products-transition-root--revealing${isPresent ? "" : " products-transition-root--leaving"}`}
+        className="page-transition-root products-transition-root"
         aria-hidden={!isPresent}
         initial={false}
         animate={{ opacity: isPresent ? 1 : 0 }}
-        transition={{ duration: 0 }}
+        transition={productFadeTransition}
+        style={isPresent ? undefined : { position: "absolute", inset: 0, width: "100%", pointerEvents: "none" }}
       >
         {children}
       </motion.main>
@@ -38,10 +35,11 @@ function ProductsPageTransition({ children }: { children: React.ReactNode }) {
   return (
     <motion.main
       className="page-transition-root products-transition-root"
-      initial={defaultEnter.initial}
-      animate={defaultEnter.animate}
-      exit={defaultEnter.exit}
-      transition={spring}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={productFadeTransition}
+      style={isPresent ? { position: "relative", zIndex: 1 } : { position: "absolute", inset: 0, width: "100%", zIndex: 0, pointerEvents: "none" }}
     >
       {children}
     </motion.main>
@@ -55,17 +53,18 @@ export function ProductsAnimatedOutlet() {
   const nextMatch = matches[nextMatchIndex];
   const key = nextMatch?.id ?? match.id;
   const reduced = prefersReducedMotion();
-  const { active } = useCategoryTransition();
 
   if (reduced) {
     return <Outlet />;
   }
 
   return (
-    <AnimatePresence mode={active ? "sync" : "wait"} initial={false}>
-      <ProductsPageTransition key={key}>
-        <Outlet />
-      </ProductsPageTransition>
-    </AnimatePresence>
+    <div className="products-transition-shell">
+      <AnimatePresence mode="sync" initial={false}>
+        <ProductsPageTransition key={key}>
+          <Outlet />
+        </ProductsPageTransition>
+      </AnimatePresence>
+    </div>
   );
 }
