@@ -32,6 +32,44 @@ export type Database = {
         }
         Relationships: []
       }
+      category_carousel_images: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          image_url: string
+          is_visible: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          image_url: string
+          is_visible?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          image_url?: string
+          is_visible?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "category_carousel_images_category_fkey"
+            columns: ["category"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
       characters: {
         Row: {
           created_at: string
@@ -160,42 +198,42 @@ export type Database = {
       }
       product_categories: {
         Row: {
-          id: string
-          slug: string
-          title: string
-          description: string | null
+          created_at: string
           cta_text: string | null
           cta_variant: string
-          route_path: string
-          sort_order: number
+          description: string | null
+          id: string
           is_visible: boolean
-          created_at: string
+          route_path: string
+          slug: string
+          sort_order: number
+          title: string
           updated_at: string
         }
         Insert: {
-          id?: string
-          slug: string
-          title: string
-          description?: string | null
+          created_at?: string
           cta_text?: string | null
           cta_variant?: string
-          route_path?: string
-          sort_order?: number
+          description?: string | null
+          id?: string
           is_visible?: boolean
-          created_at?: string
+          route_path?: string
+          slug: string
+          sort_order?: number
+          title: string
           updated_at?: string
         }
         Update: {
-          id?: string
-          slug?: string
-          title?: string
-          description?: string | null
+          created_at?: string
           cta_text?: string | null
           cta_variant?: string
-          route_path?: string
-          sort_order?: number
+          description?: string | null
+          id?: string
           is_visible?: boolean
-          created_at?: string
+          route_path?: string
+          slug?: string
+          sort_order?: number
+          title?: string
           updated_at?: string
         }
         Relationships: []
@@ -231,7 +269,15 @@ export type Database = {
           sort_order?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "product_ranges_category_fkey"
+            columns: ["category"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["slug"]
+          },
+        ]
       }
       products: {
         Row: {
